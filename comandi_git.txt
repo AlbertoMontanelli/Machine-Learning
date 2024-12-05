@@ -26,3 +26,7 @@ git add documento.txt
 git commit -m "Spostato documento.txt da branch-origine"
 git push origin branch-destinazione
 
+**se voglio eliminare dei branch che online non ci sono più ma li vedo sempre**
+git fetch --prune
+
+
