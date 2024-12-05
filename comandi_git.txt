@@ -17,3 +17,12 @@ git branch -d nomebranch # come eliminare un branch sul locale
 **come vedere quali branch ho**
 git branch -r # vedi anche i branch online
 git branch # vedi solo i branch locali
+
+**come spostare un file da un branch all'altro"
+git checkout branch-origine
+git checkout branch-destinazione -- documento.txt
+git checkout branch-destinazione
+git add documento.txt
+git commit -m "Spostato documento.txt da branch-origine"
+git push origin branch-destinazione
+
