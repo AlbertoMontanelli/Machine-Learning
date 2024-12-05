@@ -1,0 +1,19 @@
+**come scaricare la rep online sul locale**
+git pull #scarica tutto
+git pull origin main #scarica solo il main, non i branch
+
+**creazione di branch**
+git branch nomebranch #crea branch su rep locale
+git switch nomebranch #entri sul branch
+git add nomefile.txt #il file deve esistere già
+git commit -m "ho creato un branch e un file"
+git push --set-upstream origin nomebranch #per caricare tutto online
+git checkout main  # ritorno al main
+
+**distruzione del branch sul rep**
+git push origin --delete nomebranch # come eliminare un branch online
+git branch -d nomebranch # come eliminare un branch sul locale
+
+**come vedere quali branch ho**
+git branch -r # vedi anche i branch online
+git branch # vedi solo i branch locali
