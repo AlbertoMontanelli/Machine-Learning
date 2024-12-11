@@ -1,0 +1,50 @@
+**come scaricare la rep online sul locale**
+git pull #scarica tutto
+git pull origin main #scarica solo il main, non i branch
+
+**creazione di branch**
+git branch nomebranch #crea branch su rep locale
+git switch nomebranch #entri sul branch
+git add nomefile.txt #il file deve esistere già
+git commit -m "ho creato un branch e un file"
+git push --set-upstream origin nomebranch #per caricare tutto online
+git checkout main  # ritorno al main
+
+**distruzione del branch sul rep**
+git push origin --delete nomebranch # come eliminare un branch online
+git branch -d nomebranch # come eliminare un branch sul locale
+
+**come vedere quali branch ho**
+git branch -r # vedi anche i branch online
+git branch # vedi solo i branch locali
+
+**come spostare un file da un branch all'altro"
+git checkout branch-origine
+git checkout branch-destinazione -- documento.txt
+git checkout branch-destinazione
+git add documento.txt
+git commit -m "Spostato documento.txt da branch-origine"
+git push origin branch-destinazione
+
+**se voglio eliminare dei branch che online non ci sono più ma li vedo sempre**
+git fetch --prune
+
+**eliminazione file**
+git rm path/to/file
+
+**creazione branch vuoto per inserire il colab direttamente online**
+git checkout --orphan nome_branch
+git rm -rf (elimina eventuali file esistenti)
+aggiungo un qualsiasi file sul branch perché per pusharlo online deve avere almeno un commit
+git switch nome_branch
+git add nomefile.formato
+git commit -m "ho aggiunto un file a caso"
+git push origin main
+
+l'alternativa è lavorare con 3 colab diversi scaricandone una copia sul locale e commitarli su 3 branch diversi quando si vuole lavorare con lo stesso colab
+
+**merge dei branch da locale**
+per fare il merge da un branch al main
+git checkout main
+git merge nome_branch -m "ho fatto il merge di nome_branch sul main"
+git push origin main
