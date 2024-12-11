@@ -34,7 +34,7 @@ git rm path/to/file
 
 **creazione branch vuoto per inserire il colab direttamente online**
 git checkout --orphan nome_branch
-git rm -rf (elimina eventuali file esistenti)
+git rm -rf . (elimina eventuali file esistenti)
 aggiungo un qualsiasi file sul branch perché per pusharlo online deve avere almeno un commit
 git switch nome_branch
 git add nomefile.formato
