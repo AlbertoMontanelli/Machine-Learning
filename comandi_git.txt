@@ -2,6 +2,10 @@
 git pull #scarica tutto
 git pull origin main #scarica solo il main, non i branch
 
+**Se viene creato un nuovo branch da qualcun altro, come faccio a pullarlo?**
+git fetch --all #serve per copiare tutti i branch che prima non esistevano
+git pull 
+
 **creazione di branch**
 git branch nomebranch #crea branch su rep locale
 git switch nomebranch #entri sul branch
