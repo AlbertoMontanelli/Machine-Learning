@@ -1,5 +1,4 @@
 import numpy as np
-import Functions
 
 class Regularization:
     def __init__(
@@ -105,7 +104,7 @@ class Optimization:
             raise ValueError(f'Invalid {self.opt_type}. Choose from {', '.join(optimization_type)}')
 
 
-    def optimization(self, input, loss_gradient):
+    def optimization(self, input, loss_gradient, layer, regulizer):
         '''
         Function that optimizes the update of the Weights and the Biases using NAG or Adam algorithms.
 
@@ -121,15 +120,15 @@ class Optimization:
                                                                                  # gradient after the momentum is applied
             bias_pred = self.biases + self.momentum * self.velocity_biases # Same thing for the biases
             net_pred = np.dot(input, weights_pred) + bias_pred  #  Net computed with respect to the predicted weights and the predicted biases
-            delta_pred = - loss_gradient * self.activation_derivative(net_pred)  # Loss gradient with respect to net, minus sign due to the definition
-            grad_weights = self.learning_rate_w * np.dot(self.input.T, delta_pred)  # Loss gradient multiplied by the learning rate.
-                                                                            # The gradient has been computed with respect to the predicted weights and biases
+            delta_pred = - loss_gradient * layer.activation_derivative(net_pred)  # Loss gradient with respect to net, minus sign due to the definition
+            grad_weights = self.learning_rate_w * np.dot(input.T, delta_pred)  # Loss gradient multiplied by the learning rate.
+                                                                               # The gradient has been computed with respect to the predicted weights and biases
             
-            reg_term = self.regularization_func(Lambda_t, Lambda_l, weights_pred, reg_type)
-            self.velocity_weights = momentum * self.velocity_weights + grad_weights - reg_term  # Delta w new 
-                                                                                                # the minus sign before reg_term is due to the application of gradient descent algorithm.
+            reg_term = regulizer.regularization(self.Lambda_t, self.Lambda_l, weights_pred, self.reg_type)
+            self.velocity_weights = self.momentum * self.velocity_weights + grad_weights - regulizer.alpha * reg_term  # Delta w new the minus sign before reg_term 
+                                                                                                     # is due to the application of gradient descent algorithm
             self.weights += self.velocity_weights  # Updating the weights
-            self.velocity_biases = momentum * self.velocity_biases + learning_rate_b * np.sum(delta_pred, axis=0, keepdims=True)
+            self.velocity_biases = self.momentum * self.velocity_biases + self.learning_rate_b * np.sum(delta_pred, axis=0, keepdims=True)
             self.biases += self.velocity_biases # Updating the biases
 
 

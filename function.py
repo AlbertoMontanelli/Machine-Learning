@@ -186,7 +186,7 @@ activation_functions = {
 }
 
 # Dictionary for the derivative of activation functions
-activation_functions = {
+d_activation_functions = {
     "d_sigmoid": d_sigmoid,
     "d_tanh": d_tanh,
     "d_softplus": d_softplus,
