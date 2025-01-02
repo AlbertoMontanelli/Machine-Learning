@@ -33,7 +33,8 @@ class Regularization:
             weights (array): Weights matrix.
             reg_type (string): the type of Regularization being applied.
 
-        Return: reg_term (float), according to the reg_type being used. To be subtracted to the gradient in the Loss Function.  
+        Returns: 
+            reg_term (float), according to the reg_type being used. To be subtracted to the gradient in the Loss Function.  
         '''
 
         regularization_type = {'tikhonov', 'lasso', 'elastic', 'none'}
@@ -123,7 +124,8 @@ class Optimization:
             loss_gradient (array): derivative of the loss function evaluated in the output values of the network.
             layer (Layer): instance of the Layer class.
 
-        Return: sum_delta_weights (array), loss_gradient for hidden layer   
+        Returns:
+            sum_delta_weights (array), loss_gradient for hidden layer   
         '''
         self.delta = - loss_gradient * layer.activation_derivative(np.dot(input, self.weights) + self.biases)
 
