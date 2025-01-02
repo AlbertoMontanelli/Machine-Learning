@@ -1,7 +1,7 @@
 import numpy as np
-from Functions import activation_functions, d_activation_functions
 
 class Regularization:
+
     def __init__(
             self, 
             Lambda_t = 0.5, 
@@ -31,10 +31,11 @@ class Regularization:
 
         Args:
             weights (array): Weights matrix.
-            reg_type (string): the type of Regularization being applied.
+            reg_type (str): the type of Regularization being applied.
 
         Returns: 
-            reg_term (float), according to the reg_type being used. To be subtracted to the gradient in the Loss Function.  
+            reg_term (float): result of the computation of the regularization algorithm.
+                              To be subtracted to the gradient in the Loss Function.  
         '''
 
         regularization_type = {'tikhonov', 'lasso', 'elastic', 'none'}
@@ -52,6 +53,7 @@ class Regularization:
 
 
 class Optimization:
+
     def __init__(
             self,
             regulizer = None,
@@ -85,6 +87,7 @@ class Optimization:
         self.t = t
         self.regulizer = regulizer
         
+
     def initialization(self, weights, biases, opt_type):
         '''
         Function that initializes the parameters of the NAG and Adam algorithms.
@@ -92,7 +95,7 @@ class Optimization:
         Args:
             weights (array): Weights matrix.
             biases (array): Biases array.
-            opt_type (string): the type of Optimization being applied.
+            opt_type (str): the type of Optimization being applied.
         '''
         self.weights = weights
         self.biases = biases
@@ -125,7 +128,7 @@ class Optimization:
             layer (Layer): instance of the Layer class.
 
         Returns:
-            sum_delta_weights (array), loss_gradient for hidden layer   
+            sum_delta_weights (array): loss_gradient for hidden layer   
         '''
         self.delta = - loss_gradient * layer.activation_derivative(np.dot(input, self.weights) + self.biases)
 
