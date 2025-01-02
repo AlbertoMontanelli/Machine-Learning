@@ -52,7 +52,8 @@ class Optimization:
             beta_1 = 0.9, 
             beta_2 = 0.999, 
             epsilon = 1e-8, 
-            t = 1
+            t = 1,
+            regulizer = None
             ):
         '''
         Class for optimization
@@ -65,6 +66,7 @@ class Optimization:
             beta_2 (float): control factor linked to second order momentum for computation of the variance in Adam Optimization.
             epsilon (float): stabilization term used in the update of the Weights and the Biases at every step of the Adam Optimization.
             t (int): counter of iterations used in Adam Optimization that goes up to number_epochs * number_batches.
+            regulizer (Regularization): instance of the Regularization class.
         '''
         self.learning_rate_w = learning_rate_w
         self.learning_rate_b = learning_rate_b
@@ -73,6 +75,7 @@ class Optimization:
         self.beta_2 = beta_2
         self.epsilon = epsilon
         self.t = t
+        self.regulizer = regulizer
         
     def initialize(self, weights, biases, opt_type):
         '''
@@ -111,6 +114,8 @@ class Optimization:
         Args:
             input (array): input matrix to the current layer.
             loss_gradient (array): derivative of the loss function evaluated in the output values of the network.
+            layer (Layer): instance of the Layer class.
+            regulizer (Regularization): instance of the Regularization class.
 
         Return: sum_delta_weights (array), loss_gradient for hidden layer   
         '''
@@ -124,8 +129,8 @@ class Optimization:
             grad_weights = self.learning_rate_w * np.dot(input.T, delta_pred)  # Loss gradient multiplied by the learning rate.
                                                                                # The gradient has been computed with respect to the predicted weights and biases
             
-            reg_term = regulizer.regularization(self.Lambda_t, self.Lambda_l, weights_pred, self.reg_type)
-            self.velocity_weights = self.momentum * self.velocity_weights + grad_weights - regulizer.alpha * reg_term  # Delta w new the minus sign before reg_term 
+            reg_term = self.regulizer.regularization(weights_pred) ###ATTENZIONE, LA CHAT DICE DI METTERE reg_type COME PARAMETRO. SECONDO NOI NO
+            self.velocity_weights = self.momentum * self.velocity_weights + grad_weights - self.regulizer.alpha * reg_term  # Delta w new the minus sign before reg_term 
                                                                                                      # is due to the application of gradient descent algorithm
             self.weights += self.velocity_weights  # Updating the weights
             self.velocity_biases = self.momentum * self.velocity_biases + self.learning_rate_b * np.sum(delta_pred, axis=0, keepdims=True)
@@ -136,7 +141,7 @@ class Optimization:
 '''Unit test for regularization'''
 np.random.seed(42)
 weights = np.random.rand(3, 3)
-reg = RegularizationOptimization()
+reg = Regularization()
 reg_term = reg.regularization(weights, 'lasso')
 print(f'weights {weights}')
 print(f'reg term {reg_term}')
