@@ -63,7 +63,8 @@ class Optimization:
             beta_1 = 0.9, 
             beta_2 = 0.999, 
             epsilon = 1e-8, 
-            t = 1
+            t = 1,
+            opt_type = 'adam'
             ):
         '''
         Class for optimization
@@ -86,28 +87,26 @@ class Optimization:
         self.epsilon = epsilon
         self.t = t
         self.regulizer = regulizer
-        
+        self.opt_type = opt_type
 
-    def initialization(self, weights, biases, opt_type):
+    def initialization(self, weights, biases):
         '''
         Function that initializes the parameters of the NAG and Adam algorithms.
 
         Args:
             weights (array): Weights matrix.
             biases (array): Biases array.
-            opt_type (str): the type of Optimization being applied.
         '''
         self.weights = weights
         self.biases = biases
-        self.opt_type = opt_type
         optimization_type = {'NAG', 'adam'}
 
-        if opt_type == 'NAG':
+        if self.opt_type == 'NAG':
             # Initialization of the parameters for Nesterov optimization
             self.velocity_weights = np.zeros_like(self.weights)
             self.velocity_biases = np.zeros_like(self.biases)
 
-        elif opt_type == 'adam':
+        elif self.opt_type == 'adam':
             # Initialization of the parameters for Adam optimization
             self.m_weights = np.zeros_like(self.weights)
             self.v_weights = np.zeros_like(self.weights)
@@ -118,7 +117,7 @@ class Optimization:
             raise ValueError(f'Invalid {self.opt_type}. Choose from {', '.join(optimization_type)}')
 
 
-    def optimization(self, input, loss_gradient, layer):
+    def optimization(self, input, loss_gradient, activation_derivative):
         '''
         Function that optimizes the update of the Weights and the Biases using NAG or Adam algorithms.
 
@@ -130,7 +129,7 @@ class Optimization:
         Returns:
             sum_delta_weights (array): loss_gradient for hidden layer   
         '''
-        self.delta = - loss_gradient * layer.activation_derivative(np.dot(input, self.weights) + self.biases)
+        self.delta = - loss_gradient * activation_derivative(np.dot(input, self.weights) + self.biases)
 
         if self.opt_type == 'NAG':
             weights_pred = self.weights + self.momentum * self.velocity_weights  # Predicted weights used to compute the
@@ -138,7 +137,7 @@ class Optimization:
             bias_pred = self.biases + self.momentum * self.velocity_biases # Same thing for the biases
             net_pred = np.dot(input, weights_pred) + bias_pred  # Net computed with respect to the predicted weights and 
                                                                 # the predicted biases
-            delta_pred = - loss_gradient * layer.activation_derivative(net_pred)  # Loss gradient with respect to net, 
+            delta_pred = - loss_gradient * activation_derivative(net_pred)  # Loss gradient with respect to net, 
                                                                                   # minus sign due to the definition
             grad_weights = self.learning_rate_w * np.dot(input.T, delta_pred)  # Loss gradient multiplied by the learning rate.
                                                                                # The gradient has been computed with respect
@@ -176,8 +175,8 @@ class Optimization:
         return sum_delta_weights
 
 
-    
-'''Unit test for regularization'''
+'''
+#Unit test for regularization
 np.random.seed(42)
 xx = np.random.rand(3, 3)
 weights = np.random.rand(3, 3)
@@ -186,9 +185,10 @@ reg_term = reg.regularization(weights, 'lasso')
 print(f'weights {weights}')
 print(f'reg term {reg_term}')
 
-'''Unit test for optimization'''
+#Unit test for optimization
 biases = np.random.rand(1, 3)
 loss_gradient = np.random.rand(3, 3)
 opt = Optimization(reg)
 opt.initialization(weights, biases, 'adam')
 sum_delta_weights = opt.optimization(xx, loss_gradient)
+'''
