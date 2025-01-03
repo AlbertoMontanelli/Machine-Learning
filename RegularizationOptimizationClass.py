@@ -30,15 +30,14 @@ class Regularization:
         Function that computes the regularization term using Tikhonov, Lasso or Elastic learning rule.
 
         Args:
-            weights (array): Weights matrix.
+            weights (array): weights matrix.
             reg_type (str): the type of Regularization being applied.
 
         Returns: 
-            reg_term (float): result of the computation of the regularization algorithm.
+            reg_term (float): Result of the computation of the regularization algorithm.
                               To be subtracted to the gradient in the Loss Function.  
         '''
-
-        regularization_type = {'tikhonov', 'lasso', 'elastic', 'none'}
+        regularization_type = {'tikhonov', 'lasso', 'elastic', 'none'} # The only types of regularization accepted
         if reg_type == 'tikhonov':
             reg_term = 2 * self.Lambda_t * weights # Learning rule of Tikhonov Regularization
         elif reg_type == 'lasso':
@@ -70,6 +69,7 @@ class Optimization:
         Class for optimization
 
         Args:
+            regulizer (Regularization): instance of the Regularization class.
             learning_rate_w (float): growth factor for the Weights parameter of the network.
             learning_rate_b (float): growth factor for the Biases parameter of the network.
             momentum (float): factor for optimization through Nesterov Accelerated Gradient (NAG).
@@ -77,8 +77,9 @@ class Optimization:
             beta_2 (float): control factor linked to second order momentum for computation of the variance in Adam Optimization.
             epsilon (float): stabilization term used in the update of the Weights and the Biases at every step of the Adam Optimization.
             t (int): counter of iterations used in Adam Optimization that goes up to number_epochs * number_batches.
-            regulizer (Regularization): instance of the Regularization class.
+            opt_type (str): the type of Optimization being applied.
         '''
+        self.regulizer = regulizer
         self.learning_rate_w = learning_rate_w
         self.learning_rate_b = learning_rate_b
         self.momentum = momentum
@@ -86,20 +87,20 @@ class Optimization:
         self.beta_2 = beta_2
         self.epsilon = epsilon
         self.t = t
-        self.regulizer = regulizer
         self.opt_type = opt_type
+
 
     def initialization(self, weights, biases):
         '''
         Function that initializes the parameters of the NAG and Adam algorithms.
 
         Args:
-            weights (array): Weights matrix.
-            biases (array): Biases array.
+            weights (array): weights matrix.
+            biases (array): biases array.
         '''
         self.weights = weights
         self.biases = biases
-        optimization_type = {'NAG', 'adam'}
+        optimization_type = {'NAG', 'adam'} # The only types of optimization accepted
 
         if self.opt_type == 'NAG':
             # Initialization of the parameters for Nesterov optimization
@@ -124,7 +125,7 @@ class Optimization:
         Args:
             input (array): input matrix to the current layer.
             loss_gradient (array): derivative of the loss function evaluated in the output values of the network.
-            layer (Layer): instance of the Layer class.
+            activation_derivative (func): derivative of the activation function evaluated in net.
 
         Returns:
             sum_delta_weights (array): loss_gradient for hidden layer   
