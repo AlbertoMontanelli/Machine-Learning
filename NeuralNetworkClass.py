@@ -111,7 +111,8 @@ layers_config = [
 reg_config = {
     'Lambda_t': 0.01,
     'Lambda_l': 0.01,
-    'alpha': 1e-4
+    'alpha': 1e-4,
+    'reg_type': 'elastic'
 }
 
 # Configurazione dell'ottimizzazione

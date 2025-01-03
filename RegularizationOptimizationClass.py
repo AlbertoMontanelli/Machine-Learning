@@ -6,7 +6,8 @@ class Regularization:
             self, 
             Lambda_t = 0.5, 
             Lambda_l = 0.5, 
-            alpha = 1e-4
+            alpha = 1e-4,
+            reg_type = 'elastic'
             ):
         '''
         Class for regularization
@@ -15,39 +16,39 @@ class Regularization:
             Lambda_t (float): constant used in Tikhonov regularization.
             Lambda_l (float): constant used in Lasso regularization.
             alpha (float): scale factor for regularization term.
+            reg_type (str): the type of Regularization being applied.
         '''
         self.Lambda_t = Lambda_t
         self.Lambda_l = Lambda_l
         self.alpha = alpha
+        self.reg_type = reg_type
         
 
     def regularization(
             self, 
-            weights, 
-            reg_type = 'elastic'
+            weights
             ):
         '''
         Function that computes the regularization term using Tikhonov, Lasso or Elastic learning rule.
 
         Args:
             weights (array): weights matrix.
-            reg_type (str): the type of Regularization being applied.
 
         Returns: 
             reg_term (float): Result of the computation of the regularization algorithm.
                               To be subtracted to the gradient in the Loss Function.  
         '''
         regularization_type = {'tikhonov', 'lasso', 'elastic', 'none'} # The only types of regularization accepted
-        if reg_type == 'tikhonov':
+        if self.reg_type == 'tikhonov':
             reg_term = 2 * self.Lambda_t * weights # Learning rule of Tikhonov Regularization
-        elif reg_type == 'lasso':
+        elif self.reg_type == 'lasso':
             reg_term = self.Lambda_l * np.sign(weights) # Learning rule of Lasso Regularization
-        elif reg_type == 'elastic':
+        elif self.reg_type == 'elastic':
             reg_term = (2 * self.Lambda_t * weights + self.Lambda_l * np.sign(weights)) # Tikhonov + Lasso Regularization
-        elif reg_type == 'none':
+        elif self.reg_type == 'none':
             reg_term = 0 # No regularization
         else:
-            raise ValueError(f'Invalid {reg_type}. Choose from {', '.join(regularization_type)}')
+            raise ValueError(f"Invalid {self.reg_type}. Choose from {', '.join(regularization_type)}")
         return reg_term
 
 
@@ -115,7 +116,7 @@ class Optimization:
             self.v_biases = np.zeros_like(self.biases)
         
         else:
-            raise ValueError(f'Invalid {self.opt_type}. Choose from {', '.join(optimization_type)}')
+            raise ValueError(f"Invalid {self.opt_type}. Choose from {', '.join(optimization_type)}")
 
 
     def optimization(self, input, loss_gradient, activation_derivative):
