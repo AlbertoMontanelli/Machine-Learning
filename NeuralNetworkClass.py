@@ -17,26 +17,30 @@ class NeuralNetwork:
             opt_config (dict): optimization configuration.
         '''
         self.regularizer = Regularization(**reg_config)
-        self.optimizer = Optimization(regulizer = self.regularizer, **opt_config)
-        self.layers = self.initialize_layers(layers_config)
+        self.layers, self.optimizers = self.initialize_layers(layers_config, opt_config)
 
-    def initialize_layers(self, layers_config):
+    def initialize_layers(self, layers_config, opt_config):
         '''
         Function that iniliatizes all the layers in the neural network.
 
         Args:
-            layers_config (list): layers configuration as list:(dim_prev_layer, dim_layer, 
-            activation_function, d_activation_function).  
+            layers_config (list): layers configuration as list: 
+                                  (dim_prev_layer, dim_layer, activation_function, d_activation_function). 
+            opt_config (list): optimizations configuration as list: 
+                               (opt_type, learning_rate_w, learning_rate_b, momentum, beta_1, beta_2, epsilon). 
 
         Returns:
             layers (list): list of the layers of the neural network.
+            optimizers (list): list of instances of optimization class.
         '''
         layers = []
+        optimizers = []
         for config in layers_config:
            layer = Layer(*config)
-           self.optimizer.initialization(layer.weights, layer.biases)
+           optimizer = Optimization(layer.weights, layer.biases, regulizer = self.regularizer, **opt_config)
            layers.append(layer)
-        return layers
+           optimizers.append(optimizer)
+        return layers, optimizers
 
     def data_split(self, x_tot, target, test_split):
         '''
@@ -87,8 +91,8 @@ class NeuralNetwork:
         Args:
             loss_gradient (array): gradient loss with respect to the layer output.
         '''
-        for layer in reversed(self.layers):
-            loss_gradient = layer.backward_layer(loss_gradient, self.optimizer)
+        for layer, optimizer in reversed(list(zip(self.layers, self.optimizers))): 
+            loss_gradient = layer.backward_layer(loss_gradient, optimizer)
 
     def reinitialize_weights(self):
         '''
@@ -100,6 +104,8 @@ class NeuralNetwork:
 
 
 ## Unit test for NeuralNetworkClass
+
+np.random.seed(42)
 
 # Configurazione dei layer: [(input_dim, output_dim, activation_function, d_activation_function), ...]
 layers_config = [
@@ -118,33 +124,27 @@ reg_config = {
 
 # Configurazione dell'ottimizzazione
 opt_config = {
+    'opt_type': 'NAG',
     'learning_rate_w': 0.001,
     'learning_rate_b': 0.001,
     'momentum': 0.9,
     'beta_1': 0.9,
     'beta_2': 0.999,
     'epsilon': 1e-8,
-    'opt_type': 'NAG'
 }
-
-# Inizializza la rete neurale
-#test
-np.random.seed(42)
 
 x_tot = np.random.rand(10, 15)
 target = np.random.rand(10, 3)
-#print(f"x_tot: {x_tot}")
 
 test_split = 0.2
 train_split = 0.75
 
+# Inizializza la rete neurale
 NN = NeuralNetwork(layers_config, reg_config, opt_config)
-NN.initialize_layers(layers_config)
-'''
+
 # Split data
 x_train_val, target_train_val, x_test, target_test = NN.data_split(x_tot, target, test_split)
-print(f"data: {x_train_val}")
-'''
+
 # forward
 predictions = NN.forward(x_tot)
 
@@ -153,9 +153,10 @@ print(f"predictions: \n {predictions}")
 # backward
 for layers in NN.layers:
     print(f'weights: \n {layers.weights}')
-loss = loss_functions['mse'](target, predictions)
-print(f'loss shape: {loss.shape}')
+
+loss = d_loss_functions['d_mse'](target, predictions)
 print(f'loss: \n {loss}')
 NN.backward(loss)
+
 for layers in NN.layers:
     print(f'weights: \n {layers.weights}')

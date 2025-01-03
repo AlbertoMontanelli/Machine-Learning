@@ -56,21 +56,26 @@ class Optimization:
 
     def __init__(
             self,
+            weights,
+            biases,
             regulizer,
+            opt_type,
             learning_rate_w = 1e-4, 
             learning_rate_b = 1e-4, 
             momentum = 0.8, 
             beta_1 = 0.9, 
             beta_2 = 0.999, 
             epsilon = 1e-8, 
-            t = 1,
-            opt_type = 'adam'
+            t = 1
             ):
         '''
         Class for optimization
 
         Args:
+            weights (array): weights matrix.
+            biases (array): biases array.
             regulizer (Regularization): instance of the Regularization class.
+            opt_type (str): the type of Optimization being applied.
             learning_rate_w (float): growth factor for the Weights parameter of the network.
             learning_rate_b (float): growth factor for the Biases parameter of the network.
             momentum (float): factor for optimization through Nesterov Accelerated Gradient (NAG).
@@ -78,7 +83,6 @@ class Optimization:
             beta_2 (float): control factor linked to second order momentum for computation of the variance in Adam Optimization.
             epsilon (float): stabilization term used in the update of the Weights and the Biases at every step of the Adam Optimization.
             t (int): counter of iterations used in Adam Optimization that goes up to number_epochs * number_batches.
-            opt_type (str): the type of Optimization being applied.
         '''
         self.regulizer = regulizer
         self.learning_rate_w = learning_rate_w
@@ -89,6 +93,7 @@ class Optimization:
         self.epsilon = epsilon
         self.t = t
         self.opt_type = opt_type
+        self.initialization(weights, biases)
 
 
     def initialization(self, weights, biases):
@@ -131,10 +136,6 @@ class Optimization:
         Returns:
             sum_delta_weights (array): loss_gradient for hidden layer   
         '''
-        print(f"Input shape: {input.shape}")
-        print(f"Loss gradient shape: {loss_gradient.shape}")
-        print(f"Weights shape: {self.weights.shape}")
-        print(f"Biases shape: {self.biases.shape}")
         self.delta = - loss_gradient * d_activation_function(np.dot(input, self.weights) + self.biases)
 
         if self.opt_type == 'NAG':
