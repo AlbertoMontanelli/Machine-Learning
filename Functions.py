@@ -241,30 +241,30 @@ def d_mean_squared_error(y_true, y_pred):
     return - 2 * (y_true - y_pred)
 
 
-def mean_euclidian_error(y_true, y_pred):
+def mean_euclidean_error(y_true, y_pred):
     """ 
-    Mean Euclidian Error function.
+    Mean Euclidean Error function.
 
     Args:
         y_true (array): targets that represent data labels provided as input.
         y_pred (array): output of the last layer.
 
     Returns:
-        new float (float): result of Mean Euclidian Error.
+        new float (float): result of Mean Euclidean Error.
     """ 
     return np.sqrt(np.sum((y_true - y_pred)**2))
 
 
-def d_mean_euclidian_error(y_true, y_pred):
+def d_mean_euclidean_error(y_true, y_pred):
     """ 
-    Derivative of Mean Euclidian Error function.
+    Derivative of Mean Euclidean Error function.
 
     Args:
         y_true (array): targets that represent data labels provided as input.
         y_pred (array): output of the last layer.
 
     Returns:
-        new array (array): result of the derivative of Mean Euclidian Error.
+        new array (array): result of the derivative of Mean Euclidean Error.
     """ 
     return - (y_true - y_pred) / np.sqrt(np.sum((y_true - y_pred)**2))
 
@@ -301,14 +301,14 @@ def d_huber_loss(y_true, y_pred, delta):
 
 # Dictionary for the loss functions
 loss_functions = {
-    "mse": mean_euclidian_error,
-    "mee": mean_euclidian_error,
+    "mse": mean_squared_error,
+    "mee": mean_euclidean_error,
     "huber": huber_loss,
 }
 
 # Dictionary for the derivative of loss functions
 d_loss_functions = {
-    "d_mse": d_mean_euclidian_error,
-    "d_mee": d_mean_euclidian_error,
+    "d_mse": d_mean_squared_error,
+    "d_mee": d_mean_euclidean_error,
     "d_huber": d_huber_loss,
 }

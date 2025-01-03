@@ -56,7 +56,7 @@ class Optimization:
 
     def __init__(
             self,
-            regulizer = None,
+            regulizer,
             learning_rate_w = 1e-4, 
             learning_rate_b = 1e-4, 
             momentum = 0.8, 
@@ -119,19 +119,23 @@ class Optimization:
             raise ValueError(f"Invalid {self.opt_type}. Choose from {', '.join(optimization_type)}")
 
 
-    def optimization(self, input, loss_gradient, activation_derivative):
+    def optimization(self, input, loss_gradient, d_activation_function):
         '''
         Function that optimizes the update of the Weights and the Biases using NAG or Adam algorithms.
 
         Args:
             input (array): input matrix to the current layer.
             loss_gradient (array): derivative of the loss function evaluated in the output values of the network.
-            activation_derivative (func): derivative of the activation function evaluated in net.
+            d_activation_function (func): derivative of the activation function evaluated in net.
 
         Returns:
             sum_delta_weights (array): loss_gradient for hidden layer   
         '''
-        self.delta = - loss_gradient * activation_derivative(np.dot(input, self.weights) + self.biases)
+        print(f"Input shape: {input.shape}")
+        print(f"Loss gradient shape: {loss_gradient.shape}")
+        print(f"Weights shape: {self.weights.shape}")
+        print(f"Biases shape: {self.biases.shape}")
+        self.delta = - loss_gradient * d_activation_function(np.dot(input, self.weights) + self.biases)
 
         if self.opt_type == 'NAG':
             weights_pred = self.weights + self.momentum * self.velocity_weights  # Predicted weights used to compute the
@@ -139,7 +143,7 @@ class Optimization:
             bias_pred = self.biases + self.momentum * self.velocity_biases # Same thing for the biases
             net_pred = np.dot(input, weights_pred) + bias_pred  # Net computed with respect to the predicted weights and 
                                                                 # the predicted biases
-            delta_pred = - loss_gradient * activation_derivative(net_pred)  # Loss gradient with respect to net, 
+            delta_pred = - loss_gradient * d_activation_function(net_pred)  # Loss gradient with respect to net, 
                                                                                   # minus sign due to the definition
             grad_weights = self.learning_rate_w * np.dot(input.T, delta_pred)  # Loss gradient multiplied by the learning rate.
                                                                                # The gradient has been computed with respect

@@ -1,6 +1,6 @@
 import numpy as np
 
-from Functions import activation_functions, d_activation_functions
+from Functions import *
 from LayerClass import Layer
 from RegularizationOptimizationClass import Regularization, Optimization
 
@@ -36,6 +36,7 @@ class NeuralNetwork:
            layer = Layer(*config)
            self.optimizer.initialization(layer.weights, layer.biases)
            layers.append(layer)
+        return layers
 
     def data_split(self, x_tot, target, test_split):
         '''
@@ -102,9 +103,9 @@ class NeuralNetwork:
 
 # Configurazione dei layer: [(input_dim, output_dim, activation_function, d_activation_function), ...]
 layers_config = [
-    (10, 20, activation_functions['sigmoid'], d_activation_functions['d_sigmoid']),
-    (20, 10, activation_functions['tanh'], d_activation_functions['d_tanh']),
-    (10, 5, activation_functions['ReLU'], d_activation_functions['d_ReLU'])
+    (15, 12, activation_functions['sigmoid'], d_activation_functions['d_sigmoid']),
+    (12, 10, activation_functions['tanh'], d_activation_functions['d_tanh']),
+    (10, 3, activation_functions['ReLU'], d_activation_functions['d_ReLU'])
 ]
 
 # Configurazione della regolarizzazione
@@ -127,6 +128,34 @@ opt_config = {
 }
 
 # Inizializza la rete neurale
-network = NeuralNetwork(layers_config, reg_config, opt_config)
+#test
+np.random.seed(42)
 
+x_tot = np.random.rand(10, 15)
+target = np.random.rand(10, 3)
+#print(f"x_tot: {x_tot}")
 
+test_split = 0.2
+train_split = 0.75
+
+NN = NeuralNetwork(layers_config, reg_config, opt_config)
+NN.initialize_layers(layers_config)
+'''
+# Split data
+x_train_val, target_train_val, x_test, target_test = NN.data_split(x_tot, target, test_split)
+print(f"data: {x_train_val}")
+'''
+# forward
+predictions = NN.forward(x_tot)
+
+print(f"predictions: \n {predictions}")
+
+# backward
+for layers in NN.layers:
+    print(f'weights: \n {layers.weights}')
+loss = loss_functions['mse'](target, predictions)
+print(f'loss shape: {loss.shape}')
+print(f'loss: \n {loss}')
+NN.backward(loss)
+for layers in NN.layers:
+    print(f'weights: \n {layers.weights}')
