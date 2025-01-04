@@ -2,16 +2,26 @@ import numpy as np
 
 class DataProcessing:
 
-    def __init__(self, x_tot, target_tot):
+    def __init__(self, x_tot, target_tot, test_perc = 0.2, K = 1, train_perc = 0.75):
         '''
         Class focused on processing the data into Training Set, Validation Set and Test Set
 
         Args:
             x_tot (array): total data given as input.
             target_tot (array): total data labels given as input.
+            test_perc (float): percentile of test set with respect to the total data.
+            K (int): number of splits of the training & validation set. In case of K-Fold Cross Validation K=1.
+            train_perc (float): percentile of training set with respect to the training & validation set. 
         '''
+
         self.x_tot = x_tot
         self.target_tot = target_tot
+        self.x_train_val, self.target_train_val, self.x_test, self.target_test = self.test_split(test_perc)
+        self.x_trains, self.target_trains, self.x_vals, self.target_vals = self.train_val_split(K, train_perc)
+
+        # If no test set is needed, test data remains None
+        if self.x_test is None and self.target_test is None:
+            print("No test split performed. Entire dataset used for training and validation.")
 
     def test_split(self, test_perc):
         '''
@@ -26,63 +36,71 @@ class DataProcessing:
             x_test_val (array): test set extracted from input data.
             target_test_val (array): test set for input data labels.
         '''
-        if (test_perc > 1 or test_perc < 0):
-            raise ValueError(f"Invalid {test_perc}. Choose from 0 to 1")
+
+        if not (0 <= test_perc <= 1):
+            raise ValueError(f"Invalid test_perc {test_perc}. Choose from 0 to 1")
         
         num_samples = self.x_tot.shape[0] # the total number of the examples in input = the number of rows in the x_tot matrix
+
+        if test_perc == 0:
+            return self.x_tot, self.target_tot, None, None
+
+
         test_size = int(num_samples * test_perc) # the number of the examples in the test set
 
-        x_test = self.x_tot[:test_size]
-        target_test = self.target_tot[:test_size]
-        x_train_val = self.x_tot[test_size:]
-        target_train_val = self.target_tot[test_size:]
+        #indices = np.random.permutation(num_samples) # DA CAPIRE SE VA SHUFFOLATO, IN QUESTO MODO OGNI VOLTA CHE SI RIPETE LO SPLIT LO SHUFFOLA.
+                                                     # SE PERÒ SI PARTE DALLO STESSO SEED NON CAMBIA NIENTE DA UN ESECUZIONE DI CODICE ALL'ALTRA.
+        
+        indices = np.arange(num_samples) # it creates an array of indices arranged from 0 to num_samples 
+        test_indices = indices[:test_size]
+        train_val_indices = indices[test_size:]
+
+        x_test = self.x_tot[test_indices]
+        target_test = self.target_tot[test_indices]
+        x_train_val = self.x_tot[train_val_indices]
+        target_train_val = self.target_tot[train_val_indices]
 
         return x_train_val, target_train_val, x_test, target_test
     
     
-    def train_val_split(self, test_perc, K = 1, train_perc = 0.75):
+    def train_val_split(self, K = 1, train_perc = 0.75):
         '''
         Function that splits the training & validation set into two sets: training set and validation set.
         
         Args:
             test_perc (float): percentile of test set with respect to the total data.
-            train_perc (float): percentile of training set with respect to the training & validation set. In case of Hold-Out Validation
-            K (int): number of splits of the training & validation set. In case of K-Fold Cross Validation
+            K (int): number of splits of the training & validation set. In case of K-Fold Cross Validation K=1.
+            train_perc (float): percentile of training set with respect to the training & validation set. 
+            
         
         Returns:
             x_trains (list): list of training sets extracted from training & validation set
             target_trains (list): list of targets corrisponding to the training set
             x_vals (list): list of validation sets extracted from training & validation set
-            target_vals (list): list of targets corrisponding to the validation set
-            x_test_val (array): test set extracted from input data.
-            target_test_val (array): test set for input data labels.
-            
+            target_vals (list): list of targets corrisponding to the validation set       
         '''
-        if (train_perc > 1 or train_perc < 0):
+
+        if not (0 <= train_perc <= 1):
             raise ValueError(f"Invalid {train_perc}. Choose from 0 to 1")
 
-        x_train_val, target_train_val, x_test, target_test = self.test_split(test_perc)
-
-        x_trains = []
-        target_trains = []
-        x_vals = []
-        target_vals = []
-
-        num_samples = x_train_val.shape[0]
-        fold_size = num_samples // K
+        num_samples = self.x_train_val.shape[0]
+        #indices = np.random.permutation(num_samples) # DA CAPIRE SE SI VUOLE SHUFFOLARE
+        indices = np.arange(num_samples)
 
         if K==1: # hold-out validation
-            train_indices = np.arange(0, int(train_perc*num_samples)) # training set is 75% of the training & validation set
-            val_indices = np.setdiff1d(np.arange(num_samples), train_indices) # setdiff1d is the set difference between the first and the second set
-            x_train, target_train = x_train_val[train_indices], target_train_val[train_indices] # definition of training set with matching targets
-            x_val, target_val = x_train_val[val_indices], target_train_val[val_indices] # definition of validation set with matching targets
+            train_size = int(train_perc * num_samples)
+            train_indices = indices[:train_size]
+            val_indices = indices[train_size:]
 
-            x_vals.append(x_val)
-            target_vals.append(target_val)
-            x_trains.append(x_train)
-            target_trains.append(target_train)
+            x_trains = [self.x_train_val[train_indices]]
+            target_trains = [self.target_train_val[train_indices]]
+            x_vals = [self.x_train_val[val_indices]]
+            target_vals = [self.x_train_val[val_indices]]
 
         else:
+            fold_size = num_samples // K
+            x_trains, target_trains, x_vals, target_vals = [], [], [], []
+
             for k in range(K):
                 # creating fold indices
                 val_indices = np.arange(k * fold_size, (k + 1) * fold_size) # creation of an array of indices with len = fold_size.
@@ -92,8 +110,8 @@ class DataProcessing:
                                                                                 # len(val_indices). It contains the indices of all the examples
                                                                                 # but the ones used in the validation set for this fold.
                                                                                 # It corresponds to the training set for the current fold.
-                x_train, target_train = x_train_val[train_indices], target_train_val[train_indices]
-                x_val, target_val = x_train_val[val_indices], target_train_val[val_indices]
+                x_train, target_train = self.x_train_val[train_indices], self.target_train_val[train_indices]
+                x_val, target_val = self.x_train_val[val_indices], self.target_train_val[val_indices]
 
                 # shuffle 
                 new_train_indices = np.arange(x_train.shape[0])
@@ -106,22 +124,10 @@ class DataProcessing:
                 x_trains.append(x_train)
                 target_trains.append(target_train)
         
-        return x_trains, target_trains, x_vals, target_vals, x_test, target_test
+        return x_trains, target_trains, x_vals, target_vals
     
 # unit test
 np.random.seed(42)
-
-x_tot = np.random.rand(10, 3)
-target_tot = np.random.rand(10, 3)
-
-test_perc = 0.2
-K = 1
-
-print(f"x tot: \n {x_tot}")
-
-Data = DataProcessing(x_tot, target_tot)
-x_trains, target_trains, x_vals, target_vals, x_test, target_test = Data.train_val_split(test_perc, K, 0.7)
-
-print(f"x trains: \n {x_trains}")
-print(f"x vals: \n {x_vals}")
-print(f"x test: \n {x_test}")
+x_tot = np.random.rand(16, 3)  # 100 samples, 10 features
+target_tot = np.random.rand(16, 3)  # Binary labels
+data_split = DataProcessing(x_tot, target_tot, test_perc = 0.2, K =  3, train_perc = 0.75)
