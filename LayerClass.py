@@ -1,4 +1,5 @@
 import numpy as np
+
 from RegularizationOptimizationClass import Regularization, Optimization
 
 class Layer:
