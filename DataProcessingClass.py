@@ -13,15 +13,31 @@ class DataProcessing:
             K (int): number of splits of the training & validation set. In case of K-Fold Cross Validation K=1.
             train_perc (float): percentile of training set with respect to the training & validation set. 
         '''
-
         self.x_tot = x_tot
         self.target_tot = target_tot
+
+        print(f"Data tot: \n {self.x_tot}")
+
+        num_samples = self.x_tot.shape[0]
+        indices = np.arange(num_samples)
+        np.random.shuffle(indices) 
+        self.x_tot = self.x_tot[indices]
+        self.target_tot = self.target_tot[indices]
+
+        print(f"Data tot: \n {self.x_tot}")
+
         self.x_train_val, self.target_train_val, self.x_test, self.target_test = self.test_split(test_perc)
         self.x_trains, self.target_trains, self.x_vals, self.target_vals = self.train_val_split(K, train_perc)
+        
+        # unit test
+        print(f"test set: \n {self.x_test}")
+        print(f"train set: \n {self.x_trains}")
+        print(f"valid set: \n {self.x_vals}")
 
         # If no test set is needed, test data remains None
         if self.x_test is None and self.target_test is None:
             print("No test split performed. Entire dataset used for training and validation.")
+
 
     def test_split(self, test_perc):
         '''
@@ -36,7 +52,6 @@ class DataProcessing:
             x_test_val (array): test set extracted from input data.
             target_test_val (array): test set for input data labels.
         '''
-
         if not (0 <= test_perc <= 1):
             raise ValueError(f"Invalid test_perc {test_perc}. Choose from 0 to 1")
         
@@ -45,11 +60,7 @@ class DataProcessing:
         if test_perc == 0:
             return self.x_tot, self.target_tot, None, None
 
-
         test_size = int(num_samples * test_perc) # the number of the examples in the test set
-
-        #indices = np.random.permutation(num_samples) # DA CAPIRE SE VA SHUFFOLATO, IN QUESTO MODO OGNI VOLTA CHE SI RIPETE LO SPLIT LO SHUFFOLA.
-                                                     # SE PERÒ SI PARTE DALLO STESSO SEED NON CAMBIA NIENTE DA UN ESECUZIONE DI CODICE ALL'ALTRA.
         
         indices = np.arange(num_samples) # it creates an array of indices arranged from 0 to num_samples 
         test_indices = indices[:test_size]
@@ -72,19 +83,16 @@ class DataProcessing:
             K (int): number of splits of the training & validation set. In case of K-Fold Cross Validation K=1.
             train_perc (float): percentile of training set with respect to the training & validation set. 
             
-        
         Returns:
             x_trains (list): list of training sets extracted from training & validation set
             target_trains (list): list of targets corrisponding to the training set
             x_vals (list): list of validation sets extracted from training & validation set
             target_vals (list): list of targets corrisponding to the validation set       
         '''
-
         if not (0 <= train_perc <= 1):
             raise ValueError(f"Invalid {train_perc}. Choose from 0 to 1")
 
         num_samples = self.x_train_val.shape[0]
-        #indices = np.random.permutation(num_samples) # DA CAPIRE SE SI VUOLE SHUFFOLARE
         indices = np.arange(num_samples)
 
         if K==1: # hold-out validation
@@ -98,6 +106,9 @@ class DataProcessing:
             target_vals = [self.x_train_val[val_indices]]
 
         else:
+            if not (isinstance(K, int) and K > 0):
+                raise ValueError(f"Invalid {K}. Choose an integer bigger than 0")
+
             fold_size = num_samples // K
             x_trains, target_trains, x_vals, target_vals = [], [], [], []
 
@@ -128,6 +139,8 @@ class DataProcessing:
     
 # unit test
 np.random.seed(42)
-x_tot = np.random.rand(16, 3)  # 100 samples, 10 features
-target_tot = np.random.rand(16, 3)  # Binary labels
-data_split = DataProcessing(x_tot, target_tot, test_perc = 0.2, K =  3, train_perc = 0.75)
+
+x_tot = np.random.rand(10, 5)  
+
+target_tot = np.random.rand(10, 3)
+data_split = DataProcessing(x_tot, target_tot, test_perc = 0.3, K = 3, train_perc = 0.6)
