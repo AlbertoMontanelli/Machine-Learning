@@ -26,16 +26,21 @@ class TrainValidation:
             target (array): corresponding labels.
             batch_size (int): size of each batch.
 
-        Yields:
+        Returns:
             (array, array): batch of input data and labels.
         '''
         indices = np.arange(x.shape[0])
+        x_batch = []
+        target_batch = []
         #np.random.shuffle(indices)  # VA SHUFFOLATO ANCHE QUESTO?
         for start in range(0, x.shape[0], batch_size):
             end = start + batch_size
             batch_indices = indices[start:end]
-            yield x[batch_indices], target[batch_indices]
+            x_batch.append(x[batch_indices])
+            target_batch.append(target[batch_indices])
 
+        return x_batch, target_batch
+    
     def train_epoch(self, x_train, target_train, batch_size, loss_function, loss_function_derivative):
         '''
         Training of the network for a single epoch.
@@ -53,7 +58,9 @@ class TrainValidation:
             float: average training loss for the epoch.
         '''
         total_loss = 0
-        for x_batch, target_batch in self.batch_generator(x_train, target_train, batch_size):
+        x, target = self.batch_generator(x_train, target_train, batch_size)
+
+        for x_batch, target_batch in zip(x, target):
             predictions = self.neural_network.forward(x_batch)
             loss = loss_function(target_batch, predictions)
             total_loss += loss 
@@ -79,8 +86,7 @@ class TrainValidation:
         return np.mean(loss)
 
 
-    def execute(self, epochs, batch_size, loss_function, loss_function_derivative): # DA RICONTROLLARE SOPRATTUTTO CAPIRE
-        # SE FA LA VAAIDARION PER OGNI FOLD E CHE SHAPE HA L'ARRAY results 
+    def execute(self, epochs, batch_size, loss_function, loss_function_derivative):
         '''
         Executes training and validation using DataProcessing splits.
 
@@ -95,9 +101,9 @@ class TrainValidation:
         Returns:
             
         '''
+
         avg_train_loss = np.zeros(epochs)
         avg_val_loss = np.zeros(epochs)
-
         # Loop through folds provided by DataProcessing
         for i, (x_train, target_train, x_val, target_val) in enumerate(zip(
             self.data_split.x_trains, 
@@ -121,6 +127,11 @@ class TrainValidation:
 
                 print(f"Fold {i + 1}, Epoch {epoch + 1}/{epochs} - Train Loss: {train_loss:.4f}, Val Loss: {val_loss:.4f}")
             
+
+            # Stampa i pesi al termine di ogni epoca
+                for layer_idx, layer in enumerate(self.neural_network.layers):
+                    print(f"Epoch {epoch + 1} - Layer {layer_idx + 1} - Weights:\n{layer.weights}\nBiases:\n{layer.biases}")
+
             avg_train_loss += train_losses
             avg_val_loss += val_losses
         
@@ -128,64 +139,3 @@ class TrainValidation:
         avg_train_loss /= (i+1)
         return avg_train_loss, avg_val_loss
 
-
-## UNIT TEST
-
-np.random.seed(42)
-
-# Configurazione dei layer: [(input_dim, output_dim, activation_function, d_activation_function), ...]
-layers_config = [
-    (15, 12, activation_functions['sigmoid'], d_activation_functions['d_sigmoid']),
-    (12, 10, activation_functions['tanh'], d_activation_functions['d_tanh']),
-    (10, 3, activation_functions['ReLU'], d_activation_functions['d_ReLU'])
-]
-
-# Configurazione della regolarizzazione
-reg_config = {
-    'Lambda_t': 0.01,
-    'Lambda_l': 0.01,
-    'alpha': 1e-4,
-    'reg_type': 'elastic'
-}
-
-# Configurazione dell'ottimizzazione
-opt_config = {
-    'opt_type': 'NAG',
-    'learning_rate_w': 0.001,
-    'learning_rate_b': 0.001,
-    'momentum': 0.9,
-    'beta_1': 0.9,
-    'beta_2': 0.999,
-    'epsilon': 1e-8,
-}
-
-x_tot = np.random.rand(10, 15)
-target_tot = np.random.rand(10, 3)
-
-# Configurazione delle classi
-neural_network = NeuralNetwork(layers_config, reg_config, opt_config)
-data_split = DataProcessing(x_tot, target_tot, test_perc=0.2, K=5)
-train = TrainValidation(neural_network, data_split)
-
-# Funzioni di loss
-loss_function = loss_functions['mse']
-loss_function_derivative = d_loss_functions['d_mse']
-
-# Esecuzione
-train_error, val_error = train.execute(
-    epochs=50, 
-    batch_size=32, 
-    loss_function=loss_function, 
-    loss_function_derivative=loss_function_derivative
-)
-
-# Plot degli errori
-import matplotlib.pyplot as plt
-
-plt.plot(train_error, label='Training Error')
-plt.plot(val_error, label='Validation Error')
-plt.xlabel('Epochs')
-plt.ylabel('Error')
-plt.yscale('log')
-plt.legend()
-plt.show()

@@ -9,9 +9,8 @@ np.random.seed(42)
 
 # Configurazione dei layer: [(input_dim, output_dim, activation_function, d_activation_function), ...]
 layers_config = [
-    (15, 12, activation_functions['sigmoid'], d_activation_functions['d_sigmoid']),
-    (12, 10, activation_functions['tanh'], d_activation_functions['d_tanh']),
-    (10, 3, activation_functions['ReLU'], d_activation_functions['d_ReLU'])
+    (3, 2, activation_functions['linear'], d_activation_functions['d_linear']),
+    (2, 1, activation_functions['linear'], d_activation_functions['d_linear'])
 ]
 
 # Configurazione della regolarizzazione
@@ -33,12 +32,12 @@ opt_config = {
     'epsilon': 1e-8,
 }
 
-x_tot = np.random.rand(1000, 15)
-target_tot = np.random.rand(1000, 3)
+x_tot = np.random.rand(5, 3)
+target_tot = np.random.rand(5, 1)
 
 # Configurazione delle classi
 neural_network = NeuralNetwork(layers_config, reg_config, opt_config)
-data_split = DataProcessing(x_tot, target_tot, test_perc=0.2, K=8)
+data_split = DataProcessing(x_tot, target_tot, test_perc=0., K=1, train_perc = 0.8)
 train = TrainValidation(neural_network, data_split)
 
 # Funzioni di loss
@@ -47,8 +46,8 @@ loss_function_derivative = d_loss_functions['d_mse']
 
 # Esecuzione
 train_error, val_error = train.execute(
-    epochs=500, 
-    batch_size=32, 
+    epochs=3, 
+    batch_size=3, 
     loss_function=loss_function, 
     loss_function_derivative=loss_function_derivative
 )
