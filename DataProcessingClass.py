@@ -17,23 +17,14 @@ class DataProcessing:
         self.x_tot = x_tot
         self.target_tot = target_tot
 
-        print(f"Data tot: \n {self.x_tot}")
-
         num_samples = self.x_tot.shape[0]
         indices = np.arange(num_samples)
         np.random.shuffle(indices) 
         self.x_tot = self.x_tot[indices]
         self.target_tot = self.target_tot[indices]
 
-        print(f"Data tot: \n {self.x_tot}")
-
         self.x_train_val, self.target_train_val, self.x_test, self.target_test = self.test_split(test_perc)
         self.x_trains, self.target_trains, self.x_vals, self.target_vals = self.train_val_split(K, train_perc)
-        
-        # unit test
-        print(f"test set: \n {self.x_test}")
-        print(f"train set: \n {self.x_trains}")
-        print(f"valid set: \n {self.x_vals}")
 
         # If no test set is needed, test data remains None
         if self.x_test is None and self.target_test is None:
@@ -50,8 +41,8 @@ class DataProcessing:
         Returns:
             x_train_val (array): training and validation set extracted from input data.
             target_train_val (array): training and validation set labels.
-            x_test_val (array): test set extracted from input data.
-            target_test_val (array): test set for input data labels.
+            x_test (array): test set extracted from input data.
+            target_test (array): test set for input data labels.
         '''
         if not (0 <= test_perc <= 1):
             raise ValueError(f"Invalid test_perc {test_perc}. Choose from 0 to 1")
@@ -137,11 +128,3 @@ class DataProcessing:
                 target_trains.append(target_train)
         
         return x_trains, target_trains, x_vals, target_vals
-    
-# Unit test
-np.random.seed(42)
-
-x_tot = np.random.rand(10, 5)  
-
-target_tot = np.random.rand(10, 3)
-data_split = DataProcessing(x_tot, target_tot, test_perc = 0.3, K = 3, train_perc = 0.6)
