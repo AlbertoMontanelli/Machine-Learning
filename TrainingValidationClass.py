@@ -4,7 +4,7 @@ from Functions import activation_functions, d_activation_functions, loss_functio
 from DataProcessingClass import DataProcessing
 from NeuralNetworkClass import NeuralNetwork
 
-class TrainValidationManager:
+class TrainValidation:
 
     def __init__(self, neural_network, data_split):
         '''
@@ -14,8 +14,8 @@ class TrainValidationManager:
             neural_network (NeuralNetwork): an instance of the NeuralNetwork class.
             data_split (DataProcessing): an instance of the DataProcessing class.
         '''
-        self.neural_network = neural_network
         self.data_split = data_split
+        self.neural_network = neural_network
 
     def batch_generator(self, x, target, batch_size):
         '''
@@ -56,10 +56,11 @@ class TrainValidationManager:
         for x_batch, target_batch in self.batch_generator(x_train, target_train, batch_size):
             predictions = self.neural_network.forward(x_batch)
             loss = loss_function(target_batch, predictions)
+            total_loss += loss 
             loss_gradient = loss_function_derivative(target_batch, predictions)
-            total_loss += np.sum(loss) #controllare su chi fa la somma/media perché le funzioni di loss sono già mediate
             self.neural_network.backward(loss_gradient)
         return total_loss / x_train.shape[0]
+
 
     def validate(self, x_val, target_val, loss_function):
         '''
@@ -75,7 +76,8 @@ class TrainValidationManager:
         '''
         predictions = self.neural_network.forward(x_val)
         loss = loss_function(target_val, predictions)
-        return np.mean(loss) #controllare su chi fa la somma/media perché le funzioni di loss sono già mediate
+        return np.mean(loss)
+
 
     def execute(self, epochs, batch_size, loss_function, loss_function_derivative): # DA RICONTROLLARE SOPRATTUTTO CAPIRE
         # SE FA LA VAAIDARION PER OGNI FOLD E CHE SHAPE HA L'ARRAY results 
@@ -91,9 +93,10 @@ class TrainValidationManager:
             loss_function_derivative (func): derivative of the loss function.
 
         Returns:
-            dict: training and validation errors for each fold or hold-out split.
+            
         '''
-        results = {}
+        avg_train_loss = np.zeros(epochs)
+        avg_val_loss = np.zeros(epochs)
 
         # Loop through folds provided by DataProcessing
         for i, (x_train, target_train, x_val, target_val) in enumerate(zip(
@@ -117,14 +120,14 @@ class TrainValidationManager:
                 val_losses.append(val_loss)
 
                 print(f"Fold {i + 1}, Epoch {epoch + 1}/{epochs} - Train Loss: {train_loss:.4f}, Val Loss: {val_loss:.4f}")
+            
+            avg_train_loss += train_losses
+            avg_val_loss += val_losses
+        
+        avg_val_loss /= (i+1)
+        avg_train_loss /= (i+1)
+        return avg_train_loss, avg_val_loss
 
-            # Store results for the fold
-            results[f"Fold {i + 1}"] = {
-                "train_error": np.array(train_losses),
-                "val_error": np.array(val_losses)
-            }
-
-        return results #poi dovrebbero essere mediati per ogni fold
 
 ## UNIT TEST
 
@@ -161,21 +164,28 @@ target_tot = np.random.rand(10, 3)
 
 # Configurazione delle classi
 neural_network = NeuralNetwork(layers_config, reg_config, opt_config)
-data_processor = DataProcessing(x_tot, target_tot, test_perc=0.2, K=5, train_perc=0.75)
-manager = TrainValidationManager(neural_network, data_processor)
+data_split = DataProcessing(x_tot, target_tot, test_perc=0.2, K=5)
+train = TrainValidation(neural_network, data_split)
 
 # Funzioni di loss
 loss_function = loss_functions['mse']
 loss_function_derivative = d_loss_functions['d_mse']
 
 # Esecuzione
-results = manager.execute(
-    epochs=50, batch_size=32, 
+train_error, val_error = train.execute(
+    epochs=50, 
+    batch_size=32, 
     loss_function=loss_function, 
     loss_function_derivative=loss_function_derivative
 )
 
-# Risultati
-for fold, result in results.items():
-    print(f"{fold} - Train Error: {result['train_error'][-1]}, Validation Error: {result['val_error'][-1]}")
+# Plot degli errori
+import matplotlib.pyplot as plt
 
+plt.plot(train_error, label='Training Error')
+plt.plot(val_error, label='Validation Error')
+plt.xlabel('Epochs')
+plt.ylabel('Error')
+plt.yscale('log')
+plt.legend()
+plt.show()

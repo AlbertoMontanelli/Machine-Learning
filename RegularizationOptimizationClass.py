@@ -180,22 +180,3 @@ class Optimization:
 
         sum_delta_weights = np.dot(self.delta, self.weights.T) # loss gradient for hidden layer
         return sum_delta_weights
-
-
-'''
-#Unit test for regularization
-np.random.seed(42)
-xx = np.random.rand(3, 3)
-weights = np.random.rand(3, 3)
-reg = Regularization()
-reg_term = reg.regularization(weights, 'lasso')
-print(f'weights {weights}')
-print(f'reg term {reg_term}')
-
-#Unit test for optimization
-biases = np.random.rand(1, 3)
-loss_gradient = np.random.rand(3, 3)
-opt = Optimization(reg)
-opt.initialization(weights, biases, 'adam')
-sum_delta_weights = opt.optimization(xx, loss_gradient)
-'''

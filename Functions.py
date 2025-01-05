@@ -224,7 +224,7 @@ def mean_squared_error(y_true, y_pred):
     Returns:
         new float (float): result of Mean Squared Error.
     """ 
-    return np.mean((y_true - y_pred)**2)
+    return np.sum((y_true - y_pred)**2)
 
 
 def d_mean_squared_error(y_true, y_pred):
@@ -252,7 +252,7 @@ def mean_euclidean_error(y_true, y_pred):
     Returns:
         new float (float): result of Mean Euclidean Error.
     """ 
-    return np.mean(np.sqrt(np.sum((y_true - y_pred)**2, axis = 1)))
+    return np.sum(np.sqrt(np.sum((y_true - y_pred)**2, axis = 1)))
 
 
 def d_mean_euclidean_error(y_true, y_pred):
@@ -279,14 +279,14 @@ def huber_loss(y_true, y_pred, delta):
         delta (float): parameter that defines the threshold for the transition between two error regimes.
 
     Returns:
-        np.mean(loss) (float): result of Huber Loss.
+        np.sum(loss) (float): result of Huber Loss.
     """ 
     error = y_true - y_pred
     is_small_error = np.abs(error) <= delta # bool
     squared_loss = 0.5 * (error**2)
     linear_loss = delta * (np.abs(error) - 0.5 * delta)
     loss = np.where(is_small_error, squared_loss, linear_loss)
-    return np.mean(loss)
+    return np.sum(loss)
 
 
 def d_huber_loss(y_true, y_pred, delta):
