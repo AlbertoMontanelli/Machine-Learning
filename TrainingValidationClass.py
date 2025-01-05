@@ -8,7 +8,7 @@ class TrainValidationManager:
 
     def __init__(self, neural_network, data_split):
         '''
-        Class to manage training and validation for the neural network.
+        Class that implements training and validation of the neural network.
 
         Args:
             neural_network (NeuralNetwork): an instance of the NeuralNetwork class.
@@ -38,12 +38,14 @@ class TrainValidationManager:
 
     def train_epoch(self, x_train, target_train, batch_size, loss_function, loss_function_derivative):
         '''
-        Train the network for a single epoch.
+        Training of the network for a single epoch.
 
         Args:
             x_train (array): training data.
             target_train (array): training labels.
-            batch_size (int): batch size for training.
+            batch_size (int): batch size for training. If batch_size = 1, the neural network is trained using an online learning approach.
+                              If batch_size != 1, the neural network is trained using a mini-batch learning approach with batches of size
+                              batch_size.
             loss_function (func): loss function.
             loss_function_derivative (func): derivative of the loss function.
 
@@ -65,7 +67,7 @@ class TrainValidationManager:
 
         Args:
             x_val (array): validation data.
-            y_val (array): validation labels.
+            target_val (array): validation labels.
             loss_function (func): loss function.
 
         Returns:
@@ -82,7 +84,9 @@ class TrainValidationManager:
 
         Args:
             epochs (int): number of training epochs.
-            batch_size (int): batch size for training.
+            batch_size (int): batch size for training. If batch_size = 1, the neural network is trained using an online learning approach.
+                              If batch_size != 1, the neural network is trained using a mini-batch learning approach with batches of size
+                              batch_size.
             loss_function (func): loss function.
             loss_function_derivative (func): derivative of the loss function.
 
