@@ -171,9 +171,9 @@ class Optimization:
             #print("Pesi dopo l'aggiornamento:", self.weights)
 
             self.velocity_biases = self.momentum * self.velocity_biases + self.learning_rate_b * np.sum(delta_pred, axis=0, keepdims=True)
-            print("bias prima l'aggiornamento:", self.biases)
+            #print("bias prima l'aggiornamento:", self.biases)
             self.biases += self.velocity_biases # Updating the 
-            print("bias dopo l'aggiornamento:", self.biases)
+            #print("bias dopo l'aggiornamento:", self.biases)
 
         else:
             reg_term = self.regulizer.regularization(self.weights)
