@@ -1,8 +1,9 @@
 import numpy as np
 
-from Functions import activation_functions, d_activation_functions, loss_functions, d_loss_functions
 from LayerClass import Layer
 from RegularizationOptimizationClass import Regularization, Optimization
+from DataProcessingClass import DataProcessing
+from Functions import activation_functions, d_activation_functions, loss_functions, d_loss_functions
 
 class NeuralNetwork:
 
@@ -76,3 +77,55 @@ class NeuralNetwork:
         '''
         for layer in self.layers:
             layer.initialize_weights_biases() # does it layer-by-layer
+
+
+'''
+np.random.seed(42)
+
+# Configurazione dei layer: [(input_dim, output_dim, activation_function, d_activation_function), ...]
+layers_config = [
+    (5, 4, activation_functions['linear'], d_activation_functions['d_linear']),
+    (4, 3, activation_functions['linear'], d_activation_functions['d_linear'])
+]
+
+# Configurazione della regolarizzazione
+reg_config = {
+    'Lambda_t': 0.01,
+    'Lambda_l': 0.01,
+    'alpha': 1e-4,
+    'reg_type': 'elastic'
+}
+
+# Configurazione dell'ottimizzazione
+opt_config = {
+    'opt_type': 'NAG',
+    'learning_rate_w': 0.001,
+    'learning_rate_b': 0.001,
+    'momentum': 0.9,
+    'beta_1': 0.9,
+    'beta_2': 0.999,
+    'epsilon': 1e-8,
+}
+
+nn = NeuralNetwork(layers_config, reg_config, opt_config)
+x_tot = np.random.rand(10, 5)
+target_tot = np.random.rand(10, 3)
+#print(f"target tot: \n {target_tot}")
+K = 3
+
+data_split = DataProcessing(x_tot, target_tot, 0, K)
+print(f'x_train \n {data_split.x_trains}')
+epochs = 10
+for i in range(epochs):
+    loss = 0
+    # for nei k fold
+    for xx, target in zip(data_split.x_trains, data_split.target_trains):
+        pred = nn.forward(xx)
+        #print(f"target: \n {target}")
+        #print(f"pred: \n {pred}")
+        loss += loss_functions['mse'](target, pred)
+        d_loss = d_loss_functions['d_mse'](target, pred)
+        nn.backward(d_loss)
+    loss /= K
+    print(f"loss: \n {loss}")
+'''

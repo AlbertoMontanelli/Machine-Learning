@@ -1,6 +1,7 @@
 import numpy as np
 from DataProcessingClass import DataProcessing
 from NeuralNetworkClass import NeuralNetwork
+from Functions import activation_functions, d_activation_functions, loss_functions, d_loss_functions
 
 
 class TrainingValidation:
@@ -54,8 +55,66 @@ class TrainingValidation:
         return x_batches, target_batches
 
 
+'''Unit test for NN'''
+np.random.seed(42)
 
-'''Unit test for batches'''
+# Configurazione dei layer: [(input_dim, output_dim, activation_function, d_activation_function), ...]
+layers_config = [
+    (5, 4, activation_functions['linear'], d_activation_functions['d_linear']),
+    (4, 3, activation_functions['linear'], d_activation_functions['d_linear'])
+]
+
+# Configurazione della regolarizzazione
+reg_config = {
+    'Lambda_t': 0.01,
+    'Lambda_l': 0.01,
+    'alpha': 1e-4,
+    'reg_type': 'elastic'
+}
+
+# Configurazione dell'ottimizzazione
+opt_config = {
+    'opt_type': 'NAG',
+    'learning_rate_w': 0.0001,
+    'learning_rate_b': 0.0001,
+    'momentum': 0.9,
+    'beta_1': 0.9,
+    'beta_2': 0.999,
+    'epsilon': 1e-8,
+}
+
+
+nn = NeuralNetwork(layers_config, reg_config, opt_config)
+
+x_tot = np.random.rand(1000, 5)
+target_tot = np.random.rand(1000, 3)
+
+K = 5
+data_split = DataProcessing(x_tot, target_tot, 0, K)
+
+epochs = 10
+batch_size = 50
+
+train_val = TrainingValidation(data_split, epochs, batch_size)
+
+for xx, target in zip(data_split.x_trains, data_split.target_trains):
+    print(f"\n INIZIO FOLD \n")
+
+    batches, target_batches = train_val.batch_generator(xx, target)
+    for i in range(epochs):
+        loss = 0
+        for batch, target_batch in zip(batches, target_batches):
+            pred = nn.forward(batch)
+            loss += loss_functions['mse'](target_batch, pred)
+            d_loss = d_loss_functions['d_mse'](target_batch, pred)
+            
+            nn.backward(d_loss)
+        loss /= xx.shape[0]
+        print(f"loss: \n {loss}")
+    
+
+
+'''Unit test for batches
 np.random.seed(42)
 x_tot = np.random.rand(10, 3)
 print(f'x_tot pre-shuffle \n {x_tot}')
@@ -68,5 +127,5 @@ train_val = TrainingValidation(data_split, 100, 2)
 for xx, target in zip(data_split.x_trains, data_split.target_trains):
     batches, target_batches = train_val.batch_generator(xx, target)
     print(f'batches \n {batches}')
-
-
+'''
+    
