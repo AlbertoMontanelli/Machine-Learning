@@ -96,7 +96,11 @@ class Optimization:
         self.initialization(weights, biases)
 
 
-    def initialization(self, weights, biases):
+    def initialization(
+            self,
+            weights,
+            biases
+            ):
         '''
         Function that initializes the parameters of the NAG and Adam algorithms.
 
@@ -124,7 +128,12 @@ class Optimization:
             raise ValueError(f"Invalid {self.opt_type}. Choose from {', '.join(optimization_type)}")
 
 
-    def optimization(self, input, loss_gradient, d_activation_function):
+    def optimization(
+            self,
+            input,
+            loss_gradient,
+            d_activation_function
+            ):
         '''
         Function that optimizes the update of the Weights and the Biases using NAG or Adam algorithms.
 
@@ -162,7 +171,7 @@ class Optimization:
         else:
             reg_term = self.regulizer.regularization(self.weights)
 
-            # np.dot(input.T, delta) is dLoss/dw. 
+            # np.dot(input.T, self.delta) is dLoss/dw. 
             # Since self.delta is defined with a minus sign and the formula is with a plus sign, we put a minus sign in front of np.dot()
             self.m_weights = self.beta_1 * self.m_weights + (1 - self.beta_1) * (- np.dot(input.T, self.delta) - reg_term)
             # here we have a plus sign in front of (1 - self.beta_2) since self.delta is squared

@@ -23,6 +23,8 @@ class DataProcessing:
         self.x_tot = self.x_tot[indices]
         self.target_tot = self.target_tot[indices]
 
+        print(f'x_tot post-shuffle \n {x_tot}')
+
         self.x_train_val, self.target_train_val, self.x_test, self.target_test = self.test_split(test_perc)
         self.x_trains, self.target_trains, self.x_vals, self.target_vals = self.train_val_split(K, train_perc)
 
