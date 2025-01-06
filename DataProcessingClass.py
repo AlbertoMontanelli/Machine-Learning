@@ -97,7 +97,7 @@ class DataProcessing:
             x_trains = [self.x_train_val[train_indices]]
             target_trains = [self.target_train_val[train_indices]]
             x_vals = [self.x_train_val[val_indices]]
-            target_vals = [self.x_train_val[val_indices]]
+            target_vals = [self.target_train_val[val_indices]]
 
         else:
             if not (isinstance(K, int) and K > 0):
