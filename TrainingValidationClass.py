@@ -112,7 +112,7 @@ class TrainValidation:
             self.data_split.target_vals
         )):
             print(f"Processing Fold {i + 1}/{len(self.data_split.x_trains)}")
-            self.neural_network.reinitialize_weights()  # Reinitialize weights for each fold
+            self.neural_network.reinitialize_weights_and_optimizers()  # Reinitialize weights for each fold
 
             train_losses = []
             val_losses = []
@@ -126,11 +126,7 @@ class TrainValidation:
                 val_losses.append(val_loss)
 
                 print(f"Fold {i + 1}, Epoch {epoch + 1}/{epochs} - Train Loss: {train_loss:.4f}, Val Loss: {val_loss:.4f}")
-            
-
-            # Stampa i pesi al termine di ogni epoca
-                for layer_idx, layer in enumerate(self.neural_network.layers):
-                    print(f"Epoch {epoch + 1} - Layer {layer_idx + 1} - Weights:\n{layer.weights}\nBiases:\n{layer.biases}")
+        
 
             avg_train_loss += train_losses
             avg_val_loss += val_losses

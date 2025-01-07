@@ -68,13 +68,13 @@ class NeuralNetwork:
         for layer, optimizer in reversed(list(zip(self.layers, self.optimizers))): 
             loss_gradient = layer.backward_layer(loss_gradient, optimizer)
 
-    def reinitialize_weights(self):
-        '''
-        Function that re-initializes the weights layer-by-layer in case of need, e.g. with k-fold cross 
-        validation after each cycle.
-        '''
-        for layer in self.layers:
-            layer.initialize_weights_biases() # does it layer-by-layer
+    # def reinitialize_weights(self):
+    #     '''
+    #     Function that re-initializes the weights layer-by-layer in case of need, e.g. with k-fold cross 
+    #     validation after each cycle.
+    #     '''
+    #     for layer in self.layers:
+    #         layer.initialize_weights_biases() # does it layer-by-layer
 
 
     def reinitialize_weights_and_optimizers(self):
