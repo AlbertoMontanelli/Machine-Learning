@@ -67,6 +67,8 @@ class Layer:
         Returns:
             sum_delta_weights (array): loss_gradient for hidden layer
         '''
-        sum_delta_weights = optimizer.optimization(self.input, loss_gradient, self.d_activation_function)
+        #print("Pesi Layer prima:", self.weights)
 
+        sum_delta_weights = optimizer.optimization(self.input, loss_gradient, self.d_activation_function)
+        #print("Pesi layer dopo:", self.weights)
         return sum_delta_weights

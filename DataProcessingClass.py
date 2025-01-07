@@ -16,6 +16,9 @@ class DataProcessing:
 
         self.x_tot = x_tot
         self.target_tot = target_tot
+        self.test_perc = test_perc
+        self.K = K
+        self.train_perc = train_perc
 
         num_samples = self.x_tot.shape[0]
         indices = np.arange(num_samples)
@@ -25,20 +28,17 @@ class DataProcessing:
 
         #print(f'x_tot post-shuffle \n {x_tot}')
 
-        self.x_train_val, self.target_train_val, self.x_test, self.target_test = self.test_split(test_perc)
-        self.x_trains, self.target_trains, self.x_vals, self.target_vals = self.train_val_split(K, train_perc)
+        self.x_train_val, self.target_train_val, self.x_test, self.target_test = self.test_split()
+        self.x_trains, self.target_trains, self.x_vals, self.target_vals = self.train_val_split()
 
         # If no test set is needed, test data remains None
         if self.x_test is None and self.target_test is None:
             print("No test split performed. Entire dataset used for training and validation.")
 
 
-    def test_split(self, test_perc):
+    def test_split(self):
         '''
         Function that splits the input data into two sets: training & validation set, test set.
-        
-        Args:
-            test_perc (float): percentile of test set with respect to the total data.
         
         Returns:
             x_train_val (array): training and validation set extracted from input data.
@@ -46,15 +46,15 @@ class DataProcessing:
             x_test (array): test set extracted from input data.
             target_test (array): test set for input data labels.
         '''
-        if not (0 <= test_perc <= 1):
-            raise ValueError(f"Invalid test_perc {test_perc}. Choose from 0 to 1")
+        if not (0 <= self.test_perc <= 1):
+            raise ValueError(f"Invalid test_perc {self.test_perc}. Choose from 0 to 1")
         
         num_samples = self.x_tot.shape[0] # the total number of the examples in input = the number of rows in the x_tot matrix
 
-        if test_perc == 0:
+        if self.test_perc == 0:
             return self.x_tot, self.target_tot, None, None
 
-        test_size = int(num_samples * test_perc) # the number of the examples in the test set
+        test_size = int(num_samples * self.test_perc) # the number of the examples in the test set
         
         indices = np.arange(num_samples) # it creates an array of indices arranged from 0 to num_samples 
         test_indices = indices[:test_size]
@@ -68,14 +68,9 @@ class DataProcessing:
         return x_train_val, target_train_val, x_test, target_test
     
     
-    def train_val_split(self, K = 1, train_perc = 0.75):
+    def train_val_split(self):
         '''
         Function that splits the training & validation set into two sets: training set and validation set.
-        
-        Args:
-            train_perc (float): percentile of training set with respect to the training & validation set. 
-                                In case of Hold-Out Validation (use K = 1).
-            K (int): number of splits of the training & validation set. In case of K-Fold Cross Validation.
         
         Returns:
             x_trains (list): list of training sets extracted from training & validation set (the list has one element per iteration).
@@ -83,14 +78,14 @@ class DataProcessing:
             x_vals (list): list of validation sets extracted from training & validation set (the list has one element per iteration).
             target_vals (list): list of targets corrisponding to the validation set. 
         '''
-        if not (0 <= train_perc <= 1):
-            raise ValueError(f"Invalid {train_perc}. Choose from 0 to 1")
+        if not (0 <= self.train_perc <= 1):
+            raise ValueError(f"Invalid {self.train_perc}. Choose from 0 to 1")
 
         num_samples = self.x_train_val.shape[0]
         indices = np.arange(num_samples)
 
-        if K==1: # hold-out validation
-            train_size = int(train_perc * num_samples)
+        if self.K==1: # hold-out validation
+            train_size = int(self.train_perc * num_samples)
             train_indices = indices[:train_size]
             val_indices = indices[train_size:]
 
@@ -100,13 +95,13 @@ class DataProcessing:
             target_vals = [self.target_train_val[val_indices]]
 
         else:
-            if not (isinstance(K, int) and K > 0):
-                raise ValueError(f"Invalid {K}. Choose an integer bigger than 0")
+            if not (isinstance(self.K, int) and self.K > 0):
+                raise ValueError(f"Invalid {self.K}. Choose an integer bigger than 0")
 
-            fold_size = num_samples // K
+            fold_size = num_samples // self.K
             x_trains, target_trains, x_vals, target_vals = [], [], [], []
 
-            for k in range(K):
+            for k in range(self.K):
                 # creating fold indices
                 val_indices = np.arange(k * fold_size, (k + 1) * fold_size) # creation of an array of indices with len = fold_size.
                                                                             # It contains the indices of the examples used in validation set for

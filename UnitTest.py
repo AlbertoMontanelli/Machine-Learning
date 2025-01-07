@@ -16,9 +16,9 @@ layers_config = [
 
 # Configurazione della regolarizzazione
 reg_config = {
-    'Lambda_t': 0.001,
-    'Lambda_l': 0.001,
-    'alpha': 1e-4,
+    'Lambda_t': 0.0001,
+    'Lambda_l': 0.0001,
+    'alpha': 0.5,
     'reg_type': 'elastic'
 }
 

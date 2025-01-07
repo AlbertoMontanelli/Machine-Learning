@@ -112,7 +112,7 @@ class TrainValidation:
             self.data_split.target_vals
         )):
             print(f"Processing Fold {i + 1}/{len(self.data_split.x_trains)}")
-            self.neural_network.reinitialize_weights_and_optimizers()  # Reinitialize weights for each fold
+            
 
             train_losses = []
             val_losses = []
@@ -130,6 +130,7 @@ class TrainValidation:
 
             avg_train_loss += train_losses
             avg_val_loss += val_losses
+            self.neural_network.reinitialize_net_and_optimizers()  # Reinitialize weights for each fold
         
         avg_val_loss /= (i+1)
         avg_train_loss /= (i+1)

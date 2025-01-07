@@ -36,7 +36,9 @@ class NeuralNetwork:
         optimizers = []
         for config in layers_config:
            layer = Layer(*config)
+           #print(f'layer w: {layer.weights}')
            optimizer = Optimization(layer.weights, layer.biases, regulizer = self.regularizer, **opt_config)
+           #print(f'opt w: {optimizer.weights}')
            layers.append(layer)
            optimizers.append(optimizer)
         return layers, optimizers
@@ -67,17 +69,15 @@ class NeuralNetwork:
         '''
         for layer, optimizer in reversed(list(zip(self.layers, self.optimizers))): 
             loss_gradient = layer.backward_layer(loss_gradient, optimizer)
-
-    # def reinitialize_weights(self):
-    #     '''
-    #     Function that re-initializes the weights layer-by-layer in case of need, e.g. with k-fold cross 
-    #     validation after each cycle.
-    #     '''
-    #     for layer in self.layers:
-    #         layer.initialize_weights_biases() # does it layer-by-layer
+            optimizer.t += 1
 
 
-    def reinitialize_weights_and_optimizers(self):
+    def reinitialize_net_and_optimizers(self):
+        '''
+        Function that re-initializes weights, biases and all the parameters of the optimizers layer-by-layer in case of need, 
+        e.g. with k-fold cross validation after each cycle.
+        '''
         for layer, optimizer in zip(self.layers, self.optimizers):
             layer.initialize_weights_biases()
             optimizer.initialization(layer.weights, layer.biases)
+            optimizer.t = 1
