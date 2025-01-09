@@ -165,16 +165,11 @@ class Optimization:
             # The minus sign before reg_term is due to the application of gradient descent algorithm
             self.velocity_weights = self.momentum * self.velocity_weights + grad_weights - self.regulizer.alpha * reg_term 
             
-            #print("Pesi prima dell'aggiornamento:", self.weights)
-            #print("Gradiente calcolato:", grad_weights) 
             self.weights += self.velocity_weights  # Updating the weights
-            #print("Pesi dopo l'aggiornamento:", self.weights)
 
             self.velocity_biases = self.momentum * self.velocity_biases + self.learning_rate_b * np.sum(delta_pred, axis=0, keepdims=True)
-            #print("bias prima l'aggiornamento:", self.biases)
-            self.biases += self.velocity_biases # Updating the 
+            self.biases += self.velocity_biases # Updating the biases
 
-            #print("bias dopo l'aggiornamento:", self.biases)
 
         else:
             reg_term = self.regulizer.regularization(self.weights)
