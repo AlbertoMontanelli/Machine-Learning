@@ -124,8 +124,8 @@ class TrainingValidation:
             val_error_tot (array): Validation error array averaged on the number of folds for each epoch.
         
         '''
-        train_error_tot = np.zeros(epochs)
-        val_error_tot = np.zeros(epochs)
+        train_error_tot = np.zeros(self.epochs)
+        val_error_tot = np.zeros(self.epochs)
         a=0
         for x_train, target_train, x_val, target_val in zip(
             self.data_splitter.x_trains,

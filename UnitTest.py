@@ -3,6 +3,7 @@ import numpy as np
 from DataProcessingClass import DataProcessing
 from NeuralNetworkClass import NeuralNetwork
 from Functions import activation_functions, d_activation_functions, loss_functions, d_loss_functions
+from TrainingValidationClass import TrainingValidation
 
 '''Unit test for NN'''
 np.random.seed(42)
