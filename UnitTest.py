@@ -1,10 +1,10 @@
 import numpy as np
 
-from Functions import activation_functions, d_activation_functions, loss_functions, d_loss_functions
 from DataProcessingClass import DataProcessing
 from NeuralNetworkClass import NeuralNetwork
-from TrainingValidationClass import TrainValidation
+from Functions import activation_functions, d_activation_functions, loss_functions, d_loss_functions
 
+'''Unit test for NN'''
 np.random.seed(42)
 
 # Configurazione dei layer: [(input_dim, output_dim, activation_function, d_activation_function), ...]
@@ -24,7 +24,7 @@ reg_config = {
 
 # Configurazione dell'ottimizzazione
 opt_config = {
-    'opt_type': 'NAG',
+    'opt_type': 'adam',
     'learning_rate_w': 0.001,
     'learning_rate_b': 0.001,
     'momentum': 0.9,
@@ -33,31 +33,27 @@ opt_config = {
     'epsilon': 1e-8,
 }
 
+nn = NeuralNetwork(layers_config, reg_config, opt_config)
+
 x_tot = np.random.rand(1000, 15)
 target_tot = np.random.rand(1000, 3)
 
-# Configurazione delle classi
-neural_network = NeuralNetwork(layers_config, reg_config, opt_config)
-data_split = DataProcessing(x_tot, target_tot, test_perc=0.2, K=5)
-train = TrainValidation(neural_network, data_split)
+K = 5
+data_split = DataProcessing(x_tot, target_tot, 0.2, K)
 
-# Funzioni di loss
-loss_function = loss_functions['mse']
-loss_function_derivative = d_loss_functions['d_mse']
+epochs = 500
+batch_size = 30
 
-# Esecuzione
-train_error, val_error = train.execute(
-    epochs=100, 
-    batch_size=30, 
-    loss_function=loss_function, 
-    loss_function_derivative=loss_function_derivative
-)
+train_val = TrainingValidation(data_split, epochs, batch_size, loss_functions['mse'], d_loss_functions['d_mse'], nn)
+train_error_tot, val_error_tot = train_val.train_fold()
+
+print(f'train error: \n {train_error_tot} \n val error: \n {val_error_tot}')
 
 # Plot degli errori
 import matplotlib.pyplot as plt
 
-plt.plot(train_error, label='Training Error')
-plt.plot(val_error, label='Validation Error')
+plt.plot(train_error_tot, label='Training Error')
+plt.plot(val_error_tot, label='Validation Error')
 plt.xlabel('Epochs')
 plt.ylabel('Error')
 plt.yscale('log')

@@ -1,138 +1,197 @@
 import numpy as np
 
-from Functions import activation_functions, d_activation_functions, loss_functions, d_loss_functions
 from DataProcessingClass import DataProcessing
 from NeuralNetworkClass import NeuralNetwork
+from Functions import activation_functions, d_activation_functions, loss_functions, d_loss_functions
 
-class TrainValidation:
+class TrainingValidation:
 
-    def __init__(self, neural_network, data_split):
+    def __init__(
+            self,
+            data_splitter,
+            epochs,
+            batch_size,
+            loss_func,
+            d_loss_func,
+            neural_network
+    ):
         '''
-        Class that implements training and validation of the neural network.
+        Class focused on the actual training and validation of the neural network.
 
         Args:
-            neural_network (NeuralNetwork): an instance of the NeuralNetwork class.
-            data_split (DataProcessing): an instance of the DataProcessing class.
+            data_splitter (DataProcessing): instance of the class DataProcessing.
+            epochs (int): number of iterations of the cycle forward propagation + backward propagation + weights update. 
+            batch_size (int): batch size for training. If batch_size = 1, the neural network is trained using an online learning approach.
+                              If batch_size != 1, the neural network is trained using a mini-batch learning approach with batches of size
+                              batch_size.
+            loss_func (func): loss function.
+            d_loss_func (func): derivative of loss function.
+            neural_network (NeuralNetwork): instance of the class NeuralNetwork.
         '''
-        self.data_split = data_split
+        self.data_splitter = data_splitter
+        self.epochs = epochs
+        self.batch_size = batch_size
+        self.loss_func = loss_func
+        self.d_loss_func = d_loss_func
         self.neural_network = neural_network
 
-    def batch_generator(self, x, target, batch_size):
+
+    def batch_generator( # eventualmente metterlo nell'init
+            self,
+            x_train,
+            target_train
+    ):
         '''
-        Function that generates data batches to be yielded.
+        Function that splits the training data into mini-batches.
 
         Args:
-            x (array): input data.
-            target (array): corresponding labels.
-            batch_size (int): size of each batch.
+            x_train (array): one array of the list of arrays of self.data_splitter.x_trains.
+            target_train (array): targets corresponding to self.x_train.
 
         Returns:
-            (array, array): batch of input data and labels.
+            x_batches (list): list of arrays of data that form the mini-batches.
+            target_batches (list): list of arrays of labels corresponding to the data in x_batches.
         '''
-        indices = np.arange(x.shape[0])
-        x_batch = []
-        target_batch = []
-        #np.random.shuffle(indices)  # VA SHUFFOLATO ANCHE QUESTO?
-        for start in range(0, x.shape[0], batch_size):
-            end = start + batch_size
-            batch_indices = indices[start:end]
-            x_batch.append(x[batch_indices])
-            target_batch.append(target[batch_indices])
-
-        return x_batch, target_batch
+        num_samples = x_train.shape[0]
+        x_batches = []
+        target_batches = []
+        for i in range(0, num_samples, self.batch_size):
+            batch = x_train[i : i + self.batch_size]
+            target_batch = target_train[i : i + self.batch_size]
+            x_batches.append(batch)
+            target_batches.append(target_batch)
+        
+        return x_batches, target_batches
     
-    def train_epoch(self, x_train, target_train, batch_size, loss_function, loss_function_derivative):
+    def train_epoch(
+            self,
+            x_train,
+            target_train
+    ):
         '''
-        Training of the network for a single epoch.
-
-        Args:
-            x_train (array): training data.
-            target_train (array): training labels.
-            batch_size (int): batch size for training. If batch_size = 1, the neural network is trained using an online learning approach.
-                              If batch_size != 1, the neural network is trained using a mini-batch learning approach with batches of size
-                              batch_size.
-            loss_function (func): loss function.
-            loss_function_derivative (func): derivative of the loss function.
-
-        Returns:
-            float: average training loss for the epoch.
-        '''
-        total_loss = 0
-        x, target = self.batch_generator(x_train, target_train, batch_size)
-
-        for x_batch, target_batch in zip(x, target):
-            predictions = self.neural_network.forward(x_batch)
-            loss = loss_function(target_batch, predictions)
-            total_loss += loss 
-            loss_gradient = loss_function_derivative(target_batch, predictions)
-            self.neural_network.backward(loss_gradient)
-        return total_loss / x_train.shape[0]
-
-
-    def validate(self, x_val, target_val, loss_function):
-        '''
-        Validate the network on the validation set.
-
-        Args:
-            x_val (array): validation data.
-            target_val (array): validation labels.
-            loss_function (func): loss function.
-
-        Returns:
-            float: validation loss.
-        '''
-        predictions = self.neural_network.forward(x_val)
-        loss = loss_function(target_val, predictions)
-        return np.mean(loss)
-
-
-    def execute(self, epochs, batch_size, loss_function, loss_function_derivative):
-        '''
-        Executes training and validation using DataProcessing splits.
-
-        Args:
-            epochs (int): number of training epochs.
-            batch_size (int): batch size for training. If batch_size = 1, the neural network is trained using an online learning approach.
-                              If batch_size != 1, the neural network is trained using a mini-batch learning approach with batches of size
-                              batch_size.
-            loss_function (func): loss function.
-            loss_function_derivative (func): derivative of the loss function.
-
-        Returns:
-            
-        '''
-
-        avg_train_loss = np.zeros(epochs)
-        avg_val_loss = np.zeros(epochs)
-        # Loop through folds provided by DataProcessing
-        for i, (x_train, target_train, x_val, target_val) in enumerate(zip(
-            self.data_split.x_trains, 
-            self.data_split.target_trains, 
-            self.data_split.x_vals, 
-            self.data_split.target_vals
-        )):
-            print(f"Processing Fold {i + 1}/{len(self.data_split.x_trains)}")
-            
-
-            train_losses = []
-            val_losses = []
-
-            # Epoch loop
-            for epoch in range(epochs):
-                train_loss = self.train_epoch(x_train, target_train, batch_size, loss_function, loss_function_derivative)
-                val_loss = self.validate(x_val, target_val, loss_function)
-
-                train_losses.append(train_loss)
-                val_losses.append(val_loss)
-
-                print(f"Fold {i + 1}, Epoch {epoch + 1}/{epochs} - Train Loss: {train_loss:.4f}, Val Loss: {val_loss:.4f}")
+        Function that computes the average training error through the training of the network for a single epoch.
         
+        Args:
+            x_train (array): one array of the list of arrays of self.data_splitter.x_trains.
+            target_train (array): targets corresponding to x_train.
+            
+        Returns:
+            train_error_epoch (float): average training error of one epoch. 
+        '''
+        batches, target_batches = self.batch_generator(x_train, target_train)
+        train_error_epoch = 0
 
-            avg_train_loss += train_losses
-            avg_val_loss += val_losses
-            self.neural_network.reinitialize_net_and_optimizers()  # Reinitialize weights for each fold
+        for batch, target_batch in zip(batches, target_batches):
+            pred = self.neural_network.forward(batch)
+            train_error_epoch += self.loss_func(target_batch, pred)
+            d_loss = self.d_loss_func(target_batch, pred)
+            self.neural_network.backward(d_loss)
+
+        train_error_epoch /= x_train.shape[0]
+
+        return train_error_epoch
+    
+    
+    def train_val(
+            self,
+            x_val,
+            target_val
+    ):
+        '''
+        Function that computes the average validation error through the training of the network for a single epoch.
         
-        avg_val_loss /= (i+1)
-        avg_train_loss /= (i+1)
-        return avg_train_loss, avg_val_loss
+        Args:
+            x_val (array): one array of the list of arrays of self.data_splitter.x_vals.
+            target_val (array): targets corresponding to x_val.
+            
+        Returns:
+            val_error_epoch (float): average training error of one epoch.
+        '''
+        pred = self.neural_network.forward(x_val)
+        val_error_epoch = self.loss_func(target_val, pred)/x_val.shape[0]
 
+        return val_error_epoch
+
+    
+    def train_fold(
+            self            
+    ):
+        '''
+        Function that computes training and validation error averaged on the number of folds for each epoch
+
+        Returns:
+            train_error_tot (array): Training error array averaged on the number of folds for each epoch.
+            val_error_tot (array): Validation error array averaged on the number of folds for each epoch.
+        
+        '''
+        train_error_tot = np.zeros(epochs)
+        val_error_tot = np.zeros(epochs)
+        a=0
+        for x_train, target_train, x_val, target_val in zip(
+            self.data_splitter.x_trains,
+            self.data_splitter.target_trains,
+            self.data_splitter.x_vals,
+            self.data_splitter.target_vals
+        ):
+            a += 1
+            print(f'\n Inizio iterazion {a} \n')
+            train_error = np.array([])
+            val_error = np.array([])
+
+            for i in range(self.epochs):
+                train_error_epoch = self.train_epoch(x_train, target_train)
+                train_error = np.append(train_error, train_error_epoch)
+
+                val_error_epoch = self.train_val(x_val, target_val)
+                val_error = np.append(val_error, val_error_epoch)
+                print(f'epoch {i+1}, train error {train_error_epoch}, val error {val_error_epoch}')
+
+            val_error_tot += val_error
+            train_error_tot += train_error
+            self.neural_network.reinitialize_net_and_optimizers()
+
+        train_error_tot /= self.data_splitter.K
+        val_error_tot /= self.data_splitter.K
+
+        return train_error_tot, val_error_tot
+
+
+'''
+Unit test for batches
+
+np.random.seed(42)
+x_tot = np.random.rand(10, 3)
+print(f'x_tot pre-shuffle \n {x_tot}')
+target_tot = np.random.rand(10, 3)
+K = 3
+
+data_split = DataProcessing(x_tot, target_tot, 0, K)
+print(f'x_tot \n {data_split.x_trains}')
+train_val = TrainingValidation(data_split, 100, 2)
+for xx, target in zip(data_split.x_trains, data_split.target_trains):
+    batches, target_batches = train_val.batch_generator(xx, target)
+    print(f'batches \n {batches}')
+
+'''
+
+'''
+Unit test for the training
+
+for xx, target in zip(data_split.x_trains, data_split.target_trains):
+    print(f"\n INIZIO FOLD \n")
+
+    batches, target_batches = train_val.batch_generator(xx, target)
+    for i in range(epochs):
+        loss = 0
+        for batch, target_batch in zip(batches, target_batches):
+            pred = nn.forward(batch)
+            loss += loss_functions['mse'](target_batch, pred)
+            d_loss = d_loss_functions['d_mse'](target_batch, pred)
+            
+            nn.backward(d_loss)
+        loss /= xx.shape[0]
+        print(f"loss: \n {loss}")
+    
+    
+    nn.reinitialize_net_and_optimizers()
+'''
