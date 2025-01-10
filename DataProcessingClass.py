@@ -47,7 +47,7 @@ class DataProcessing:
             target_test (array): test set for input data labels.
         '''
         if not (0 <= self.test_perc <= 1):
-            raise ValueError(f"Invalid test_perc {self.test_perc}. Choose from 0 to 1")
+            raise ValueError(f"Invalid test set percentile: {self.test_perc}. Choose from 0 to 1")
         
         num_samples = self.x_tot.shape[0] # the total number of the examples in input = the number of rows in the x_tot matrix
 
@@ -79,7 +79,7 @@ class DataProcessing:
             target_vals (list): list of targets corrisponding to the validation set. 
         '''
         if not (0 <= self.train_perc <= 1):
-            raise ValueError(f"Invalid {self.train_perc}. Choose from 0 to 1")
+            raise ValueError(f"Invalid traininig set percentile: {self.train_perc}. Choose from 0 to 1")
 
         num_samples = self.x_train_val.shape[0]
         indices = np.arange(num_samples)
@@ -96,7 +96,7 @@ class DataProcessing:
 
         else:
             if not (isinstance(self.K, int) and self.K > 0):
-                raise ValueError(f"Invalid {self.K}. Choose an integer bigger than 0")
+                raise ValueError(f"Invalid number of folds: {self.K}. Choose an integer bigger than 0")
 
             fold_size = num_samples // self.K
             x_trains, target_trains, x_vals, target_vals = [], [], [], []

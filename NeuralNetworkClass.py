@@ -26,7 +26,7 @@ class NeuralNetwork:
             layers_config (list): layers configuration as list: 
                                   (dim_prev_layer, dim_layer, activation_function, d_activation_function). 
             opt_config (list): optimizations configuration as list: 
-                               (opt_type, learning_rate_w, learning_rate_b, momentum, beta_1, beta_2, epsilon). 
+                               (opt_type, learning_rate, momentum, beta_1, beta_2, epsilon). 
 
         Returns:
             layers (list): list of the layers of the neural network.

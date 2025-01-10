@@ -3,25 +3,25 @@ import numpy as np
 class Regularization:
 
     def __init__(
-            self, 
-            Lambda_t = 0.5, 
-            Lambda_l = 0.5, 
-            alpha = 1e-4,
+            self,  
+            Lambda = 5e-3,
+            alpha = 0.5,
             reg_type = 'elastic'
             ):
         '''
         Class for regularization
 
         Args:
-            Lambda_t (float): constant used in Tikhonov regularization.
-            Lambda_l (float): constant used in Lasso regularization.
-            alpha (float): scale factor for regularization term.
+            Lambda (float): constant used in elastic regularization.
+            alpha (float): parameter used in elastic regularization to tune between Tikhonov and Lass regularization.             
             reg_type (str): the type of Regularization being applied.
         '''
-        self.Lambda_t = Lambda_t
-        self.Lambda_l = Lambda_l
+        self.Lambda = Lambda
         self.alpha = alpha
         self.reg_type = reg_type
+
+        if not(0<= self.alpha <=1):
+            raise ValueError(f"Invalid value for alpha: {self.alpha}. It must be between 0 and 1")
         
 
     def regularization(
@@ -39,16 +39,26 @@ class Regularization:
                               To be subtracted to the gradient in the Loss Function.  
         '''
         regularization_type = {'tikhonov', 'lasso', 'elastic', 'none'} # The only types of regularization accepted
+ 
         if self.reg_type == 'tikhonov':
-            reg_term = 2 * self.Lambda_t * weights # Learning rule of Tikhonov Regularization
+            self.alpha = 0 
         elif self.reg_type == 'lasso':
-            reg_term = self.Lambda_l * np.sign(weights) # Learning rule of Lasso Regularization
+            self.alpha = 1 
         elif self.reg_type == 'elastic':
-            reg_term = (2 * self.Lambda_t * weights + self.Lambda_l * np.sign(weights)) # Tikhonov + Lasso Regularization
+            if (self.alpha == 0):
+                print("Using Tikhonov regularization")
+            if (self.alpha == 1):
+                print("Using Lasso regularization")
+
         elif self.reg_type == 'none':
             reg_term = 0 # No regularization
         else:
             raise ValueError(f"Invalid {self.reg_type}. Choose from {', '.join(regularization_type)}")
+        
+        reg_term = self.Lambda * (2  * (1-self.alpha) * weights + self.alpha * np.sign(weights)) # Learning rule of Elastic Regularization.
+                                                                                                 # If self.alpha == 0: Tikhonov Regularization.
+                                                                                                 # If self.alpha == 1: Lasso Regularizaion.
+
         return reg_term
 
 
@@ -60,8 +70,7 @@ class Optimization:
             biases,
             regulizer,
             opt_type,
-            learning_rate_w = 1e-4, 
-            learning_rate_b = 1e-4, 
+            learning_rate = 1e-4,
             momentum = 0.8, 
             beta_1 = 0.9, 
             beta_2 = 0.999, 
@@ -76,8 +85,7 @@ class Optimization:
             biases (array): biases array.
             regulizer (Regularization): instance of the Regularization class.
             opt_type (str): the type of Optimization being applied.
-            learning_rate_w (float): growth factor for the Weights parameter of the network.
-            learning_rate_b (float): growth factor for the Biases parameter of the network.
+            learning_rate (float): growth factor for the Weights parameter of the network.
             momentum (float): factor for optimization through Nesterov Accelerated Gradient (NAG).
             beta_1 (float): control factor linked to first order momentum for computation of the velocity in Adam Optimization.
             beta_2 (float): control factor linked to second order momentum for computation of the variance in Adam Optimization.
@@ -85,8 +93,7 @@ class Optimization:
             t (int): counter of iterations used in Adam Optimization that goes up to number_epochs * number_batches.
         '''
         self.regulizer = regulizer
-        self.learning_rate_w = learning_rate_w
-        self.learning_rate_b = learning_rate_b
+        self.learning_rate = learning_rate
         self.momentum = momentum
         self.beta_1 = beta_1
         self.beta_2 = beta_2
@@ -155,7 +162,7 @@ class Optimization:
                                                                 # the predicted biases
             delta_pred = - loss_gradient * d_activation_function(net_pred)  # Loss gradient with respect to net, 
                                                                                   # minus sign due to the definition
-            grad_weights = self.learning_rate_w * np.dot(input.T, delta_pred)  # Loss gradient multiplied by the learning rate.
+            grad_weights = self.learning_rate * np.dot(input.T, delta_pred)  # Loss gradient multiplied by the learning rate.
                                                                                # The gradient has been computed with respect
                                                                                # to the predicted weights and biases
             
@@ -163,11 +170,11 @@ class Optimization:
 
             # Difference between the current weights and the previous weights. 
             # The minus sign before reg_term is due to the application of gradient descent algorithm
-            self.velocity_weights = self.momentum * self.velocity_weights + grad_weights - self.regulizer.alpha * reg_term 
+            self.velocity_weights = self.momentum * self.velocity_weights + grad_weights - reg_term 
             
             self.weights += self.velocity_weights  # Updating the weights
 
-            self.velocity_biases = self.momentum * self.velocity_biases + self.learning_rate_b * np.sum(delta_pred, axis=0, keepdims=True)
+            self.velocity_biases = self.momentum * self.velocity_biases + self.learning_rate * np.sum(delta_pred, axis=0, keepdims=True)
             self.biases += self.velocity_biases # Updating the biases
 
 
@@ -187,8 +194,47 @@ class Optimization:
             m_biases_hat = self.m_biases / (1 - self.beta_1**self.t)
             v_biases_hat = self.v_biases / (1 - self.beta_2**self.t)
 
-            self.weights -= self.learning_rate_w * m_weights_hat / (np.sqrt(v_weights_hat) + self.epsilon)
-            self.biases -= self.learning_rate_b * m_biases_hat / (np.sqrt(v_biases_hat) + self.epsilon)
+            self.weights -= self.learning_rate * m_weights_hat / (np.sqrt(v_weights_hat) + self.epsilon)
+            self.biases -= self.learning_rate * m_biases_hat / (np.sqrt(v_biases_hat) + self.epsilon)
 
         sum_delta_weights = np.dot(self.delta, self.weights.T) # loss gradient for hidden layer
         return sum_delta_weights
+
+
+# POSSIBILI MIGLIORAMENTI PER LA CLASSE
+
+# class Optimizer:
+#     def __init__(self, weights, biases, learning_rate_w, learning_rate_b, regularizer):
+#         self.weights = weights
+#         self.biases = biases
+#         self.learning_rate_w = learning_rate_w
+#         self.learning_rate_b = learning_rate_b
+#         self.regularizer = regularizer
+
+#     def update(self, input, loss_gradient, d_activation_function):
+#         raise NotImplementedError("Update method must be implemented by subclasses.")
+
+# class NAGOptimizer(Optimizer):
+#     def __init__(self, weights, biases, learning_rate_w, learning_rate_b, regularizer, momentum):
+#         super().__init__(weights, biases, learning_rate_w, learning_rate_b, regularizer)
+#         self.momentum = momentum
+#         self.velocity_weights = np.zeros_like(weights)
+#         self.velocity_biases = np.zeros_like(biases)
+
+#     def update(self, input, loss_gradient, d_activation_function):
+#         # Logica per NAG...
+#         pass
+
+# class AdamOptimizer(Optimizer):
+#     def __init__(self, weights, biases, learning_rate_w, learning_rate_b, regularizer, beta_1, beta_2, epsilon, t):
+#         super().__init__(weights, biases, learning_rate_w, learning_rate_b, regularizer)
+#         self.beta_1 = beta_1
+#         self.beta_2 = beta_2
+#         self.epsilon = epsilon
+#         self.t = t
+#         self.m_weights = np.zeros_like(weights)
+#         self.v_weights = np.zeros_like(weights)
+
+#     def update(self, input, loss_gradient, d_activation_function):
+#         # Logica per Adam...
+#         pass
