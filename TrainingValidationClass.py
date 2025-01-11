@@ -140,7 +140,8 @@ class TrainingValidation:
 
                 val_error_epoch = self.train_val(x_val, target_val)
                 val_error = np.append(val_error, val_error_epoch)
-                print(f'epoch {i+1}, train error {train_error_epoch}, val error {val_error_epoch}')
+                if ((i+1)%10 == 0):
+                    print(f'epoch {i+1}, train error {train_error_epoch}, val error {val_error_epoch}')
 
             val_error_tot += val_error
             train_error_tot += train_error

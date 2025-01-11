@@ -24,9 +24,9 @@ reg_config = {
 
 # Configurazione dell'ottimizzazione
 opt_config = {
-    'opt_type': 'adam',
-    'learning_rate': 0.001,
-    'momentum': 0.99,
+    'opt_type': 'NAG',
+    'learning_rate': 0.00001,
+    'momentum': 0.9,
     'beta_1': 0.9,
     'beta_2': 0.999,
     'epsilon': 1e-8,
@@ -34,13 +34,13 @@ opt_config = {
 
 nn = NeuralNetwork(layers_config, reg_config, opt_config)
 
-x_tot = np.random.rand(1000, 15)
-target_tot = np.random.rand(1000, 3)
+x_tot = np.random.rand(255, 15)
+target_tot = np.random.rand(255, 3)
 
-K = 5
+K = 6
 data_split = DataProcessing(x_tot, target_tot, 0.2, K)
 
-epochs = 250
+epochs = 500
 batch_size = 30
 
 train_val = TrainingValidation(data_split, epochs, batch_size, loss_functions['mse'], d_loss_functions['d_mse'], nn)
@@ -58,3 +58,5 @@ plt.ylabel('Error')
 plt.yscale('log')
 plt.legend()
 plt.show()
+
+

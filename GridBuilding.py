@@ -1,7 +1,7 @@
 import numpy as np
 from itertools import product
 
-from Functions import activation_functions
+from Functions import activation_functions_grid
 
 '''
 IPERPARAMETRI
@@ -41,7 +41,7 @@ for i in N_layer:
         nn_architecture.append({'N_layer' : i, 'N_units' : combo})
 
 param_grid = {
-    'activation_function' : list(activation_functions.keys()),
+    'activation_function' : list(activation_functions_grid.keys()),
     'batch_size' : [1, 16, 32, 64], #includere anche il totale dei dati
     'learning_rate' : np.logspace(-5, -2, num = 4),  
     'lambda': np.logspace(-4, 2, num = 7),
