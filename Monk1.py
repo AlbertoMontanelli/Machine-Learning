@@ -39,17 +39,15 @@ opt_config = {
     'epsilon': 1e-8,
 }
 
-
 # nn_selection = NeuralNetwork(layers_config, reg_config, opt_config)
 
-epochs = 500
+epochs = 100
 batch_size = 20
 '''
 train_val = TrainingValidation(data_splitter_monk1_selection, epochs, batch_size, loss_functions['bce'], d_loss_functions['d_bce'], nn_selection)
 train_error_tot, val_error_tot = train_val.train_fold()
 
 # Plot
-
 
 # Modifica del font della label nella legenda
 font = {'family': 'serif', 'weight': 'normal', 'size': 24}
@@ -70,6 +68,10 @@ plt.show()
 nn_assessment = NeuralNetwork(layers_config, reg_config, opt_config)
 
 train_test = ModelAssessment(training_set_1, target_training_set_1, test_set_1, target_test_set_1, epochs, batch_size, loss_functions['bce'], d_loss_functions['d_bce'], nn_assessment)
+print(f'train len: {len(training_set_1)}')
+print(f'train target len: {len(target_training_set_1)}')
+print(f'test len: {len(test_set_1)}')
+print(f'test target len: {len(target_test_set_1)}')
 retrain_error_tot, test_error = train_test.retrain_test(accuracy_check=True)
 
 plt.plot(retrain_error_tot, label = 'Training Error')

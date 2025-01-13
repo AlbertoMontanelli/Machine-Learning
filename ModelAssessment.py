@@ -81,16 +81,21 @@ class ModelAssessment:
         '''
         batches, target_batches = self.batch_generator(xx, target)
         train_error_epoch = 0
+        prediction = np.array([])
 
         for batch, target_batch in zip(batches, target_batches):
+            #print(f'batch: \n {batch}')
             pred = self.neural_network.forward(batch)
+            prediction = np.append(prediction, pred)
+            #print(f'pred: \n {pred}')
             train_error_epoch += self.loss_func(target_batch, pred)
             d_loss = self.d_loss_func(target_batch, pred)
             self.neural_network.backward(d_loss)
+            #print(f'd_loss: \n {d_loss}')
 
         train_error_epoch /= xx.shape[0]
 
-        return train_error_epoch
+        return train_error_epoch, prediction
     
     
     def test_epoch(
@@ -107,24 +112,29 @@ class ModelAssessment:
         pred = self.neural_network.forward(xx)
         test_error_epoch = self.loss_func(target, pred)/xx.shape[0]
 
-        return test_error_epoch
+        return test_error_epoch, pred
 
     
     def accuracy_curve(
             self,
-            xx,
+            pred,
             target
-    ):
-        
-        pred = self.neural_network.forward(xx)
+    ): 
+        #pred = self.neural_network.forward(xx)
         correct_classifications = 0
         
-        for k in range(len(xx)):
+        for k in range(len(pred)):
+            #print(f'pred prima = {pred[k]}')
             pred[k] = 1 if pred[k] >= 0.5 else 0
+            #print(f'pred dopo = {pred[k]}')
             if (pred[k] == target[k]):
                 correct_classifications += 1
 
-        accuracy = correct_classifications/len(xx)
+        accuracy = correct_classifications/len(pred)
+        #print(f'corret class: {correct_classifications}')
+        #print(f'len pred: {len(pred)} ')
+        #print(f'accuracy: {accuracy}')
+
         return accuracy
 
     def plot_accuracy(
@@ -138,6 +148,7 @@ class ModelAssessment:
         plt.ylabel('Accuracy')
         plt.grid()
         plt.legend()
+        plt.savefig('figura1.png')
         plt.show()
 
 
@@ -155,15 +166,15 @@ class ModelAssessment:
         accuracy_test_tot = np.array([])
 
         for i in range(self.epochs):
-            retrain_error_epoch = self.retrain_epoch(self.x_retrain, self.target_retrain)
+            retrain_error_epoch, retrain_pred = self.retrain_epoch(self.x_retrain, self.target_retrain)
             retrain_error_tot = np.append(retrain_error_tot, retrain_error_epoch)
 
-            test_error_epoch = self.test_epoch(self.x_test, self.target_test)
+            test_error_epoch, test_pred = self.test_epoch(self.x_test, self.target_test)
             test_error_tot = np.append(test_error_tot, test_error_epoch)
             
             if accuracy_check:
-                accuracy_retrain = self.accuracy_curve(self.x_retrain, self.target_retrain)
-                accuracy_test = self.accuracy_curve(self.x_test, self.target_test)
+                accuracy_retrain = self.accuracy_curve(retrain_pred, self.target_retrain)
+                accuracy_test = self.accuracy_curve(test_pred, self.target_test)
 
                 accuracy_retrain_tot = np.append(accuracy_retrain_tot, accuracy_retrain)
                 accuracy_test_tot = np.append(accuracy_test_tot, accuracy_test)
@@ -178,6 +189,6 @@ class ModelAssessment:
             print(f"Final training accuracy value: {accuracy_retrain_tot[-1]}")
             print(f"Final test accuracy value: {accuracy_test_tot[-1]}")
             print(f'lunghezza accuracy train {len(accuracy_retrain_tot)}')
-            print(f'lunghezza accuracy train {len(accuracy_test_tot)}')
+            print(f'lunghezza accuracy test {len(accuracy_test_tot)}')
 
         return retrain_error_tot, test_error_tot
