@@ -131,7 +131,7 @@ def d_ReLU(net):
     return np.ones_like(net) if(net>=0) else np.zeros_like(net)
 
 
-def leaky_relu(net, alpha):
+def leaky_relu(net, alpha = 0.01):
     """ 
     Leaky ReLU function.
 
@@ -144,7 +144,7 @@ def leaky_relu(net, alpha):
     return np.maximum(net, alpha*net)
 
 
-def d_leaky_relu(net, alpha):
+def d_leaky_relu(net, alpha = 0.01):
     """ 
     Derivative of Leaky ReLU function.
 
@@ -196,7 +196,7 @@ activation_functions = {
     "softplus": softplus,
     "linear": linear,
     "ReLU": ReLU,
-    "leaky_relu": leaky_relu,
+    "leaky_ReLU": leaky_relu,
     "ELU": ELU,
 }
 
@@ -207,7 +207,7 @@ d_activation_functions = {
     "d_softplus": d_softplus,
     "d_linear": d_linear,
     "d_ReLU": d_ReLU,
-    "d_leaky_relu": d_leaky_relu,
+    "d_leaky_ReLU": d_leaky_relu,
     "d_ELU": d_ELU,
 }
 
@@ -215,14 +215,14 @@ d_activation_functions = {
 activation_functions_grid = {
     "tanh": tanh,
     "ReLU": ReLU,
-    "leaky_relu": leaky_relu
+    "leaky_ReLU": leaky_relu
 }
 
 # Dictionary for the derivative of activation functions used for grid search
 d_activation_functions_grid = {
     "d_tanh": d_tanh,
     "d_ReLU": d_ReLU,
-    "d_leaky_relu": d_leaky_relu
+    "d_leaky_ReLU": d_leaky_relu
 }
 
 
@@ -333,7 +333,7 @@ def binary_cross_entropy(y_true, y_pred, epsilon = 1e-7):
     return - np.sum(y_true * np.log(y_pred + epsilon) + (1 - y_true) * np.log(1 - y_pred + epsilon))
 
 
-def d_binary_cross_entropy(y_true, y_pred, epsilon):
+def d_binary_cross_entropy(y_true, y_pred, epsilon = 1e-7):
      """ 
     Derivative of Binary Cross Entropy function.
 

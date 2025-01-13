@@ -32,7 +32,7 @@ class TrainingValidation:
         self.neural_network = neural_network
 
 
-    def batch_generator( # eventualmente metterlo nell'init
+    def batch_generator( 
             self,
             x_train,
             target_train
@@ -110,7 +110,7 @@ class TrainingValidation:
 
     
     def train_fold(
-            self            
+            self           
     ):
         '''
         Function that computes training and validation error averaged on the number of folds for each epoch
@@ -130,7 +130,7 @@ class TrainingValidation:
             self.data_splitter.target_vals
         ):
             a += 1
-            print(f'\n Inizio iterazion {a} \n')
+            print(f'\n Begin iteration {a} \n')
             train_error = np.array([])
             val_error = np.array([])
 
@@ -142,6 +142,7 @@ class TrainingValidation:
                 val_error = np.append(val_error, val_error_epoch)
                 if ((i+1)%10 == 0):
                     print(f'epoch {i+1}, train error {train_error_epoch}, val error {val_error_epoch}')
+
 
             val_error_tot += val_error
             train_error_tot += train_error

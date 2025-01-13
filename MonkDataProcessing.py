@@ -1,70 +1,36 @@
-import numpy as np
 import pandas as pd
 
-from DataProcessingClass import DataProcessing
-from NeuralNetworkClass import NeuralNetwork
-from Functions import activation_functions, d_activation_functions, loss_functions, d_loss_functions
-from TrainingValidationClass import TrainingValidation
+# Importing data for all monk datasets
+columns = ["target", "feat1", "feat2", "feat3", "feat4", "feat5", "feat6", "Id"]
 
-# Importing data
-file_path_train = "monk+s+problems/monks-1.train"
-file_path_test = "monk+s+problems/monks-1.test"
-columns = ["target", "feat1", "feat2", "feat3", "feat4", "feat5", "feat6", "Id"]  
-df_train = pd.read_csv(file_path_train, sep = " ", header = None, names = columns, skipinitialspace = True)
-df_test = pd.read_csv(file_path_test, sep = " ", header = None, names = columns, skipinitialspace = True)
-training_set1 = df_train.drop(columns = ["target", "Id"])
-test_set1 = df_test.drop(columns = ["target", "Id"])
+for i in range(1, 4, 1):
+    file_path_train = f"monk+s+problems/monks-{i}.train"
+    file_path_test = f"monk+s+problems/monks-{i}.test"
+    df_train = pd.read_csv(file_path_train, sep = " ", header = None, names = columns, skipinitialspace = True)
+    df_test = pd.read_csv(file_path_test, sep = " ", header = None, names = columns, skipinitialspace = True)
 
-# One-hot encoding of train_val_set and test_set for data and targets
-training_set1 = pd.get_dummies(training_set1, columns = training_set1.columns[1:], drop_first = False, dtype = int)
-test_set1 = pd.get_dummies(test_set1, columns = test_set1.columns[1:], drop_first = False, dtype = int)
-target_train_set1 = df_train.drop(columns = ["feat1", "feat2", "feat3", "feat4", "feat5", "feat6", "Id"])
-target_test_set1 = df_test.drop(columns = ["feat1", "feat2", "feat3", "feat4", "feat5", "feat6", "Id"])
+    # Separation between targets and data. Last column is dropped because useless.
+    training_set = df_train.drop(columns = ["target", "Id"])
+    target_training_set = df_train["target"]
+    
+    test_set = df_test.drop(columns = ["target", "Id"])
+    target_test_set = df_test["target"]
 
-# Splitting of training set and validation set
-monk1_data = DataProcessing(training_set1, target_train_set1, test_perc = 0., K = 5)
+    # One-hot encoding of training, validation and test set for data.
+    training_set = pd.get_dummies(training_set, columns = training_set.columns[:], drop_first = False, dtype = int)
+    test_set = pd.get_dummies(test_set, columns = test_set.columns[:], drop_first = False, dtype = int)
 
-# Training of the neural network using monk1_data
-# Configurazione dei layer: [(input_dim, output_dim, activation_function, d_activation_function), ...]
-layers_config = [
-    (17, 8, activation_functions['sigmoid'], d_activation_functions['d_sigmoid ']),
-    (8, 3, activation_functions['sigmoid'], d_activation_functions['d_sigmoid'])
-]
+    # Conversion from pandas.dataframe to numpy arrays.
+    training_set = training_set.to_numpy()
+    target_training_set = target_training_set.to_numpy()
+    target_training_set = target_training_set.reshape(-1, 1)
 
-# Configurazione della regolarizzazione
-reg_config = {
-    'Lambda': 0.0001,
-    'alpha' : 0.5,
-    'reg_type': 'elastic'
-}
+    test_set = test_set.to_numpy()
+    target_test_set = target_test_set.to_numpy()
+    target_test_set= target_test_set.reshape(-1, 1)
 
-# Configurazione dell'ottimizzazione
-opt_config = {
-    'opt_type': 'NAG',
-    'learning_rate': 0.00001,
-    'momentum': 0.9,
-    'beta_1': 0.9,
-    'beta_2': 0.999,
-    'epsilon': 1e-8,
-}
-
-nn = NeuralNetwork(layers_config, reg_config, opt_config)
-
-epochs = 100
-batch_size = 20
-
-train_val = TrainingValidation(monk1_data, epochs, batch_size, loss_functions['bce'], d_loss_functions['d_bce'], nn)
-train_error_tot, val_error_tot = train_val.train_fold()
-
-# Plot degli errori
-import matplotlib.pyplot as plt
-
-plt.plot(train_error_tot, label='Training Error')
-plt.plot(val_error_tot, label='Validation Error')
-plt.xlabel('Epochs')
-plt.ylabel('Error')
-plt.yscale('log')
-plt.legend()
-plt.show()
-
-# Plot accuracy
+    # Saving all the data in different global variables for each monk dataset.
+    globals()[f"training_set_{i}"] = training_set
+    globals()[f"target_training_set_{i}"] = target_training_set
+    globals()[f"test_set_{i}"] = test_set
+    globals()[f"target_test_set_{i}"] = target_test_set
