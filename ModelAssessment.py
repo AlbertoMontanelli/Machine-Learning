@@ -134,8 +134,8 @@ class ModelAssessment:
     ):
         plt.plot(accuracy_retrain, label = 'Training Accuracy')
         plt.plot(accuracy_test, label = 'Test Accuracy')
-        plt.xlabel('Epochs', fontdict = font)
-        plt.ylabel('Accuracy', fontdict = font)
+        plt.xlabel('Epochs')
+        plt.ylabel('Accuracy')
         plt.grid()
         plt.legend()
         plt.show()
@@ -148,11 +148,11 @@ class ModelAssessment:
         '''
         INSERIRE        
         '''
-        retrain_error_tot = np.zeros(self.epochs)
-        test_error_tot = np.zeros(self.epochs)
+        retrain_error_tot = np.array([])
+        test_error_tot = np.array([])
 
-        accuracy_retrain_tot = np.zeros(self.epochs)
-        accuracy_test_tot = np.zeros(self.epochs)
+        accuracy_retrain_tot = np.array([])
+        accuracy_test_tot = np.array([])
 
         for i in range(self.epochs):
             retrain_error_epoch = self.retrain_epoch(self.x_retrain, self.target_retrain)
@@ -177,5 +177,7 @@ class ModelAssessment:
             self.plot_accuracy(accuracy_retrain_tot, accuracy_test_tot)
             print(f"Final training accuracy value: {accuracy_retrain_tot[-1]}")
             print(f"Final test accuracy value: {accuracy_test_tot[-1]}")
+            print(f'lunghezza accuracy train {len(accuracy_retrain_tot)}')
+            print(f'lunghezza accuracy train {len(accuracy_test_tot)}')
 
         return retrain_error_tot, test_error_tot
