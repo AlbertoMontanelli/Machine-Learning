@@ -318,11 +318,42 @@ def d_huber_loss(y_true, y_pred, delta):
     return - (y_true - y_pred) if(np.abs(y_true-y_pred)<=delta) else - delta * np.sign(y_true-y_pred)
 
 
+def binary_cross_entropy(y_true, y_pred, epsilon = 1e-7):
+    """ 
+    Binary Cross Entropy function.
+
+    Args:
+        y_true (array): targets that represent data labels provided as input.
+        y_pred (array): output of the last layer.
+        epsilon (float): constant that allows log to exist when y_pred = 0 or (1 - y_pred) = 0.
+
+    Returns:
+        np.sum(loss) (float): result of Binary Cross Entropy.
+    """ 
+    return - np.sum(y_true * np.log(y_pred + epsilon) + (1 - y_true) * np.log(1 - y_pred + epsilon))
+
+
+def d_binary_cross_entropy(y_true, y_pred, epsilon):
+     """ 
+    Derivative of Binary Cross Entropy function.
+
+    Args:
+        y_true (array): targets that represent data labels provided as input.
+        y_pred (array): output of the last layer.
+        epsilon (float): constant that allows log to exist when y_pred = 0 or (1 - y_pred) = 0.
+
+    Returns:
+        np.sum(loss) (float): result of derivative of Binary Cross Entropy.
+    """ 
+     return - (y_true / (y_pred + epsilon) - (1 - y_true) / (1 - y_pred + epsilon))
+
+
 # Dictionary for the loss functions
 loss_functions = {
     "mse": mean_squared_error,
     "mee": mean_euclidean_error,
     "huber": huber_loss,
+    "bce": binary_cross_entropy
 }
 
 # Dictionary for the derivative of loss functions
@@ -330,4 +361,5 @@ d_loss_functions = {
     "d_mse": d_mean_squared_error,
     "d_mee": d_mean_euclidean_error,
     "d_huber": d_huber_loss,
+    "d_bce": d_binary_cross_entropy
 }

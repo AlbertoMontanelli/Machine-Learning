@@ -13,5 +13,3 @@ training_set1 = pd.get_dummies(training_set1, columns = training_set1.columns[1:
 target_set1 = df.drop(columns = ["feat1", "feat2", "feat3", "feat4", "feat5", "feat6", "Id"])
 
 Datapepper = DataProcessing(training_set1, target_set1, test_perc = 0., K = 5)
-
-
