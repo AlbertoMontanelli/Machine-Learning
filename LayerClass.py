@@ -28,13 +28,17 @@ class Layer:
         self.d_activation_function = d_activation_function
         self.initialize_weights_biases()
 
-
+    def xavier_normal(self, shape, n_in, n_out):
+        stddev = np.sqrt(2 / (n_in + n_out))
+        return np.random.normal(0, stddev, shape)
+    
     def initialize_weights_biases(self):
         '''
         Function that initializes the Weights and the Biases of the network
         '''
-        self.weights = np.random.uniform(low=-1/np.sqrt(self.dim_prev_layer), high=1/np.sqrt(self.dim_prev_layer), 
-                                         size=(self.dim_prev_layer, self.dim_layer))
+        #self.weights = np.random.uniform(low=-1/np.sqrt(self.dim_prev_layer), high=1/np.sqrt(self.dim_prev_layer), 
+        #                                 size=(self.dim_prev_layer, self.dim_layer))
+        self.weights = self.xavier_normal((self.dim_prev_layer, self.dim_layer), self.dim_prev_layer, self.dim_layer)
         self.biases = np.zeros((1, self.dim_layer))
 
 

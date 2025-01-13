@@ -31,8 +31,8 @@ reg_config = {
 
 # Optimization configuration
 opt_config = {
-    'opt_type': 'NAG',
-    'learning_rate': 0.00001,
+    'opt_type': 'adam',
+    'learning_rate': 0.01,
     'momentum': 0.9,
     'beta_1': 0.9,
     'beta_2': 0.999,
@@ -41,7 +41,7 @@ opt_config = {
 
 # nn_selection = NeuralNetwork(layers_config, reg_config, opt_config)
 
-epochs = 100
+epochs = 500
 batch_size = 20
 '''
 train_val = TrainingValidation(data_splitter_monk1_selection, epochs, batch_size, loss_functions['bce'], d_loss_functions['d_bce'], nn_selection)
