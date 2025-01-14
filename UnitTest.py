@@ -4,7 +4,7 @@ import numpy as np
 from NeuralNetworkClass import NeuralNetwork
 from Functions import activation_functions, d_activation_functions, loss_functions, d_loss_functions
 from TrainingValidationClass import TrainingValidation
-from CUPDataProcessing import CUP_data_splitter
+from DataProcessingClass import DataProcessing
 
 '''Unit test for NN'''
 np.random.seed(12)
@@ -38,32 +38,12 @@ nn = NeuralNetwork(layers_config, reg_config, opt_config)
 epochs = 500
 batch_size = 20
 
-train_val = TrainingValidation(CUP_data_splitter, epochs, batch_size, loss_functions['mse'], d_loss_functions['d_mse'], nn)
-train_error_tot, val_error_tot = train_val.train_fold()
-
-# Plot degli errori
-import matplotlib.pyplot as plt
-
-plt.plot(train_error_tot, label='Training Error')
-plt.plot(val_error_tot, label='Validation Error')
-plt.xlabel('Epochs')
-plt.ylabel('Error')
-plt.yscale('log')
-plt.legend()
-plt.savefig('FigureCUP')
-plt.show()
-
-
-'''
-#unit test random 
+# unit test random 
 x_tot = np.random.rand(255, 15)
 target_tot = np.random.rand(255, 3)
 
 K = 6
 data_split = DataProcessing(x_tot, target_tot, 0.2, K)
-
-epochs = 500
-batch_size = 30
 
 train_val = TrainingValidation(data_split, epochs, batch_size, loss_functions['mse'], d_loss_functions['d_mse'], nn)
 train_error_tot, val_error_tot = train_val.train_fold()
@@ -77,5 +57,5 @@ plt.xlabel('Epochs')
 plt.ylabel('Error')
 plt.yscale('log')
 plt.legend()
+plt.savefig('Figure.png')
 plt.show()
-'''
