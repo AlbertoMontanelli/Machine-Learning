@@ -36,10 +36,10 @@ opt_config = {
 nn = NeuralNetwork(layers_config, reg_config, opt_config)
 
 epochs = 500
-batch_size = 20
+batch_size = 10
 
 # unit test random 
-x_tot = np.random.rand(255, 15)
+x_tot = np.random.rand(255, 12)
 target_tot = np.random.rand(255, 3)
 
 K = 6

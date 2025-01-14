@@ -36,7 +36,7 @@ opt_config = {
 nn = NeuralNetwork(layers_config, reg_config, opt_config)
 
 epochs = 500
-batch_size = 20
+batch_size = 40
 
 train_val = TrainingValidation(CUP_data_splitter, epochs, batch_size, loss_functions['mse'], d_loss_functions['d_mse'], nn)
 train_error_tot, val_error_tot = train_val.train_fold()

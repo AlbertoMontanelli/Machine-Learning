@@ -51,7 +51,7 @@ class Regularization:
                 print("Using Lasso regularization")
 
         elif self.reg_type == 'none':
-            reg_term = 0 # No regularization
+            self.Lambda = 0 # No regularization
         else:
             raise ValueError(f"Invalid {self.reg_type}. Choose from {', '.join(regularization_type)}")
         
@@ -156,6 +156,7 @@ class Optimization:
             sum_delta_weights (array): loss_gradient for hidden layer   
         '''
         self.delta = - loss_gradient * d_activation_function(np.dot(input, self.weights) + self.biases)
+        #print(f'delta {self.delta}')
 
         if self.opt_type == 'NAG':
             weights_pred = self.weights + self.momentum * self.velocity_weights  # Predicted weights used to compute the
@@ -203,7 +204,7 @@ class Optimization:
         else:
             reg_term = self.regulizer.regularization(self.weights)
             self.weights += (self.learning_rate * np.dot(input.T, self.delta) - reg_term)
-            self.biases += np.sum(self.delta, axis=0, keepdims=True)
+            self.biases += np.sum(self.delta, axis=0, keepdims=True)/len(input)
 
         sum_delta_weights = np.dot(self.delta, self.weights.T) # loss gradient for hidden layer
         return sum_delta_weights

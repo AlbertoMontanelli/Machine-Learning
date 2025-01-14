@@ -136,7 +136,8 @@ class TrainingValidation:
 
 
     def train_fold(
-            self           
+            self,
+            accuracy_curve = False         
     ):
         '''
         Function that computes training and validation error averaged on the number of folds for each epoch
@@ -167,8 +168,9 @@ class TrainingValidation:
                 train_error_epoch, prediction = self.train_epoch(x_train, target_train)
                 train_error = np.append(train_error, train_error_epoch)
 
-                accuracy_epoch = self.accuracy_curve(prediction, target_train)
-                accuracy_fold = np.append(accuracy_fold, accuracy_epoch)
+                if accuracy_curve:
+                    accuracy_epoch = self.accuracy_curve(prediction, target_train)
+                    accuracy_fold = np.append(accuracy_fold, accuracy_epoch)
 
                 val_error_epoch = self.train_val(x_val, target_val)
                 val_error = np.append(val_error, val_error_epoch)
@@ -179,15 +181,18 @@ class TrainingValidation:
 
             val_error_tot += val_error
             train_error_tot += train_error
-            accuracy_tot += accuracy_fold
+            if accuracy_curve: 
+                accuracy_tot += accuracy_fold
             self.neural_network.reinitialize_net_and_optimizers()
 
         train_error_tot /= self.data_splitter.K
         val_error_tot /= self.data_splitter.K
         accuracy_tot /= self.data_splitter.K
 
-        return train_error_tot, val_error_tot, accuracy_tot
-
+        if accuracy_curve:
+            return train_error_tot, val_error_tot, accuracy_tot
+        else:
+            return train_error_tot, val_error_tot
 
 '''
 Unit test for batches
