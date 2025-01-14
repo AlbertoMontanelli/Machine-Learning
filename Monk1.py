@@ -8,10 +8,10 @@ from Functions import activation_functions, d_activation_functions, loss_functio
 from TrainingValidationClass import TrainingValidation
 from ModelAssessment import ModelAssessment
 
-from MonkDataProcessing import training_set_1, target_training_set_1, test_set_1, target_test_set_1
+from MonkDataProcessing import monk_data
 
 # Splitting of training set and validation set
-data_splitter_monk1_selection = DataProcessing(training_set_1, target_training_set_1, test_perc = 0., K = 5)
+data_splitter_monk1_selection = DataProcessing(monk_data["training_set_1"], monk_data["target_training_set_1"], test_perc = 0., K = 5)
 
 # Training of the neural network using monk1_data
 
@@ -39,13 +39,13 @@ opt_config = {
     'epsilon': 1e-8,
 }
 
-# nn_selection = NeuralNetwork(layers_config, reg_config, opt_config)
+nn_selection = NeuralNetwork(layers_config, reg_config, opt_config)
 
 epochs = 500
 batch_size = 20
-'''
+
 train_val = TrainingValidation(data_splitter_monk1_selection, epochs, batch_size, loss_functions['bce'], d_loss_functions['d_bce'], nn_selection)
-train_error_tot, val_error_tot = train_val.train_fold()
+train_error_tot, val_error_tot, accuracy_tot = train_val.train_fold()
 
 # Plot
 
@@ -61,24 +61,31 @@ plt.yscale('log')
 plt.grid()
 plt.legend()
 plt.show()
-'''
 
-# Model assessment with accuracy plot
-
-nn_assessment = NeuralNetwork(layers_config, reg_config, opt_config)
-
-train_test = ModelAssessment(training_set_1, target_training_set_1, test_set_1, target_test_set_1, epochs, batch_size, loss_functions['bce'], d_loss_functions['d_bce'], nn_assessment)
-print(f'train len: {len(training_set_1)}')
-print(f'train target len: {len(target_training_set_1)}')
-print(f'test len: {len(test_set_1)}')
-print(f'test target len: {len(target_test_set_1)}')
-retrain_error_tot, test_error = train_test.retrain_test(accuracy_check=True)
-
-plt.plot(retrain_error_tot, label = 'Training Error')
-plt.plot(test_error, label = 'Test Error')
-plt.xlabel('Epochs')
-plt.ylabel('Error')
-plt.yscale('log')
+plt.plot(accuracy_tot, label = 'Training accuracy')
+plt.xlabel('Epochs', fontdict = font)
+plt.ylabel('Training accuracy', fontdict = font)
 plt.grid()
 plt.legend()
 plt.show()
+
+
+# # Model assessment with accuracy plot
+
+# nn_assessment = NeuralNetwork(layers_config, reg_config, opt_config)
+
+# train_test = ModelAssessment(training_set_1, target_training_set_1, test_set_1, target_test_set_1, epochs, batch_size, loss_functions['bce'], d_loss_functions['d_bce'], nn_assessment)
+# print(f'train len: {len(training_set_1)}')
+# print(f'train target len: {len(target_training_set_1)}')
+# print(f'test len: {len(test_set_1)}')
+# print(f'test target len: {len(target_test_set_1)}')
+# retrain_error_tot, test_error = train_test.retrain_test(accuracy_check=True)
+
+# plt.plot(retrain_error_tot, label = 'Training Error')
+# plt.plot(test_error, label = 'Test Error')
+# plt.xlabel('Epochs')
+# plt.ylabel('Error')
+# plt.yscale('log')
+# plt.grid()
+# plt.legend()
+# plt.show()
