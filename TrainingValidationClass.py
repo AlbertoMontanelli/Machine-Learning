@@ -58,7 +58,29 @@ class TrainingValidation:
             target_batches.append(target_batch)
         
         return x_batches, target_batches
-    
+
+    def accuracy_curve(
+            self,
+            pred,
+            target
+    ): 
+        #pred = self.neural_network.forward(xx)
+        correct_classifications = 0
+        
+        for k in range(len(pred)):
+            #print(f'pred prima = {pred[k]}')
+            pred[k] = 1 if pred[k] >= 0.5 else 0
+            #print(f'pred dopo = {pred[k]}')
+            if (pred[k] == target[k]):
+                correct_classifications += 1
+
+        accuracy = correct_classifications/len(pred)
+        #print(f'corret class: {correct_classifications}')
+        #print(f'len pred: {len(pred)} ')
+        #print(f'accuracy: {accuracy}')
+
+        return accuracy 
+
     def train_epoch(
             self,
             x_train,
@@ -76,16 +98,19 @@ class TrainingValidation:
         '''
         batches, target_batches = self.batch_generator(x_train, target_train)
         train_error_epoch = 0
+        
+        prediction = np.array([])
 
         for batch, target_batch in zip(batches, target_batches):
             pred = self.neural_network.forward(batch)
+            prediction = np.append(prediction, pred)
             train_error_epoch += self.loss_func(target_batch, pred)
             d_loss = self.d_loss_func(target_batch, pred)
             self.neural_network.backward(d_loss)
 
         train_error_epoch /= x_train.shape[0]
 
-        return train_error_epoch
+        return train_error_epoch, prediction
     
     
     def train_val(
@@ -107,8 +132,9 @@ class TrainingValidation:
         val_error_epoch = self.loss_func(target_val, pred)/x_val.shape[0]
 
         return val_error_epoch
+   
 
-    
+
     def train_fold(
             self           
     ):
@@ -122,6 +148,8 @@ class TrainingValidation:
         '''
         train_error_tot = np.zeros(self.epochs)
         val_error_tot = np.zeros(self.epochs)
+        accuracy_tot = np.zeros(self.epochs)
+
         a=0
         for x_train, target_train, x_val, target_val in zip(
             self.data_splitter.x_trains,
@@ -133,25 +161,32 @@ class TrainingValidation:
             print(f'\n Begin iteration {a} \n')
             train_error = np.array([])
             val_error = np.array([])
+            accuracy_fold = np.array([])
 
             for i in range(self.epochs):
-                train_error_epoch = self.train_epoch(x_train, target_train)
+                train_error_epoch, prediction = self.train_epoch(x_train, target_train)
                 train_error = np.append(train_error, train_error_epoch)
+
+                accuracy_epoch = self.accuracy_curve(prediction, target_train)
+                accuracy_fold = np.append(accuracy_fold, accuracy_epoch)
 
                 val_error_epoch = self.train_val(x_val, target_val)
                 val_error = np.append(val_error, val_error_epoch)
                 if ((i+1)%10 == 0):
                     print(f'epoch {i+1}, train error {train_error_epoch}, val error {val_error_epoch}')
 
+    
 
             val_error_tot += val_error
             train_error_tot += train_error
+            accuracy_tot += accuracy_fold
             self.neural_network.reinitialize_net_and_optimizers()
 
         train_error_tot /= self.data_splitter.K
         val_error_tot /= self.data_splitter.K
+        accuracy_tot /= self.data_splitter.K
 
-        return train_error_tot, val_error_tot
+        return train_error_tot, val_error_tot, accuracy_tot
 
 
 '''
