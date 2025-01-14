@@ -18,15 +18,15 @@ data_splitter_monk1_selection = DataProcessing(training_set_1, target_training_s
 # Layers configuration
 np.random.seed(12)
 layers_config = [
-    (17, 4, activation_functions['sigmoid'], d_activation_functions['d_sigmoid']),
-    (4, 1, activation_functions['sigmoid'], d_activation_functions['d_sigmoid'])
+    (17, 6, activation_functions['sigmoid'], d_activation_functions['d_sigmoid']),
+    (6, 1, activation_functions['sigmoid'], d_activation_functions['d_sigmoid'])
 ]
 
 # Regularization configuration
 reg_config = {
-    'Lambda': 0.0001,
+    'Lambda': 0.01,
     'alpha' : 0.5,
-    'reg_type': 'none'
+    'reg_type': 'elastic'
 }
 
 # Optimization configuration

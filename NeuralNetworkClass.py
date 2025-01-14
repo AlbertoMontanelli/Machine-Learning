@@ -57,7 +57,7 @@ class NeuralNetwork:
         '''
         for layer in self.layers:
             input = layer.forward_layer(input)
-            print(f'pesi: \n {layer.weights}')
+            #print(f'pesi: \n {layer.weights}')
         return input
 
     def backward(self, loss_gradient):

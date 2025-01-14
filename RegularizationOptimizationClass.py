@@ -117,7 +117,7 @@ class Optimization:
         '''
         self.weights = weights
         self.biases = biases
-        optimization_type = {'NAG', 'adam'} # The only types of optimization accepted
+        optimization_type = {'NAG', 'adam', 'none'} # The only types of optimization accepted
 
         if self.opt_type == 'NAG':
             # Initialization of the parameters for Nesterov optimization
@@ -131,6 +131,9 @@ class Optimization:
             self.m_biases = np.zeros_like(self.biases)
             self.v_biases = np.zeros_like(self.biases)
         
+        elif self.opt_type == 'none':
+            pass
+
         else:
             raise ValueError(f"Invalid {self.opt_type}. Choose from {', '.join(optimization_type)}")
 
@@ -178,7 +181,7 @@ class Optimization:
             self.biases += self.velocity_biases # Updating the biases
 
 
-        else:
+        elif self.opt_type == 'adam':
             reg_term = self.regulizer.regularization(self.weights)
 
             # np.dot(input.T, self.delta) is dLoss/dw. 
@@ -196,6 +199,11 @@ class Optimization:
 
             self.weights -= self.learning_rate * m_weights_hat / (np.sqrt(v_weights_hat) + self.epsilon)
             self.biases -= self.learning_rate * m_biases_hat / (np.sqrt(v_biases_hat) + self.epsilon)
+
+        else:
+            reg_term = self.regulizer.regularization(self.weights)
+            self.weights += (self.learning_rate * np.dot(input.T, self.delta) - reg_term)
+            self.biases += np.sum(self.delta, axis=0, keepdims=True)
 
         sum_delta_weights = np.dot(self.delta, self.weights.T) # loss gradient for hidden layer
         return sum_delta_weights
