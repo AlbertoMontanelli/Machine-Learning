@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 from DataProcessingClass import DataProcessing
 from NeuralNetworkClass import NeuralNetwork
 from Functions import activation_functions, d_activation_functions, loss_functions, d_loss_functions
-from TrainingValidationClass import TrainingValidation
+#from TrainingValidationClass import TrainingValidation
 from ModelAssessment import ModelAssessment
 
 from MonkDataProcessing import monk_data
@@ -31,7 +31,7 @@ reg_config = {
 
 # Optimization configuration
 opt_config = {
-    'opt_type': 'none',
+    'opt_type': 'adam',
     'learning_rate': 0.01,
     'momentum': 0.9,
     'beta_1': 0.9,
