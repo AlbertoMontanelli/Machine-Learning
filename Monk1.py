@@ -5,8 +5,7 @@ import matplotlib.pyplot as plt
 from DataProcessingClass import DataProcessing
 from NeuralNetworkClass import NeuralNetwork
 from Functions import activation_functions, d_activation_functions, loss_functions, d_loss_functions
-#from TrainingValidationClass import TrainingValidation
-from ModelAssessment import ModelAssessment
+from ModelAssessmentClass import ModelAssessment
 
 from MonkDataProcessing import monk_data
 

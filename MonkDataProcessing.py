@@ -31,5 +31,3 @@ for i in range(1, 4):
 
 # Access example:
 # monk_data["training_set_1"], monk_data["target_training_set_1"]
-
-

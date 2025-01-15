@@ -1,6 +1,6 @@
 import numpy as np
 
-class TrainingValidation:
+class ModelSelection:
 
     def __init__(
             self,
