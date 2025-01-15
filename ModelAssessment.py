@@ -1,5 +1,6 @@
 import numpy as np
-import matplotlib.pyplot as plt
+
+from Functions import activation_functions
 
 class ModelAssessment:
 
@@ -84,14 +85,13 @@ class ModelAssessment:
         prediction = np.array([])
 
         for batch, target_batch in zip(batches, target_batches):
-            #print(f'batch: \n {batch}')
+
             pred = self.neural_network.forward(batch)
             prediction = np.append(prediction, pred)
-            #print(f'pred: \n {pred}')
             train_error_epoch += self.loss_func(target_batch, pred)
             d_loss = self.d_loss_func(target_batch, pred)
             self.neural_network.backward(d_loss)
-            #print(f'd_loss: \n {d_loss}')
+
 
         train_error_epoch /= xx.shape[0]
 
@@ -120,36 +120,24 @@ class ModelAssessment:
             pred,
             target
     ): 
-        #pred = self.neural_network.forward(xx)
+
         correct_classifications = 0
         
         for k in range(len(pred)):
-            # print(f'pred prima = {pred[k]}')
-            pred[k] = 1 if pred[k] >= 0.5 else 0
-            # print(f'pred dopo = {pred[k]}')
+            if (self.neural_network.layers[-1].activation_function == activation_functions['sigmoid']):
+                pred[k] = 1 if pred[k] >= 0.5 else 0
+            elif (self.neural_network.layers[-1].activation_function == activation_functions['tanh']):
+                pred[k] = 1 if pred[k] > 0 else 0
+            else:
+                raise ValueError("Invalid activation_function for the output layer for classification task. Choose between sigmoid or tanh")
+
             if (pred[k] == target[k]):
                 correct_classifications += 1
 
         accuracy = correct_classifications/len(pred)
-        #print(f'corret class: {correct_classifications}')
-        #print(f'len pred: {len(pred)} ')
-        #print(f'accuracy: {accuracy}')
+
 
         return accuracy
-
-    def plot_accuracy(
-            self,
-            accuracy_retrain,
-            accuracy_test
-    ):
-        plt.plot(accuracy_retrain, label = 'Training Accuracy')
-        plt.plot(accuracy_test, label = 'Test Accuracy')
-        plt.xlabel('Epochs')
-        plt.ylabel('Accuracy')
-        plt.grid()
-        plt.legend()
-        plt.savefig('figura1.png')
-        plt.show()
 
 
     def retrain_test(
@@ -185,10 +173,7 @@ class ModelAssessment:
 
 
         if accuracy_check:
-            self.plot_accuracy(accuracy_retrain_tot, accuracy_test_tot)
-            print(f"Final training accuracy value: {accuracy_retrain_tot[-1]}")
-            print(f"Final test accuracy value: {accuracy_test_tot[-1]}")
-            print(f'lunghezza accuracy train {len(accuracy_retrain_tot)}')
-            print(f'lunghezza accuracy test {len(accuracy_test_tot)}')
+            return retrain_error_tot, test_error_tot, accuracy_retrain_tot, accuracy_test_tot
 
-        return retrain_error_tot, test_error_tot
+        else:
+            return retrain_error_tot, test_error_tot
