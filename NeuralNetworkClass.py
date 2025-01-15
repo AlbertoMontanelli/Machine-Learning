@@ -36,9 +36,7 @@ class NeuralNetwork:
         optimizers = []
         for config in layers_config:
            layer = Layer(*config)
-           #print(f'layer w: {layer.weights}')
            optimizer = Optimization(layer.weights, layer.biases, regulizer = self.regularizer, **opt_config)
-           #print(f'opt w: {optimizer.weights}')
            layers.append(layer)
            optimizers.append(optimizer)
         return layers, optimizers
@@ -57,7 +55,6 @@ class NeuralNetwork:
         '''
         for layer in self.layers:
             input = layer.forward_layer(input)
-            #print(f'pesi: \n {layer.weights}')
         return input
 
     def backward(self, loss_gradient):

@@ -70,7 +70,7 @@ class Optimization:
             biases,
             regulizer,
             opt_type,
-            learning_rate = 1e-4,
+            learning_rate = 1e-2,
             momentum = 0.8, 
             beta_1 = 0.9, 
             beta_2 = 0.999, 
@@ -155,8 +155,7 @@ class Optimization:
         Returns:
             sum_delta_weights (array): loss_gradient for hidden layer   
         '''
-        self.delta = - loss_gradient * d_activation_function(np.dot(input, self.weights) + self.biases)
-        #print(f'delta {self.delta}')
+        self.delta = loss_gradient * d_activation_function(np.dot(input, self.weights) + self.biases)
 
         if self.opt_type == 'NAG':
             weights_pred = self.weights + self.momentum * self.velocity_weights  # Predicted weights used to compute the
@@ -203,12 +202,11 @@ class Optimization:
 
         else:
             reg_term = self.regulizer.regularization(self.weights)
-            self.weights += (self.learning_rate * np.dot(input.T, self.delta) - reg_term)
-            self.biases += np.sum(self.delta, axis=0, keepdims=True)/len(input)
+            self.weights -= (self.learning_rate * np.dot(input.T, self.delta) + reg_term)
+            self.biases -= np.sum(self.delta, axis=0, keepdims=True)/len(input)
 
         sum_delta_weights = np.dot(self.delta, self.weights.T) # loss gradient for hidden layer
         return sum_delta_weights
-
 
 # POSSIBILI MIGLIORAMENTI PER LA CLASSE
 

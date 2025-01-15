@@ -1,9 +1,4 @@
 import numpy as np
-from MonkDataProcessing import monk_data
-from RegularizationOptimizationClass import Regularization, Optimization
-from Functions import *
-
-
 
 class Layer:
 
@@ -31,10 +26,15 @@ class Layer:
         self.d_activation_function = d_activation_function
         self.initialize_weights_biases()
 
+
     def xavier_normal(self, shape, n_in, n_out):
+        '''
+        scrivere doc
+        '''
         stddev = np.sqrt(2 / (n_in + n_out))
         return np.random.normal(0, stddev, shape)
     
+
     def initialize_weights_biases(self):
         '''
         Function that initializes the Weights and the Biases of the network
@@ -75,43 +75,48 @@ class Layer:
             sum_delta_weights (array): loss_gradient for hidden layer
         '''
         #print("Pesi Layer prima:", self.weights)
-
         sum_delta_weights = optimizer.optimization(self.input, loss_gradient, self.d_activation_function)
         #print("Pesi layer dopo:", self.weights)
         return sum_delta_weights
     
-'''unit test monk'''
+
+'''unit test monk
+from Functions import *
+from MonkDataProcessing import monk_data
+from RegularizationOptimizationClass import Regularization, Optimization
+
 np.random.seed(1)
 
-data = monk_data['training_set_1'][5:15]
+data = monk_data['training_set_1']
 #print(f'dati {data}')
-target = monk_data['target_training_set_1'][5:15]
+target = monk_data['target_training_set_1']
 print(f'target {target}')
 
-layer_hid = Layer(17, 8, activation_functions['leaky_ReLU'], d_activation_functions['d_leaky_ReLU'])
-layer_out = Layer(8, 1, activation_functions['sigmoid'], d_activation_functions['d_sigmoid'])
+layer_hid = Layer(17, 4, activation_functions['leaky_ReLU'], d_activation_functions['d_leaky_ReLU'])
+layer_out = Layer(4, 1, activation_functions['sigmoid'], d_activation_functions['d_sigmoid'])
 
 print(f'weights init hidden {layer_hid.weights}')
-#print(f'weights init out {layer_out.weights}')
 
 regulizer = Regularization(reg_type = 'none')
 
-optimizer_hid = Optimization(layer_hid.weights*1e-2, layer_hid.biases, regulizer, opt_type = 'none')
-optimizer_out = Optimization(layer_out.weights*1e-2, layer_out.biases, regulizer, opt_type = 'none')
+optimizer_hid = Optimization(layer_hid.weights, layer_hid.biases, regulizer, opt_type = 'none')
+optimizer_out = Optimization(layer_out.weights, layer_out.biases, regulizer, opt_type = 'none')
+
+accuracy = np.zeros(1000)
 
 for i in range(100):
+    correct_classifications = 0
     out_hid = layer_hid.forward_layer(data)
     out_out = layer_out.forward_layer(out_hid)
 
     d_loss_out = d_loss_functions['d_bce'](target, out_out)
     d_loss_hid = layer_out.backward_layer(d_loss_out, optimizer_out)
     ddd = layer_hid.backward_layer(d_loss_hid, optimizer_hid)
-    print(f'predictions_{i} {out_out}')
-    #print(f'd_loss_out{i} {d_loss_out}')
-    #print(f'weights final out_{i} {layer_out.weights}')
-    #print(f'bias final out_{i} {layer_out.biases}')
 
-#print(f'out hidden {out_hid}')
-
-
-#print(f'weights final out {layer_out.weights}')
+    for k in range(len(out_out)):
+        out_out[k] = 1 if out_out[k] >= 0.5 else 0
+        if (out_out[k] == target[k]):
+            correct_classifications += 1
+    accuracy[i] = correct_classifications/len(out_out)
+    print(f'accuracy_{i}: {accuracy[i]}')
+'''

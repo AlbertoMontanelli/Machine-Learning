@@ -124,9 +124,9 @@ class ModelAssessment:
         correct_classifications = 0
         
         for k in range(len(pred)):
-            print(f'pred prima = {pred[k]}')
+            # print(f'pred prima = {pred[k]}')
             pred[k] = 1 if pred[k] >= 0.5 else 0
-            #print(f'pred dopo = {pred[k]}')
+            # print(f'pred dopo = {pred[k]}')
             if (pred[k] == target[k]):
                 correct_classifications += 1
 

@@ -16,7 +16,7 @@ data_splitter_monk1_selection = DataProcessing(monk_data["training_set_1"], monk
 # Training of the neural network using monk1_data
 
 # Layers configuration
-np.random.seed(12)
+np.random.seed(1)
 layers_config = [
     (17, 6, activation_functions['sigmoid'], d_activation_functions['d_sigmoid']),
     (6, 1, activation_functions['sigmoid'], d_activation_functions['d_sigmoid'])
