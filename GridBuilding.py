@@ -31,7 +31,7 @@ reg_type = 'elastic'
 '''
 
 N_layer = [1, 2, 3]
-N_units = [16, 32, 64]
+N_units = [16, 32, 64, 128, 256]
 
 nn_architecture = []
 
@@ -41,10 +41,11 @@ for i in N_layer:
         nn_architecture.append({'N_layer' : i, 'N_units' : combo})
 
 param_grid = {
+    'opt_type' : ['none', 'NAG', 'adam'], 
     'activation_function' : list(activation_functions_grid.keys()),
     'batch_size' : [1, 16, 32, 64], #includere anche il totale dei dati
     'learning_rate' : np.logspace(-5, -2, num = 4),  
-    'lambda': np.logspace(-4, 2, num = 7),
+    'lambda': np.logspace(-4, -1, num = 4),
     'alpha': [0, 0.25, 0.5, 0.75, 1]
     }
 
@@ -56,8 +57,6 @@ valid_combinations = [
     dict(zip(param_grid.keys(), values))
     for values in all_combinations
 ]
-
-
 
 combinations_grid = [
     {**nn_architecture_list, **valid_combinations_list}

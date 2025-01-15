@@ -214,17 +214,14 @@ d_activation_functions = {
 # Dictionary for the activation functions used for grid search
 activation_functions_grid = {
     "tanh": tanh,
-    "ReLU": ReLU,
     "leaky_ReLU": leaky_relu
 }
 
 # Dictionary for the derivative of activation functions used for grid search
 d_activation_functions_grid = {
     "d_tanh": d_tanh,
-    "d_ReLU": d_ReLU,
     "d_leaky_ReLU": d_leaky_relu
 }
-
 
 # Definition of Loss functions and their derivative
 def mean_squared_error(y_true, y_pred):
