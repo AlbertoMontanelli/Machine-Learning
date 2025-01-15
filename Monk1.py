@@ -24,7 +24,7 @@ layers_config = [
 
 # Regularization configuration
 reg_config = {
-    'Lambda': 0.01,
+    'Lambda': 1e-4,
     'alpha' : 0.5,
     'reg_type': 'none'
 }
@@ -32,7 +32,7 @@ reg_config = {
 # Optimization configuration
 opt_config = {
     'opt_type': 'adam',
-    'learning_rate': 0.01,
+    'learning_rate': 0.001,
     'momentum': 0.9,
     'beta_1': 0.9,
     'beta_2': 0.999,

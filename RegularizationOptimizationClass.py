@@ -174,7 +174,7 @@ class Optimization:
             # Difference between the current weights and the previous weights. 
             # The minus sign before reg_term is due to the application of gradient descent algorithm
             self.velocity_weights = self.momentum * self.velocity_weights - grad_weights - reg_term 
-            self.velocity_biases = self.momentum * self.velocity_biases - self.learning_rate * np.sum(delta_pred, axis=0, keepdims=True)
+            self.velocity_biases = self.momentum * self.velocity_biases - self.learning_rate * (np.sum(delta_pred, axis=0, keepdims=True)/len(input))
             
             self.weights += self.velocity_weights  # Updating the weights
             self.biases += self.velocity_biases # Updating the biases
@@ -187,12 +187,12 @@ class Optimization:
             # Since self.delta is defined with a minus sign and the formula is with a plus sign, we put a minus sign in front of np.dot()
             self.m_weights = self.beta_1 * self.m_weights + (1 - self.beta_1) * (np.dot(input.T, self.delta) - reg_term)
             # here we have a plus sign in front of (1 - self.beta_2) since self.delta is squared
-            self.v_weights = self.beta_2* self.v_weights + (1 - self.beta_2) * ((np.dot(input.T, self.delta) - reg_term)**2) 
+            self.v_weights = self.beta_2 * self.v_weights + (1 - self.beta_2) * ((np.dot(input.T, self.delta) - reg_term)**2) 
             m_weights_hat = self.m_weights / (1 - self.beta_1**self.t)
             v_weights_hat = self.v_weights / (1 - self.beta_2**self.t)
-
-            self.m_biases = self.beta_1 * self.m_biases + (1 - self.beta_1) * np.sum(self.delta, axis=0, keepdims=True)
-            self.v_biases = self.beta_2* self.v_biases + (1 - self.beta_2) * np.sum(self.delta**2, axis=0, keepdims=True)
+            
+            self.m_biases = self.beta_1 * self.m_biases + (1 - self.beta_1) * np.sum(self.delta, axis=0, keepdims=True)/len(input)
+            self.v_biases = self.beta_2* self.v_biases + (1 - self.beta_2) * np.sum(self.delta**2, axis=0, keepdims=True)/(len(input)**2)
             m_biases_hat = self.m_biases / (1 - self.beta_1**self.t)
             v_biases_hat = self.v_biases / (1 - self.beta_2**self.t)
 
