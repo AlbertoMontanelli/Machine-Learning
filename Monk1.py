@@ -3,7 +3,8 @@ import matplotlib.pyplot as plt
 
 from NeuralNetworkClass import NeuralNetwork
 from Functions import activation_functions, d_activation_functions, loss_functions, d_loss_functions
-from ModelAssessment import ModelAssessment
+from ModelAssessmentClass import ModelAssessment
+
 from MonkDataProcessing import monk_data
 
 # Training of the neural network using monk1_data
@@ -12,8 +13,8 @@ from MonkDataProcessing import monk_data
 np.random.seed(12)
 
 layers_config = [
-    (17, 10, activation_functions['sigmoid'], d_activation_functions['d_sigmoid']),
-    (10, 1, activation_functions['sigmoid'], d_activation_functions['d_sigmoid'])
+    (17, 4, activation_functions['sigmoid'], d_activation_functions['d_sigmoid']),
+    (4, 1, activation_functions['sigmoid'], d_activation_functions['d_sigmoid'])
 ]
 
 # Regularization configuration
@@ -25,7 +26,7 @@ reg_config = {
 
 # Optimization configuration
 opt_config = {
-    'opt_type': 'NAG',
+    'opt_type': 'none',
     'learning_rate': 0.01,
     'momentum': 0.9,
     'beta_1': 0.9,

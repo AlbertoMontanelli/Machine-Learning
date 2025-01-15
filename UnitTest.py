@@ -3,7 +3,7 @@ import numpy as np
 #from DataProcessingClass import DataProcessing
 from NeuralNetworkClass import NeuralNetwork
 from Functions import activation_functions, d_activation_functions, loss_functions, d_loss_functions
-from TrainingValidationClass import TrainingValidation
+from ModelSelectionClass import ModelSelection
 from DataProcessingClass import DataProcessing
 
 '''Unit test for NN'''
@@ -45,7 +45,7 @@ target_tot = np.random.rand(255, 3)
 K = 6
 data_split = DataProcessing(x_tot, target_tot, 0.2, K)
 
-train_val = TrainingValidation(data_split, epochs, batch_size, loss_functions['mse'], d_loss_functions['d_mse'], nn)
+train_val = ModelSelection(data_split, epochs, batch_size, loss_functions['mse'], d_loss_functions['d_mse'], nn)
 train_error_tot, val_error_tot = train_val.train_fold()
 
 # Plot degli errori

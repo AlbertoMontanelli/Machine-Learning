@@ -187,7 +187,7 @@ class Optimization:
             # Since self.delta is defined with a minus sign and the formula is with a plus sign, we put a minus sign in front of np.dot()
             self.m_weights = self.beta_1 * self.m_weights + (1 - self.beta_1) * (np.dot(input.T, self.delta) - reg_term)
             # here we have a plus sign in front of (1 - self.beta_2) since self.delta is squared
-            self.v_weights = self.beta_2* self.v_weights + (1 - self.beta_2) * ((np.dot(input.T, self.delta) - reg_term)**2) 
+            self.v_weights = self.beta_2 * self.v_weights + (1 - self.beta_2) * ((np.dot(input.T, self.delta) - reg_term)**2) 
             m_weights_hat = self.m_weights / (1 - self.beta_1**self.t)
             v_weights_hat = self.v_weights / (1 - self.beta_2**self.t)
 
