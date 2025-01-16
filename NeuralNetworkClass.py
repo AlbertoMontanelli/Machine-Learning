@@ -10,27 +10,29 @@ class NeuralNetwork:
         Class for the neural network  
 
         Args:
-            layers_config (list): layers configuration as list:(dim_prev_layer, dim_layer, 
-            activation_function, d_activation_function).
-            reg_config (dict): regularization configuration.
-            opt_config (dict): optimization configuration.
+            layers_config (list): layers configuration as a list of N layers, each defined by the following parameters:
+                                  dim_prev_layer, dim_layer, activation_function, d_activation_function.
+            reg_config (dict): a dictionary for regularization configuration defined by the following keys: Lambda, alpha, reg_type.
+            opt_config (dict): a dictionary for optimization configuration defined by the following keys:
+                               opt_type, learning_rate, momentum, beta_1, beta_2, epsilon.
         '''
         self.regularizer = Regularization(**reg_config)
         self.layers, self.optimizers = self.initialize_layers(layers_config, opt_config)
+
 
     def initialize_layers(self, layers_config, opt_config):
         '''
         Function that iniliatizes all the layers in the neural network.
 
         Args:
-            layers_config (list): layers configuration as list: 
-                                  (dim_prev_layer, dim_layer, activation_function, d_activation_function). 
-            opt_config (list): optimizations configuration as list: 
-                               (opt_type, learning_rate, momentum, beta_1, beta_2, epsilon). 
+            layers_config (list): layers configuration as a list of N layers, each defined by the following parameters:
+                                  dim_prev_layer, dim_layer, activation_function, d_activation_function.
+            opt_config (dict): a dictionary for optimization configuration defined by the following keys:
+                               opt_type, learning_rate, momentum, beta_1, beta_2, epsilon.
 
         Returns:
             layers (list): list of the layers of the neural network.
-            optimizers (list): list of instances of optimization class.
+            optimizers (list): list of optimization class instances, one for each layer of the neural network.
         '''
         layers = []
         optimizers = []
@@ -51,11 +53,12 @@ class NeuralNetwork:
                            In case of a hidden layer, it is the output of the previous layer.
 
         Returns:
-            input (array): the output of the current layer.
+            input (new array): the output of the current layer.
         '''
         for layer in self.layers:
             input = layer.forward_layer(input)
         return input
+
 
     def backward(self, loss_gradient):
         '''
