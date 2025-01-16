@@ -4,7 +4,7 @@ class Regularization:
 
     def __init__(
             self,  
-            Lambda = 5e-3,
+            Lambda = 1e-4,
             alpha = 0.5,
             reg_type = 'elastic'
             ):
@@ -49,7 +49,6 @@ class Regularization:
                 print("Using Tikhonov regularization")
             if (self.alpha == 1):
                 print("Using Lasso regularization")
-
         elif self.reg_type == 'none':
             self.Lambda = 0 # No regularization
         else:
@@ -85,24 +84,24 @@ class Optimization:
             biases (array): biases array.
             regulizer (Regularization): instance of the Regularization class.
             opt_type (str): the type of Optimization being applied.
-            learning_rate (float): growth factor for the Weights parameter of the network.
+            learning_rate (float): growth factor for the weights and biases parameters of the network.
             momentum (float): factor for optimization through Nesterov Accelerated Gradient (NAG).
             beta_1 (float): control factor linked to first order momentum for computation of the velocity in Adam Optimization.
             beta_2 (float): control factor linked to second order momentum for computation of the variance in Adam Optimization.
-            epsilon (float): stabilization term used in the update of the Weights and the Biases at every step of the Adam Optimization.
+            epsilon (float): stabilization term used in the update of the weights and the biases at every step of the Adam Optimization.
             t (int): counter of iterations used in Adam Optimization that goes up to number_epochs * number_batches.
         '''
+        self.initialization(weights, biases)
         self.regulizer = regulizer
+        self.opt_type = opt_type
         self.learning_rate = learning_rate
         self.momentum = momentum
         self.beta_1 = beta_1
         self.beta_2 = beta_2
         self.epsilon = epsilon
         self.t = t
-        self.opt_type = opt_type
-        self.initialization(weights, biases)
-
-
+        
+        
     def initialization(
             self,
             weights,
@@ -155,56 +154,57 @@ class Optimization:
         Returns:
             sum_delta_weights (array): loss_gradient for hidden layer   
         '''
-        self.delta = loss_gradient * d_activation_function(np.dot(input, self.weights) + self.biases)
+        delta = loss_gradient * d_activation_function(np.dot(input, self.weights) + self.biases) # used for adam and none optimization
 
         if self.opt_type == 'NAG':
+            # Updating weights and biases using NAG optimization
             weights_pred = self.weights + self.momentum * self.velocity_weights  # Predicted weights used to compute the
                                                                                  # gradient after the momentum is applied
             bias_pred = self.biases + self.momentum * self.velocity_biases # Same thing for the biases
             net_pred = np.dot(input, weights_pred) + bias_pred  # Net computed with respect to the predicted weights and 
                                                                 # the predicted biases
-            delta_pred = loss_gradient * d_activation_function(net_pred)  # Loss gradient with respect to net, 
-                                                                          # minus sign due to the definition
+            delta_pred = loss_gradient * d_activation_function(net_pred)  # Loss gradient with respect to predicted net, 
             grad_weights = self.learning_rate * np.dot(input.T, delta_pred)  # Loss gradient multiplied by the learning rate.
-                                                                               # The gradient has been computed with respect
-                                                                               # to the predicted weights and biases
-            
+                                                                             # The gradient has been computed with respect
+                                                                             # to the predicted weights and biases
             reg_term = self.regulizer.regularization(weights_pred)
 
             # Difference between the current weights and the previous weights. 
-            # The minus sign before reg_term is due to the application of gradient descent algorithm
+            # The minus sign before reg_term and grad_weights is due to the application of gradient descent algorithm
             self.velocity_weights = self.momentum * self.velocity_weights - grad_weights - reg_term 
             self.velocity_biases = self.momentum * self.velocity_biases - self.learning_rate * (np.sum(delta_pred, axis=0, keepdims=True)/len(input))
             
             self.weights += self.velocity_weights  # Updating the weights
             self.biases += self.velocity_biases # Updating the biases
 
-
         elif self.opt_type == 'adam':
+            # Updating weights and biases using adam optimization
             reg_term = self.regulizer.regularization(self.weights)
 
             # np.dot(input.T, self.delta) is dLoss/dw. 
-            # Since self.delta is defined with a minus sign and the formula is with a plus sign, we put a minus sign in front of np.dot()
-            self.m_weights = self.beta_1 * self.m_weights + (1 - self.beta_1) * (np.dot(input.T, self.delta) - reg_term)
-            # here we have a plus sign in front of (1 - self.beta_2) since self.delta is squared
-            self.v_weights = self.beta_2 * self.v_weights + (1 - self.beta_2) * ((np.dot(input.T, self.delta) - reg_term)**2) 
+            self.m_weights = self.beta_1 * self.m_weights + (1 - self.beta_1) * (np.dot(input.T, delta) - reg_term)
+            self.v_weights = self.beta_2 * self.v_weights + (1 - self.beta_2) * ((np.dot(input.T, delta) - reg_term)**2) 
+
             m_weights_hat = self.m_weights / (1 - self.beta_1**self.t)
             v_weights_hat = self.v_weights / (1 - self.beta_2**self.t)
 
-            self.m_biases = self.beta_1 * self.m_biases + (1 - self.beta_1) * np.sum(self.delta, axis=0, keepdims=True)/(len(input))
-            self.v_biases = self.beta_2* self.v_biases + (1 - self.beta_2) * np.sum(self.delta**2, axis=0, keepdims=True)/(len(input))
+            self.m_biases = self.beta_1 * self.m_biases + (1 - self.beta_1) * np.sum(delta, axis=0, keepdims=True)/(len(input))
+            self.v_biases = self.beta_2* self.v_biases + (1 - self.beta_2) * np.sum(delta**2, axis=0, keepdims=True)/(len(input))
+
             m_biases_hat = self.m_biases / (1 - self.beta_1**self.t)
             v_biases_hat = self.v_biases / (1 - self.beta_2**self.t)
 
+            # Update of weights and biases
             self.weights -= self.learning_rate * m_weights_hat / (np.sqrt(v_weights_hat) + self.epsilon)
             self.biases -= self.learning_rate * m_biases_hat / (np.sqrt(v_biases_hat) + self.epsilon)
 
         else:
+            # Updating weights and biases without using optimization 
             reg_term = self.regulizer.regularization(self.weights)
-            self.weights -= (self.learning_rate * np.dot(input.T, self.delta) + reg_term)
-            self.biases -= np.sum(self.delta, axis=0, keepdims=True)/len(input)
+            self.weights -= (self.learning_rate * np.dot(input.T, delta) + reg_term)
+            self.biases -= np.sum(delta, axis=0, keepdims=True)/len(input)
 
-        sum_delta_weights = np.dot(self.delta, self.weights.T) # loss gradient for hidden layer
+        sum_delta_weights = np.dot(delta, self.weights.T) # loss gradient for hidden layer
         return sum_delta_weights
 
 # POSSIBILI MIGLIORAMENTI PER LA CLASSE
