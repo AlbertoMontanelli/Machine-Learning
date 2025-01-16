@@ -1,5 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
+from matplotlib.ticker import LogLocator, ScalarFormatter
 
 from NeuralNetworkClass import NeuralNetwork
 from Functions import activation_functions, d_activation_functions, loss_functions, d_loss_functions
@@ -57,7 +58,7 @@ train_test = ModelAssessment(
     d_loss_functions['d_bce'], 
     nn_assessment)
 
-train_error, test_error, accuracy_train, accuracy_test = train_test.retrain_test(accuracy_check = True)
+train_error, test_error, accuracy_train, accuracy_test = train_test.retrain_test(classification_problem = True)
 
 # Creazione della figura con due subplot
 fig, ax = plt.subplots(1, 2, figsize = (15, 10))
@@ -68,6 +69,8 @@ line_test, = ax[0].plot(test_error, label = 'Test Error', linewidth = 2)
 ax[0].set_xlabel('Epochs', fontsize = 16, fontweight = 'bold')
 ax[0].set_ylabel('Error', fontsize = 16, fontweight = 'bold')
 ax[0].set_yscale('log')
+ax[0].yaxis.set_major_locator(LogLocator(base=10.0, subs=np.arange(1.0, 10.0) * 0.1, numticks=10))  # Ticks tra i principali
+ax[0].yaxis.set_major_formatter(ScalarFormatter())  # Mostra i valori in formato decimale
 ax[0].grid()
 
 # Secondo grafico (Accuracy)
@@ -98,13 +101,13 @@ ax[1].legend(handles = [line_train_acc, line_test_acc], labels = ['Training Accu
 
 
 # Titolo del blocco
-ax[1].text(0.71, 0.265, "Network characteristics", transform=ax[1].transAxes, fontsize=16, 
-        fontweight='bold', horizontalalignment='center', verticalalignment='top')
+ax[1].text(0.77, 0.255, "Network characteristics", transform = ax[1].transAxes, fontsize = 16, 
+        fontweight = 'bold', horizontalalignment = 'center', verticalalignment = 'top')
 
 # Aggiungere un rettangolo bianco dietro il testo per simulare la "legenda"
-props = dict(boxstyle='round', facecolor='white', edgecolor='black')
-ax[1].text(0.71, 0.23, legend_info, transform=ax[1].transAxes, fontsize=16, 
-        verticalalignment='top', horizontalalignment='center', bbox=props)
+props = dict(boxstyle = 'round', facecolor = 'white', edgecolor = 'black')
+ax[1].text(0.77, 0.22, legend_info, transform = ax[1].transAxes, fontsize = 16, 
+        verticalalignment = 'top', horizontalalignment = 'center', bbox = props)
 
 # Titoli
 ax[0].set_title('Error vs Epochs', fontsize = 18, fontweight = 'bold')
@@ -113,8 +116,18 @@ ax[1].set_title('Accuracy vs Epochs', fontsize = 18, fontweight = 'bold')
 # Aggiungere padding tra i subplot
 plt.tight_layout()
 
-# Salvare il grafico in PDF con alta risoluzione
-plt.savefig('grafici/monk2.pdf', bbox_inches='tight', pad_inches=0, dpi=1200)
+for a in ax:
+    a.tick_params(axis = 'x', labelsize = 16)  # Dimensione xticks
+    a.tick_params(axis = 'y', labelsize = 16)  # Dimensione yticks
 
-# Mostrare il grafico
+# Mettere il grafico a schermo intero
+manager = plt.get_current_fig_manager()
+manager.full_screen_toggle() 
+
+plt.pause(2)  # Pausa di 2 secondi
+
+# Salvare il grafico in PDF con alta risoluzione
+plt.savefig('grafici/monk2.pdf', bbox_inches = 'tight', dpi = 1200)
+
 plt.show()
+

@@ -88,7 +88,7 @@ class DataProcessing:
         num_samples = self.x_train_val.shape[0]
         indices = np.arange(num_samples)
 
-        if self.K==1: # hold-out validation
+        if self.K == 1: # hold-out validation
             train_size = int(self.train_perc * num_samples)
             train_indices = indices[:train_size]
             val_indices = indices[train_size:]

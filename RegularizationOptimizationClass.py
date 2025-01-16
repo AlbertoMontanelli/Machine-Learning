@@ -91,7 +91,7 @@ class Optimization:
             epsilon (float): stabilization term used in the update of the weights and the biases at every step of the Adam Optimization.
             t (int): counter of iterations used in Adam Optimization that goes up to number_epochs * number_batches.
         '''
-        self.initialization(weights, biases)
+        
         self.regulizer = regulizer
         self.opt_type = opt_type
         self.learning_rate = learning_rate
@@ -100,6 +100,7 @@ class Optimization:
         self.beta_2 = beta_2
         self.epsilon = epsilon
         self.t = t
+        self.initialization(weights, biases)
         
         
     def initialization(

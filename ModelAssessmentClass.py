@@ -1,17 +1,16 @@
 import numpy as np
 
 from Functions import activation_functions
-from DataProcessingClass import DataProcessing
 
 class ModelAssessment:
 
     def __init__(
             self,
-            #x_retrain,
-            #target_retrain,
-            #x_test,
-            #target_test,
-            test_splitter,
+            x_retrain,
+            target_retrain,
+            x_test,
+            target_test,
+            #test_splitter,
             epochs,
             batch_size,
             loss_func,
@@ -37,11 +36,11 @@ class ModelAssessment:
             d_loss_func (func): derivative of the loss function.
             neural_network (NeuralNetwork): instance of the class NeuralNetwork.
         '''
-        #self.x_retrain = x_retrain
-        #self.target_retrain = target_retrain
-        #self.x_test = x_test
-        #self.target_test = target_test
-        self.test_splitter = test_splitter
+        self.x_retrain = x_retrain
+        self.target_retrain = target_retrain
+        self.x_test = x_test
+        self.target_test = target_test
+        #self.test_splitter = test_splitter
         self.epochs = epochs
         self.batch_size = batch_size
         self.loss_func = loss_func
@@ -67,7 +66,7 @@ class ModelAssessment:
             target_batches (list): list of arrays of labels corresponding to the data in x_batches.
         '''
         num_samples = xx.shape[0]
-        if self.batch_size > len(num_samples):
+        if self.batch_size > num_samples:
             raise ValueError(f'Invalid batch size {self.batch_size}. Must be smaller than number of examples {num_samples}')
         x_batches = []
         target_batches = []
@@ -96,7 +95,7 @@ class ModelAssessment:
             train_error_epoch (float): average training error of one epoch. 
             prediction_retrain (array): array of the outputs of the neural network for the training data.
         '''
-        #batches, target_batches = self.batch_generator(xx, target)
+       
         train_error_epoch = 0
         prediction_retrain = np.array([])
         batches, target_batches = self.batch_generator(xx, target)
