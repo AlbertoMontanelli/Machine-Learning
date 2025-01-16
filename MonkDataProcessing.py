@@ -1,9 +1,11 @@
 import pandas as pd
 
-# Importing data for all monk datasets
+# Setting the column names for each monk datasets.
 columns = ["target", "feat1", "feat2", "feat3", "feat4", "feat5", "feat6", "Id"]
+# Creation of an empty dictionary to store the processed data related to the 3 monk datasets.
 monk_data = {}
 
+# Importing data for all monk datasets.
 for i in range(1, 4):
     file_path_train = f"monk+s+problems/monks-{i}.train"
     file_path_test = f"monk+s+problems/monks-{i}.test"
@@ -11,7 +13,7 @@ for i in range(1, 4):
     df_train = pd.read_csv(file_path_train, sep=" ", header=None, names=columns, skipinitialspace=True)
     df_test = pd.read_csv(file_path_test, sep=" ", header=None, names=columns, skipinitialspace=True)
 
-    # Separation between targets and data. Last column is dropped because useless.
+    # Separation of targets and data for both training and testing. Last column is dropped because useless.
     training_set = df_train.drop(columns=["target", "Id"])
     target_training_set = df_train["target"]
     
@@ -21,7 +23,6 @@ for i in range(1, 4):
     # One-hot encoding of training and test set.
     training_set = pd.get_dummies(training_set, columns = training_set.columns, drop_first = False, dtype = int)
     test_set = pd.get_dummies(test_set, columns = test_set.columns, drop_first = False, dtype = int)
-
 
     # Conversion to numpy arrays.
     monk_data[f"training_set_{i}"] = training_set.to_numpy()
