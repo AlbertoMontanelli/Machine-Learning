@@ -35,3 +35,11 @@ data_blind = df_blind.drop(columns = ['Id'])
 
 # Conversion to numpy arrays
 data_blind = data_blind.to_numpy()
+
+
+'''
+# printing
+print(f'data \n {data}')
+print(f'target \n {target}')
+print(f'blind data \n {data_blind}')
+'''

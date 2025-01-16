@@ -11,8 +11,8 @@ np.random.seed(12)
 
 # Layer configuration: [(input_dim, output_dim, activation_function, d_activation_function), ...]
 layers_config = [
-    (12, 32, activation_functions['ELU'], d_activation_functions['d_ELU']),
-    (32, 16, activation_functions['ELU'], d_activation_functions['d_ELU']),
+    (12, 32, activation_functions['leaky_ReLU'], d_activation_functions['leaky_ReLU']),
+    (32, 16, activation_functions['leaky_ReLU'], d_activation_functions['d_leaky_ReLU']),
     (16, 3, activation_functions['linear'], d_activation_functions['d_linear'])
 ]
 

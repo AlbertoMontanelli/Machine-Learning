@@ -10,7 +10,8 @@ class DataProcessing:
             x_tot (array): total data given as input.
             target_tot (array): total data labels given as input.
             test_perc (float): percentile of test set with respect to the total data.
-            K (int): number of splits of the training & validation set. In case of K-Fold Cross Validation K=1.
+            K (int): number of splits of the training + validation set. In case of Hold-Out Validation K = 1. 
+                     K > 1 is the number of folds used in K-Fold Cross Validation.
             train_perc (float): percentile of training set with respect to the training & validation set. 
         '''
 
@@ -19,6 +20,9 @@ class DataProcessing:
         self.test_perc = test_perc
         self.K = K
         self.train_perc = train_perc
+
+        if (K < 1):
+            raise ValueError(f"Invalid value for the number of splits of the training + validation set K = {K}. Choose an integer >= 1.")
 
         num_samples = self.x_tot.shape[0]
         indices = np.arange(num_samples)
@@ -44,6 +48,7 @@ class DataProcessing:
             x_test (array): test set extracted from input data.
             target_test (array): test set for input data labels.
         '''
+
         if not (0 <= self.test_perc <= 1):
             raise ValueError(f"Invalid test set percentile: {self.test_perc}. Choose from 0 to 1")
         
@@ -76,6 +81,7 @@ class DataProcessing:
             x_vals (list): list of validation sets extracted from training & validation set (the list has one element per iteration).
             target_vals (list): list of targets corrisponding to the validation set. 
         '''
+        
         if not (0 <= self.train_perc <= 1):
             raise ValueError(f"Invalid traininig set percentile: {self.train_perc}. Choose from 0 to 1")
 
@@ -93,8 +99,8 @@ class DataProcessing:
             target_vals = [self.target_train_val[val_indices]]
 
         else:
-            if not (isinstance(self.K, int) and self.K > 0):
-                raise ValueError(f"Invalid number of folds: {self.K}. Choose an integer bigger than 0")
+           # if not (isinstance(self.K, int) and self.K > 0):
+               # raise ValueError(f"Invalid number of folds: {self.K}. Choose an integer bigger than 0")
 
             fold_size = num_samples // self.K
             x_trains, target_trains, x_vals, target_vals = [], [], [], []
