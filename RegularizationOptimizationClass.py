@@ -190,9 +190,9 @@ class Optimization:
             self.v_weights = self.beta_2 * self.v_weights + (1 - self.beta_2) * ((np.dot(input.T, self.delta) - reg_term)**2) 
             m_weights_hat = self.m_weights / (1 - self.beta_1**self.t)
             v_weights_hat = self.v_weights / (1 - self.beta_2**self.t)
-            
-            self.m_biases = self.beta_1 * self.m_biases + (1 - self.beta_1) * np.sum(self.delta, axis=0, keepdims=True)/len(input)
-            self.v_biases = self.beta_2* self.v_biases + (1 - self.beta_2) * np.sum(self.delta**2, axis=0, keepdims=True)/(len(input)**2)
+
+            self.m_biases = self.beta_1 * self.m_biases + (1 - self.beta_1) * np.sum(self.delta, axis=0, keepdims=True)/(len(input))
+            self.v_biases = self.beta_2* self.v_biases + (1 - self.beta_2) * np.sum(self.delta**2, axis=0, keepdims=True)/(len(input))
             m_biases_hat = self.m_biases / (1 - self.beta_1**self.t)
             v_biases_hat = self.v_biases / (1 - self.beta_2**self.t)
 

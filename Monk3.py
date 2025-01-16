@@ -4,10 +4,9 @@ import matplotlib.pyplot as plt
 from NeuralNetworkClass import NeuralNetwork
 from Functions import activation_functions, d_activation_functions, loss_functions, d_loss_functions
 from ModelAssessmentClass import ModelAssessment
-
 from MonkDataProcessing import monk_data
 
-# Training of the neural network using monk1_data
+# Training of the neural network using monk3_data
 
 # Layers configuration
 np.random.seed(12)
@@ -48,10 +47,10 @@ batch_size = 20
 nn_assessment = NeuralNetwork(layers_config, reg_config, opt_config)
 
 train_test = ModelAssessment(
-    monk_data['training_set_1'], 
-    monk_data['target_training_set_1'], 
-    monk_data['test_set_1'], 
-    monk_data['target_test_set_1'], 
+    monk_data['training_set_3'], 
+    monk_data['target_training_set_3'], 
+    monk_data['test_set_3'], 
+    monk_data['target_test_set_3'], 
     epochs, 
     batch_size, 
     loss_functions['bce'], 
@@ -115,7 +114,7 @@ ax[1].set_title('Accuracy vs Epochs', fontsize = 18, fontweight = 'bold')
 plt.tight_layout()
 
 # Salvare il grafico in PDF con alta risoluzione
-plt.savefig('grafici/monk1.pdf', bbox_inches='tight', pad_inches=0, dpi = 1200)
+plt.savefig('grafici/monk3.pdf', bbox_inches='tight', pad_inches=0, dpi=1200)
 
 # Mostrare il grafico
 plt.show()
