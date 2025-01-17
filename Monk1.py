@@ -27,7 +27,7 @@ reg_config = {
 
 # Optimization configuration
 opt_config = {
-    'opt_type': 'none',
+    'opt_type': 'adam',
     'learning_rate': 0.5,
     'momentum': 0.9,
     'beta_1': 0.9,
