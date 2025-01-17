@@ -10,24 +10,22 @@ class ModelAssessment:
             target_retrain,
             x_test,
             target_test,
-            #test_splitter,
             epochs,
             batch_size,
             loss_func,
             d_loss_func,
-            neural_network
+            neural_network,
+            classification_problem = False
     ):
         '''
         Class focused on the actual training and validation of the neural network.
 
         Args:
-            test_splitter (DataProcessing): instance of the class DataProcessing. 
-            Returns:
-                x_train_val (array): data through which the neural network will be re-trained (once 
-                                     hyperparameters are fixed, after Model Selection).
-                target_train_val (array): targets of x_train_val.
-                x_test (array): data through which the accuracy of the neural network is estimated.
-                target_test (array): targets of x_test.
+            x_retrain (array): data through which the neural network will be re-trained (once 
+                               hyperparameters are fixed, after Model Selection).
+            target_retrain (array): targets of x_retrain.
+            x_test (array): data through which the accuracy of the neural network is estimated.
+            target_test (array): targets of x_test.
             epochs (int): number of iterations of the cycle forward propagation + backward propagation). 
             batch_size (int): batch size for training. If batch_size = 1, the neural network is trained using an online learning approach.
                               If batch_size != 1, the neural network is trained using a mini-batch learning approach with batches of size
@@ -35,19 +33,26 @@ class ModelAssessment:
             loss_func (func): loss function.
             d_loss_func (func): derivative of the loss function.
             neural_network (NeuralNetwork): instance of the class NeuralNetwork.
+            classification_problem (bool): checking whether the problem consists of regression (default) 
+                                           or classification. If classification_problem = True, accuracy
+                                           is computed.
         '''
         self.x_retrain = x_retrain
         self.target_retrain = target_retrain
         self.x_test = x_test
         self.target_test = target_test
-        #self.test_splitter = test_splitter
         self.epochs = epochs
         self.batch_size = batch_size
         self.loss_func = loss_func
         self.d_loss_func = d_loss_func
         self.neural_network = neural_network
-        
-
+        self.classification_problem = classification_problem
+        '''
+        if classification_problem:
+            if self.neural_network.layers[-1].activation_function == activation_functions['tanh']:
+                self.target_retrain[self.target_retrain == 0] = -1
+                self.target_test[self.target_test == 0] = -1
+        '''
 
     def batch_generator( 
             self,
@@ -108,7 +113,6 @@ class ModelAssessment:
             d_loss = self.d_loss_func(target_batch, pred)
             self.neural_network.backward(d_loss)
 
-
         train_error_epoch /= xx.shape[0]
 
         return train_error_epoch, prediction_retrain
@@ -168,16 +172,10 @@ class ModelAssessment:
 
 
     def retrain_test(
-            self,
-            classification_problem = False           
+            self         
     ):
         '''
         Function that computes training and test error for each epoch.
-
-        Args:
-            classification_problem (bool): checking whether the problem consists of regression (default) 
-                                           or classification. If classification_problem = True, accuracy
-                                           is computed.
         
         Returns:
             retrain_error_tot (array): training error for each epoch.
@@ -200,7 +198,7 @@ class ModelAssessment:
             test_error_epoch, test_pred = self.test_epoch(self.x_test, self.target_test)
             test_error_tot = np.append(test_error_tot, test_error_epoch)
             
-            if classification_problem:
+            if self.classification_problem:
                 accuracy_retrain = self.accuracy_curve(retrain_pred, self.target_retrain)
                 accuracy_test = self.accuracy_curve(test_pred, self.target_test)
 
@@ -212,7 +210,7 @@ class ModelAssessment:
                 print(f'epoch {i+1}, retrain error {retrain_error_epoch}, test error {test_error_epoch}')
 
 
-        if classification_problem:
+        if self.classification_problem:
             return retrain_error_tot, test_error_tot, accuracy_retrain_tot, accuracy_test_tot
 
         else:

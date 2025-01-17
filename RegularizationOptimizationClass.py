@@ -164,7 +164,7 @@ class Optimization:
             bias_pred = self.biases + self.momentum * self.velocity_biases # Same thing for the biases
             net_pred = np.dot(input, weights_pred) + bias_pred  # Net computed with respect to the predicted weights and 
                                                                 # the predicted biases
-            delta_pred = loss_gradient * d_activation_function(net_pred)  # Loss gradient with respect to predicted net, 
+            delta_pred = loss_gradient * d_activation_function(net_pred) / len(input)  # Loss gradient with respect to predicted net, 
             grad_weights = self.learning_rate * np.dot(input.T, delta_pred)  # Loss gradient multiplied by the learning rate.
                                                                              # The gradient has been computed with respect
                                                                              # to the predicted weights and biases
@@ -173,7 +173,7 @@ class Optimization:
             # Difference between the current weights and the previous weights. 
             # The minus sign before reg_term and grad_weights is due to the application of gradient descent algorithm
             self.velocity_weights = self.momentum * self.velocity_weights - grad_weights - reg_term 
-            self.velocity_biases = self.momentum * self.velocity_biases - self.learning_rate * (np.sum(delta_pred, axis=0, keepdims=True)/len(input))
+            self.velocity_biases = self.momentum * self.velocity_biases - self.learning_rate * (np.sum(delta_pred, axis=0, keepdims=True))
             
             self.weights += self.velocity_weights  # Updating the weights
             self.biases += self.velocity_biases # Updating the biases
@@ -189,8 +189,8 @@ class Optimization:
             m_weights_hat = self.m_weights / (1 - self.beta_1**self.t)
             v_weights_hat = self.v_weights / (1 - self.beta_2**self.t)
 
-            self.m_biases = self.beta_1 * self.m_biases + (1 - self.beta_1) * np.sum(delta, axis=0, keepdims=True)/(len(input))
-            self.v_biases = self.beta_2* self.v_biases + (1 - self.beta_2) * np.sum(delta**2, axis=0, keepdims=True)/(len(input))
+            self.m_biases = self.beta_1 * self.m_biases + (1 - self.beta_1) * np.sum(delta, axis=0, keepdims=True)
+            self.v_biases = self.beta_2* self.v_biases + (1 - self.beta_2) * np.sum(delta**2, axis=0, keepdims=True)
 
             m_biases_hat = self.m_biases / (1 - self.beta_1**self.t)
             v_biases_hat = self.v_biases / (1 - self.beta_2**self.t)
@@ -202,7 +202,7 @@ class Optimization:
         else:
             # Updating weights and biases without using optimization 
             reg_term = self.regulizer.regularization(self.weights)
-            self.weights -= (self.learning_rate * np.dot(input.T, delta) + reg_term)
+            self.weights -= (self.learning_rate * np.dot(input.T, delta) / len(input) + reg_term)
             self.biases -= np.sum(delta, axis=0, keepdims=True)/len(input)
 
         sum_delta_weights = np.dot(delta, self.weights.T) # loss gradient for hidden layer

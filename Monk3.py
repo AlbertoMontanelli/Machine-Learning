@@ -56,9 +56,11 @@ train_test = ModelAssessment(
     batch_size, 
     loss_functions['bce'], 
     d_loss_functions['d_bce'], 
-    nn_assessment)
+    nn_assessment,
+    classification_problem = True
+    )
 
-train_error, test_error, accuracy_train, accuracy_test = train_test.retrain_test(classification_problem = True)
+train_error, test_error, accuracy_train, accuracy_test = train_test.retrain_test()
 
 # Creazione della figura con due subplot
 fig, ax = plt.subplots(1, 2, figsize = (15, 10))
@@ -86,9 +88,9 @@ network_details = [
     ('Units per Layer', f'{layers_config[1][0]}'),
     ('Activation functions', 'sigmoid'),
     ('Loss function', 'bce'),
-    ('Learning Rate', f'{opt_config['learning_rate']}'),
-    ('Regularization', f'{reg_config['reg_type']}'),
-    ('Optimizer',f'{opt_config['opt_type']}')
+    ('Learning Rate', f"{opt_config['learning_rate']}"),
+    ('Regularization', f"{reg_config['reg_type']}"),
+    ('Optimizer',f"{opt_config['opt_type']}")
 ]
 
 # Aggiungere informazioni della rete come stringa multilinea
@@ -127,6 +129,6 @@ manager.full_screen_toggle()
 plt.pause(2)  # Pausa di 2 secondi
 
 # Salvare il grafico in PDF con alta risoluzione
-plt.savefig('grafici/monk3.pdf', bbox_inches = 'tight', dpi = 1200)
+plt.savefig('grafici/monk3_tanh.pdf', bbox_inches = 'tight', dpi = 1200)
 
 plt.show()

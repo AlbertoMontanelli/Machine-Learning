@@ -16,6 +16,11 @@ class ModelSelection:
 
         Args:
             data_splitter (DataProcessing): instance of the class DataProcessing.
+                Returns:
+                    x_train (array): data through which the neural network will be trained.
+                    target_train (array): targets of x_train.
+                    x_val (array): data through which the neural network is validated.
+                    target_val (array): targets of x_val.
             epochs (int): number of iterations of the training cycle (forward propagation + backward propagation). 
             batch_size (int): batch size for training. If batch_size = 1, the neural network is trained using an online learning approach.
                               If batch_size != 1, the neural network is trained using a mini-batch learning approach with batches of size
