@@ -27,7 +27,7 @@ reg_config = {
 
 # Optimization configuration
 opt_config = {
-    'opt_type': 'none',
+    'opt_type': 'adam',
     'learning_rate': 0.5,
     'momentum': 0.9,
     'beta_1': 0.9,
@@ -131,6 +131,6 @@ manager.full_screen_toggle()
 plt.pause(2)  # Pausa di 2 secondi
 
 # Salvare il grafico in PDF con alta risoluzione
-plt.savefig('grafici/monk1.pdf', bbox_inches = 'tight', dpi = 1200)
+plt.savefig('grafici/monk1_adam.pdf', bbox_inches = 'tight', dpi = 1200)
 
 plt.show()
