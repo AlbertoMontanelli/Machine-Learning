@@ -72,8 +72,8 @@ line_test, = ax[0].plot(test_error, label = 'Test Error', linewidth = 2)
 ax[0].set_xlabel('Epochs', fontsize = 16, fontweight = 'bold')
 ax[0].set_ylabel('Error', fontsize = 16, fontweight = 'bold')
 ax[0].set_yscale('log')
-ax[0].yaxis.set_major_locator(LogLocator(base=10.0, subs=np.arange(1.0, 10.0) * 0.1, numticks=10))  # Ticks tra i principali
-ax[0].yaxis.set_major_formatter(ScalarFormatter())  # Mostra i valori in formato decimale
+#ax[0].yaxis.set_major_locator(LogLocator(base = 10.0, subs = np.arange(0, 10) * 0.1, numticks = 5))  # Ticks tra i principali
+#ax[0].yaxis.set_major_formatter(ScalarFormatter())  # Mostra i valori in formato decimale
 
 ax[0].grid()
 

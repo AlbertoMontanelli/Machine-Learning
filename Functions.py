@@ -327,7 +327,7 @@ def binary_cross_entropy(y_true, y_pred, epsilon = 1e-7):
     Returns:
         np.sum(loss) (float): result of Binary Cross Entropy.
     """ 
-    return - np.sum(y_true * np.log(y_pred + epsilon) + (1 - y_true) * np.log(1 - y_pred + epsilon))
+    return - (np.sum(y_true * np.log(y_pred + epsilon) + (1 - y_true) * np.log(1 - y_pred + epsilon)))/y_pred.shape[0]
 
 
 def d_binary_cross_entropy(y_true, y_pred, epsilon = 1e-7):
@@ -342,7 +342,8 @@ def d_binary_cross_entropy(y_true, y_pred, epsilon = 1e-7):
     Returns:
         np.sum(loss) (float): result of derivative of Binary Cross Entropy.
     """ 
-     return - (y_true / (y_pred + epsilon) - (1 - y_true) / (1 - y_pred + epsilon))
+     print('lugnhezza y pred',y_pred.shape[0])
+     return - ((y_true / (y_pred + epsilon) - (1 - y_true) / (1 - y_pred + epsilon)))/y_pred.shape[0]
 
 
 # Dictionary for the loss functions

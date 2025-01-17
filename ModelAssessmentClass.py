@@ -109,7 +109,7 @@ class ModelAssessment:
 
             pred = self.neural_network.forward(batch)
             prediction_retrain = np.append(prediction_retrain, pred)
-            train_error_epoch += self.loss_func(target_batch, pred)
+            train_error_epoch += self.loss_func(target_batch, pred)*len(batch)
             d_loss = self.d_loss_func(target_batch, pred)
             self.neural_network.backward(d_loss)
 
@@ -135,7 +135,7 @@ class ModelAssessment:
             prediction_test (array): array of the outputs of the neural network for the test data.
         '''
         prediction_test = self.neural_network.forward(xx)
-        test_error_epoch = self.loss_func(target, prediction_test)/xx.shape[0]
+        test_error_epoch = self.loss_func(target, prediction_test)
 
         return test_error_epoch, prediction_test
 
