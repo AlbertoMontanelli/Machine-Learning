@@ -1,4 +1,5 @@
 import numpy as np
+from EarlyStoppingClass import EarlyStopping
 
 class ModelSelection:
 
@@ -9,7 +10,8 @@ class ModelSelection:
             batch_size,
             loss_func,
             d_loss_func,
-            neural_network
+            neural_network,
+            early_stop
     ):
         '''
         Class focused on the actual training and validation of the neural network.
@@ -28,12 +30,14 @@ class ModelSelection:
             loss_func (func): loss function.
             d_loss_func (func): derivative of the loss function.
             neural_network (NeuralNetwork): instance of the class NeuralNetwork.
+            early_stop (): instance of EarlyStopping Class
         '''
         self.data_splitter = data_splitter
         self.epochs = epochs
         self.batch_size = batch_size
         self.loss_func = loss_func
         self.d_loss_func = d_loss_func
+        self.early_stop = early_stop
         self.neural_network = neural_network
 
 
@@ -123,10 +127,14 @@ class ModelSelection:
 
 
     def train_fold(
-            self        
+            self, 
+            stopping_check        
     ):
         '''
         Function that computes training and validation error averaged on the number of folds for each epoch.
+
+        Args:
+            stopping_check (Early_Stopping): istances of early stopping class
 
         Returns:
             train_error_tot (array): training error for each epoch averaged on the number of folds.
@@ -153,6 +161,12 @@ class ModelSelection:
                 train_error = np.append(train_error, train_error_epoch)
                 val_error_epoch = self.train_val(x_val, target_val)
                 val_error = np.append(val_error, val_error_epoch)
+
+                early_check = self.early_stop.stopping_check(i, val_error)
+                if early_check:
+                    print(f"epoch: {i}")
+                    break
+
                 if ((i + 1) % 10 == 0):
                     print(f'epoch {i+1}, train error {train_error_epoch}, val error {val_error_epoch}')
 
