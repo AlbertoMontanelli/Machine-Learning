@@ -4,9 +4,11 @@ class EarlyStopping:
 
     def __init__(self, epochs):
         '''
+        Class that implements a mechanism to monitor validation metrics during the training of a model, in order to prematurely
+        stop the optimization process.
         
         Args:
-            epochs: 
+            epochs (int): Maximum number of backpropagation iterations that can be executed.
             
         '''
         self.epochs = epochs
@@ -16,12 +18,16 @@ class EarlyStopping:
     
     def stopping_check(self, actual_epoch, val_errors):
         '''
+        Function that keep tracks of the relative improvement of the validation error, and if it remains below a certain threshold
+        for 20 consecutive epochs, it returns True.
+
         Args:
-            actual_epoch (int):
+            actual_epoch (int): current epoch of the training.
             val_errors (array): array containing all validation errors from epoch 0 to the current epoch.
 
         Return:
-            bool
+            bool: Return False if the training algorithm should continue;
+                  return True if it should stop.
         '''
         self.actual_epoch = actual_epoch
 
@@ -43,13 +49,14 @@ class EarlyStopping:
 
     def smoothness_check(self, error_array):
         '''
-        Function that check if the curve is smooth or not
+        Function that check if the curve is smooth or not.
 
         Args: 
-            error_array (array): val o training error array
+            error_array (array): validation or training error array
 
         Returns:
-            bool: True if the curve isn't smooth, False if the curve is smooth
+            bool: Returns True if the curve is not smooth;
+                  return False if it is smooth.
         '''
         if self.perc > 0.1:
             if error_array[self.actual_epoch] > error_array[self.actual_epoch - 1]:

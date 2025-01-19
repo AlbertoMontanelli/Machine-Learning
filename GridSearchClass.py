@@ -12,7 +12,6 @@ from GridBuilding import combinations_grid, x_trains, target_trains, x_vals, tar
 # classifica
 # selezione il set di iperparametri migliore
 
-
 # List of neural network combinations being investigated
 nn_combo = []
 

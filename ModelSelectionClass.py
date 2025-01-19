@@ -1,5 +1,4 @@
 import numpy as np
-from EarlyStoppingClass import EarlyStopping
 
 class ModelSelection:
 
