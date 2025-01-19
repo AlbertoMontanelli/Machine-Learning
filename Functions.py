@@ -182,12 +182,12 @@ def d_ELU(net):
     """ 
     return np.ones_like(net) if(net>=0) else np.exp(net)
 
-
 # np.vectorize returns an object that acts like pyfunc, but takes arrays as input
 d_ReLU = np.vectorize(d_ReLU)
 d_leaky_relu = np.vectorize(d_leaky_relu)
 ELU = np.vectorize(ELU)
 d_ELU = np.vectorize(d_ELU)
+
 
 # Dictionary for the activation functions
 activation_functions = {
@@ -222,6 +222,12 @@ d_activation_functions_grid = {
     "d_tanh": d_tanh,
     "d_leaky_ReLU": d_leaky_relu
 }
+
+activation_to_derivative_mapper = {
+    "tanh": "d_tanh",
+    "leaky_ReLU": "d_leaky_ReLU"
+}
+
 
 # Definition of Loss functions and their derivative
 def mean_squared_error(y_true, y_pred):

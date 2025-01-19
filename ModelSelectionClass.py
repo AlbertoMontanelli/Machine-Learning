@@ -29,7 +29,7 @@ class ModelSelection:
             loss_func (func): loss function.
             d_loss_func (func): derivative of the loss function.
             neural_network (NeuralNetwork): instance of the class NeuralNetwork.
-            early_stop (): instance of EarlyStopping Class
+            early_stop (EarlyStoppingClass): instance of EarlyStopping Class
         '''
         self.data_splitter = data_splitter
         self.epochs = epochs
@@ -57,7 +57,7 @@ class ModelSelection:
             target_batches (list): list of arrays of labels corresponding to the data in x_batches.
         '''
         num_samples = x_train.shape[0]
-        if self.batch_size > len(num_samples):
+        if self.batch_size > num_samples:
             raise ValueError(f'Invalid batch size {self.batch_size}. Must be smaller than number of examples {num_samples}')
         x_batches = []
         target_batches = []
@@ -94,6 +94,8 @@ class ModelSelection:
         for batch, target_batch in zip(batches, target_batches):
             pred = self.neural_network.forward(batch)
             prediction = np.append(prediction, pred)
+            #print(f'target: \n {target_batch}')
+            #print(f'pred: \n {pred}')
             train_error_epoch += self.loss_func(target_batch, pred)
             d_loss = self.d_loss_func(target_batch, pred)
             self.neural_network.backward(d_loss)
@@ -126,14 +128,10 @@ class ModelSelection:
 
 
     def train_fold(
-            self, 
-            stopping_check        
+            self   
     ):
         '''
         Function that computes training and validation error averaged on the number of folds for each epoch.
-
-        Args:
-            stopping_check (Early_Stopping): istances of early stopping class
 
         Returns:
             train_error_tot (array): training error for each epoch averaged on the number of folds.
@@ -151,7 +149,7 @@ class ModelSelection:
             self.data_splitter.target_vals
         ):
             iterations += 1
-            print(f'\n Begin iteration {iterations} \n')
+            #print(f'\n Begin iteration {iterations} \n')
             train_error = np.array([])
             val_error = np.array([])
 
@@ -160,12 +158,12 @@ class ModelSelection:
                 train_error = np.append(train_error, train_error_epoch)
                 val_error_epoch = self.train_val(x_val, target_val)
                 val_error = np.append(val_error, val_error_epoch)
-
+                
                 early_check = self.early_stop.stopping_check(i, val_error)
                 if early_check:
                     print(f"epoch: {i}")
                     break
-
+                
                 if ((i + 1) % 10 == 0):
                     print(f'epoch {i+1}, train error {train_error_epoch}, val error {val_error_epoch}')
 
