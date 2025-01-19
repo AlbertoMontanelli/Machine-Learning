@@ -19,7 +19,19 @@ class NeuralNetwork:
         self.regularizer = Regularization(**reg_config)
         self.layers, self.optimizers = self.initialize_layers(layers_config, opt_config)
 
-
+    '''
+    def initialize_layers(self, layers_config, opt_config):
+      
+        layers = []
+        optimizers = []
+        for config in layers_config:
+           layer = Layer(*config)
+           optimizer = Optimization(layer.weights, layer.biases, regulizer = self.regularizer, **opt_config)
+           layers.append(layer)
+           optimizers.append(optimizer)
+        return layers, optimizers
+    '''
+    
     def initialize_layers(self, layers_config, opt_config):
         '''
         Function that iniliatizes all the layers in the neural network.
@@ -37,10 +49,16 @@ class NeuralNetwork:
         layers = []
         optimizers = []
         for config in layers_config:
-           layer = Layer(*config)
-           optimizer = Optimization(layer.weights, layer.biases, regulizer = self.regularizer, **opt_config)
-           layers.append(layer)
-           optimizers.append(optimizer)
+            # Decomposing GridSearchClass dictionary
+            layer = Layer(
+                dim_prev_layer=config['dim_prev_layer'],
+                dim_layer=config['dim_layer'],
+                activation_function=config['activation function'],
+                d_activation_function=config['d_activation_function']
+            )
+            optimizer = Optimization(layer.weights, layer.biases, regulizer = self.regularizer, **opt_config)
+            layers.append(layer)
+            optimizers.append(optimizer)
         return layers, optimizers
 
 

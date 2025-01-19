@@ -39,9 +39,9 @@ class Layer:
         '''
         Function that initializes the Weights and the Biases of the network
         '''
-        #self.weights = np.random.uniform(low=-1/np.sqrt(self.dim_prev_layer), high=1/np.sqrt(self.dim_prev_layer), 
-        #                                 size=(self.dim_prev_layer, self.dim_layer))
-        self.weights = self.xavier_normal((self.dim_prev_layer, self.dim_layer), self.dim_prev_layer, self.dim_layer)
+        self.weights = np.random.uniform(low=-1/np.sqrt(self.dim_prev_layer), high=1/np.sqrt(self.dim_prev_layer), 
+                                         size=(self.dim_prev_layer, self.dim_layer))
+        # self.weights = self.xavier_normal((self.dim_prev_layer, self.dim_layer), self.dim_prev_layer, self.dim_layer)
         self.biases = np.zeros((1, self.dim_layer))
 
 
