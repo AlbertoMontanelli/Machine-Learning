@@ -1,7 +1,7 @@
 import numpy as np
 from itertools import product
 
-from Functions import activation_functions_grid, d_activation_functions_grid, activation_to_derivative_mapper
+from Functions import activation_functions_grid, d_activation_functions_grid
 from CUPDataProcessing import CUP_data_splitter
 
 '''
@@ -37,7 +37,7 @@ x_trains, target_trains, x_vals, target_vals = CUP_data_splitter.train_val_split
 # baby griglia
 
 N_layer = [1]
-N_units = [16, 32]
+N_units = [16]
 
 nn_architecture = []
 
@@ -51,8 +51,8 @@ param_grid = {
     'activation_function' : list(activation_functions_grid.keys()),
     'd_activation_function' : list(d_activation_functions_grid.keys()),
     'batch_size' : [1, 64, len(x_trains[0])],
-    'learning_rate' : np.logspace(-5, -2, num = 4),  
-    'lambda': np.logspace(-4, -2, num = 3),
+    'learning_rate' : np.logspace(-5, -3, num = 3),  
+    'lambda': np.logspace(-4, -3, num = 2),
     'alpha': [0.2, 0.8]
     }
 

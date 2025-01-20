@@ -33,7 +33,7 @@ class EarlyStopping:
 
         self.perc = self.actual_epoch/self.epochs
 
-        if self.perc >= 0.4:
+        if self.perc >= 0.2:
             relative_error_improvement = (val_errors[actual_epoch - 1] - val_errors[actual_epoch]) / val_errors[actual_epoch - 1]
             if relative_error_improvement <= 0.001:
                 self.stop_count += 1
@@ -41,7 +41,7 @@ class EarlyStopping:
             else:
                 self.stop_count = 0
 
-        if self.stop_count == 20:
+        if self.stop_count >= 20:
             return True
         else:
             return False
@@ -55,22 +55,15 @@ class EarlyStopping:
             error_array (array): validation or training error array
 
         Returns:
-            bool: Returns True if the curve is not smooth;
-                  return False if it is smooth.
+            bool: Returns False if the curve is not smooth;
+                  return True if it is smooth.
         '''
-        if self.perc > 0.1:
+        
+        if self.perc > 0.2:
             if error_array[self.actual_epoch] > error_array[self.actual_epoch - 1]:
-                return True
-            else:
+                self.smooth_count += 1
+            
+            if self.smooth_count > 10:
                 return False
-
-
-
-   
-
-
-
-
-
-    
-    
+            else:
+                return True    

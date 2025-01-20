@@ -223,11 +223,6 @@ d_activation_functions_grid = {
     "d_leaky_ReLU": d_leaky_relu
 }
 
-activation_to_derivative_mapper = {
-    "tanh": "d_tanh",
-    "leaky_ReLU": "d_leaky_ReLU"
-}
-
 
 # Definition of Loss functions and their derivative
 def mean_squared_error(y_true, y_pred):
