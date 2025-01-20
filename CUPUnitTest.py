@@ -13,24 +13,25 @@ np.random.seed(12)
 
 # Layer configuration: [(input_dim, output_dim, activation_function, d_activation_function), ...]
 layers_config = [
-    (12, 128, activation_functions['leaky_ReLU'], d_activation_functions['d_leaky_ReLU']),
-    (128, 256, activation_functions['leaky_ReLU'], d_activation_functions['d_leaky_ReLU']),
-    (256, 64, activation_functions['leaky_ReLU'], d_activation_functions['d_leaky_ReLU']),
-    (64, 32, activation_functions['leaky_ReLU'], d_activation_functions['d_leaky_ReLU']),
-    (32, 3, activation_functions['linear'], d_activation_functions['d_linear'])
+    (12, 64, activation_functions['leaky_ReLU'], d_activation_functions['d_leaky_ReLU']),
+    (64, 64, activation_functions['leaky_ReLU'], d_activation_functions['d_leaky_ReLU']),
+    (64, 64, activation_functions['leaky_ReLU'], d_activation_functions['d_leaky_ReLU']),
+    (64, 64, activation_functions['leaky_ReLU'], d_activation_functions['d_leaky_ReLU']),
+    (64, 64, activation_functions['leaky_ReLU'], d_activation_functions['d_leaky_ReLU']),
+    (64, 3, activation_functions['linear'], d_activation_functions['d_linear'])
 ]
 
 # Regulizer configuration
 reg_config = {
-    'Lambda': 1e-4,
+    'Lambda': 1e-5,
     'alpha' : 0.5,
     'reg_type': 'elastic'
 }
 
 # Optimizater configuration
 opt_config = {
-    'opt_type': 'NAG',
-    'learning_rate': 1e-5,
+    'opt_type': 'none',
+    'learning_rate': 1e-3,
     'momentum': 0.9,
     'beta_1': 0.9,
     'beta_2': 0.999,
@@ -57,8 +58,8 @@ import matplotlib.pyplot as plt
 
 
 network_details = [
-    ('Number of Hidden Layers', f'{layers_config[1][1]}'),
-    ('Units per Layer', f'{layers_config[1][0]}'),
+    ('Number of Hidden Layers', f'{len(layers_config)}'),
+    ('Units per Layer', f'{layers_config[0][1]}'),
     ('Activation function', 'sigmoid'),
     ('Loss function', 'Leaky ReLU'),
     ('Learning Rate', f"{opt_config['learning_rate']}"),
@@ -102,6 +103,6 @@ manager.full_screen_toggle()
 plt.pause(2)  # Pausa di 2 secondi
 
 # Salvare il grafico in PDF con alta risoluzione
-plt.savefig('grafici/8.pdf', bbox_inches = 'tight', dpi = 1200)
+plt.savefig('grafici/17.pdf', bbox_inches = 'tight', dpi = 1200)
 
 plt.show()
