@@ -35,17 +35,16 @@ class NeuralNetwork:
     def initialize_layers(self, layers_config, opt_config):
         '''
         Function that iniliatizes all the layers in the neural network.
+    #     Args:
+    #         layers_config (list): layers configuration as a list of N layers, each defined by the following parameters:
+    #                               dim_prev_layer, dim_layer, activation_function, d_activation_function.
+    #         opt_config (dict): a dictionary for optimization configuration defined by the following keys:
+    #                            opt_type, learning_rate, momentum, beta_1, beta_2, epsilon.
 
-        Args:
-            layers_config (list): layers configuration as a list of N layers, each defined by the following parameters:
-                                  dim_prev_layer, dim_layer, activation_function, d_activation_function.
-            opt_config (dict): a dictionary for optimization configuration defined by the following keys:
-                               opt_type, learning_rate, momentum, beta_1, beta_2, epsilon.
-
-        Returns:
-            layers (list): list of the layers of the neural network.
-            optimizers (list): list of optimization class instances, one for each layer of the neural network.
-        '''
+    #     Returns:
+    #         layers (list): list of the layers of the neural network.
+    #         optimizers (list): list of optimization class instances, one for each layer of the neural network.
+    #     '''
         layers = []
         optimizers = []
         for config in layers_config:
@@ -60,7 +59,7 @@ class NeuralNetwork:
             layers.append(layer)
             optimizers.append(optimizer)
         return layers, optimizers
-    
+
 
     def forward(self, input):
         '''

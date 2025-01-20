@@ -88,13 +88,10 @@ class ModelSelection:
         batches, target_batches = self.batch_generator(x_train, target_train)
         train_error_epoch = 0
         
-        prediction = np.array([])
+
 
         for batch, target_batch in zip(batches, target_batches):
             pred = self.neural_network.forward(batch)
-            prediction = np.append(prediction, pred)
-            #print(f'target: \n {target_batch}')
-            #print(f'pred: \n {pred}')
             train_error_epoch += self.loss_func(target_batch, pred)
             d_loss = self.d_loss_func(target_batch, pred)
             self.neural_network.backward(d_loss)

@@ -1,0 +1,17 @@
+N LAYERS,LAYERS CONFIG,,ACTIVATION FUNCTION,,ETA,LAMBDA,REG TYPE,OPTIMIZER,BATCH SIZE,EPOCHE,
+3,"(12,32), (32,16), (16,3)",,leaky_ReLU,,"0,0001","0,000001",elastic,NAG,40,500,OK
+3,"(12,32), (32,16), (16,3)",,leaky_ReLU,,"0,000001","0,0001",elastic,NAG,40,500,ERRORE + ALTO MA PUÒ DESCRESCERE?
+3,"(12,32), (32,16), (16,3)",,leaky_ReLU,,"0,000001","0,0001",elastic,NAG,40,1000,È ALTO E DECRESCE TROPPO LENTAMENTE
+3,"(12,32), (32,16), (16,3)",,leaky_ReLU,,"0,001","0,0001",elastic,NAG,40,500,OK
+3,"(12,32), (32,16), (16,3)",,leaky_ReLU,,"0,01","0,0001",elastic,NAG,40,500,DÀ ERRORE NAN
+3,"(12,32), (32,16), (16,3)",,leaky_ReLU,,"0,00001","0,0001",elastic,NAG,40,500,"OK, FORSE ERRORE PIÙ ALTO"
+5,"(12,128), (128,256), (256,64), (64,32), (32,3)",,leaky_ReLU,,"0,00001","0,0001",elastic,NAG,40,500,ERRORE ALTO
+5,"(12,16), (16,32), (32,16), (16,8), (8,3)",,leaky_ReLU,,"0,001","0,0001",elastic,NAG,40,500,DÀ ERRORE NAN
+5,"(12,16), (16,32), (32,16), (16,8), (8,3)",,leaky_ReLU,,"0,0001","0,0001",elastic,NAG,40,500,"OK, FORSE ERRORE PIÙ ALTO"
+5,Tutte 32,,leaky_ReLU,,"0,01","0,0001",elastic,adam,40,500,INSTABILE E L’ERRORE CRESCE
+5,Tutte 32,,leaky_ReLU,,"0,001","0,001",elastic,adam,40,500,"OK, FORSE OVERFITTING"
+6,Tutte 64,,leaky_ReLU,,"0,001","0,001",elastic,adam,40,500,ABBASTANZA INSTABILE ALLA FINE
+6,Tutte 64,,leaky_ReLU,,"0,001","0,001",elastic,NAG,40,500,DÀ ERRORE NAN
+6,Tutte 64,,leaky_ReLU,,"0,0001","0,001",elastic,NAG,40,500,ERRORE ALTO
+6,Tutte 64,,leaky_ReLU,,"0,01","0,001",elastic,NAG,40,500,
+6,Tutte 64,,leaky_ReLU,,"0,001","0,0001",elastic,NAG,40,500,DÀ ERRORE NAN
