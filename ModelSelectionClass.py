@@ -89,20 +89,17 @@ class ModelSelection:
         batches, target_batches = self.batch_generator(x_train, target_train)
         train_error_epoch = 0
         
-        prediction = np.array([])
+
 
         for batch, target_batch in zip(batches, target_batches):
             pred = self.neural_network.forward(batch)
-            prediction = np.append(prediction, pred)
-            #print(f'target: \n {target_batch}')
-            #print(f'pred: \n {pred}')
             train_error_epoch += self.loss_func(target_batch, pred)
             d_loss = self.d_loss_func(target_batch, pred)
             self.neural_network.backward(d_loss)
 
         train_error_epoch /= x_train.shape[0]
 
-        return train_error_epoch, prediction
+        return train_error_epoch
     
     
     def train_val(
@@ -154,15 +151,15 @@ class ModelSelection:
             val_error = np.array([])
 
             for i in range(self.epochs):
-                train_error_epoch, prediction = self.train_epoch(x_train, target_train)
+                train_error_epoch = self.train_epoch(x_train, target_train)
                 train_error = np.append(train_error, train_error_epoch)
                 val_error_epoch = self.train_val(x_val, target_val)
                 val_error = np.append(val_error, val_error_epoch)
                 
-                early_check = self.early_stop.stopping_check(i, val_error)
-                if early_check:
-                    print(f"epoch: {i}")
-                    break
+                # early_check = self.early_stop.stopping_check(i, val_error)
+                # if early_check:
+                #     print(f"epoch: {i}")
+                #     break
                 
                 if ((i + 1) % 10 == 0):
                     print(f'epoch {i+1}, train error {train_error_epoch}, val error {val_error_epoch}')
