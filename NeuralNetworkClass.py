@@ -19,7 +19,7 @@ class NeuralNetwork:
         self.regularizer = Regularization(**reg_config)
         self.layers, self.optimizers = self.initialize_layers(layers_config, opt_config)
 
-    '''
+    # per CUPUnitTest
     def initialize_layers(self, layers_config, opt_config):
       
         layers = []
@@ -30,11 +30,12 @@ class NeuralNetwork:
            layers.append(layer)
            optimizers.append(optimizer)
         return layers, optimizers
-    '''
     
+    # per GridSearchClass
+    '''
     def initialize_layers(self, layers_config, opt_config):
-        '''
-        Function that iniliatizes all the layers in the neural network.
+    #    
+    #    Function that iniliatizes all the layers in the neural network.
     #     Args:
     #         layers_config (list): layers configuration as a list of N layers, each defined by the following parameters:
     #                               dim_prev_layer, dim_layer, activation_function, d_activation_function.
@@ -44,7 +45,7 @@ class NeuralNetwork:
     #     Returns:
     #         layers (list): list of the layers of the neural network.
     #         optimizers (list): list of optimization class instances, one for each layer of the neural network.
-    #     '''
+    #     
         layers = []
         optimizers = []
         for config in layers_config:
@@ -59,7 +60,7 @@ class NeuralNetwork:
             layers.append(layer)
             optimizers.append(optimizer)
         return layers, optimizers
-
+    '''
 
     def forward(self, input):
         '''

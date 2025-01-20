@@ -125,7 +125,7 @@ class ModelSelection:
     def train_fold(
             self,
             early_stopping = False,
-            smoothness = True  
+            smoothness = True
     ):
         '''
         Function that computes training and validation error averaged on the number of folds for each epoch.
@@ -138,11 +138,9 @@ class ModelSelection:
         train_error_tot = np.zeros(self.epochs)
         val_error_tot = np.zeros(self.epochs)
 
-        # questo for lo fa 6 volte (ovvero k) dobbiamo trovare il modo di metterci insieme la early stopping perchè
-        # sennò fa casino quando somma gli array di errori
         aa = -1
+        stop_epoch = np.zeros(self.data_splitter.K)
         
-
         for x_train, target_train, x_val, target_val in zip(
             self.data_splitter.x_trains,
             self.data_splitter.target_trains,
@@ -155,8 +153,7 @@ class ModelSelection:
             train_error = np.array([])
             val_error = np.array([])
 
-            stop_epoch = np.zeros(self.data_splitter.K)
-
+        
             for i in range(self.epochs):
                 if early_stopping: # True se voglio fare early stopping, false se non voglio
                     early_check = self.early_stop.stopping_check(i, val_error) # true se si deve fermare
@@ -190,16 +187,20 @@ class ModelSelection:
             
             val_error_tot += val_error
             train_error_tot += train_error
+
             if early_stopping:
-                print(f'val error {aa+1}: \n {val_error}')
-                print(f'train error {aa+1}: \n {train_error}')
+                # rinizializzo in modo che alla prossima iterazione parta di nuovo da 0
+                self.early_stop.stop_count = 0
+                #print(f'val error {aa+1}: \n {val_error}')
+                #print(f'train error {aa+1}: \n {train_error}')
 
             self.neural_network.reinitialize_net_and_optimizers()
 
 
         if early_stopping:
-            max_lenght = max(stop_epoch)
+            max_lenght = int(max(stop_epoch))
             print(f"qual è il maggiore ?: {max_lenght}")
+            print(f'stop epoch: \n {stop_epoch}')
 
             #tronco
             val_error_tot = val_error_tot[:max_lenght]
@@ -207,8 +208,6 @@ class ModelSelection:
 
         train_error_tot /= self.data_splitter.K
         val_error_tot /= self.data_splitter.K
-
-        
 
         return train_error_tot, val_error_tot
 
