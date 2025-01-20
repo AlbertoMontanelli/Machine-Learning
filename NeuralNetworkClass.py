@@ -19,7 +19,7 @@ class NeuralNetwork:
         self.regularizer = Regularization(**reg_config)
         self.layers, self.optimizers = self.initialize_layers(layers_config, opt_config)
 
-    '''
+   
     def initialize_layers(self, layers_config, opt_config):
       
         layers = []
@@ -30,10 +30,10 @@ class NeuralNetwork:
            layers.append(layer)
            optimizers.append(optimizer)
         return layers, optimizers
-    '''
     
+    '''
     def initialize_layers(self, layers_config, opt_config):
-        '''
+        
         Function that iniliatizes all the layers in the neural network.
 
         Args:
@@ -45,7 +45,7 @@ class NeuralNetwork:
         Returns:
             layers (list): list of the layers of the neural network.
             optimizers (list): list of optimization class instances, one for each layer of the neural network.
-        '''
+        
         layers = []
         optimizers = []
         for config in layers_config:
@@ -60,7 +60,7 @@ class NeuralNetwork:
             layers.append(layer)
             optimizers.append(optimizer)
         return layers, optimizers
-
+    '''
 
     def forward(self, input):
         '''
