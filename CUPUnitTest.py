@@ -13,25 +13,23 @@ np.random.seed(12)
 
 # Layer configuration: [(input_dim, output_dim, activation_function, d_activation_function), ...]
 layers_config = [
-    (12, 64, activation_functions['leaky_ReLU'], d_activation_functions['d_leaky_ReLU']),
-    (64, 64, activation_functions['leaky_ReLU'], d_activation_functions['d_leaky_ReLU']),
-    (64, 64, activation_functions['leaky_ReLU'], d_activation_functions['d_leaky_ReLU']),
-    (64, 64, activation_functions['leaky_ReLU'], d_activation_functions['d_leaky_ReLU']),
-    (64, 64, activation_functions['leaky_ReLU'], d_activation_functions['d_leaky_ReLU']),
-    (64, 3, activation_functions['linear'], d_activation_functions['d_linear'])
+    (12, 128, activation_functions['leaky_ReLU'], d_activation_functions['d_leaky_ReLU']),
+    (128, 128, activation_functions['leaky_ReLU'], d_activation_functions['d_leaky_ReLU']),
+    (128, 128, activation_functions['leaky_ReLU'], d_activation_functions['d_leaky_ReLU']),
+    (128, 3, activation_functions['linear'], d_activation_functions['d_linear'])
 ]
 
 # Regulizer configuration
 reg_config = {
-    'Lambda': 1e-5,
+    'Lambda': 1e-4,
     'alpha' : 0.5,
     'reg_type': 'elastic'
 }
 
 # Optimizater configuration
 opt_config = {
-    'opt_type': 'none',
-    'learning_rate': 1e-3,
+    'opt_type': 'NAG',
+    'learning_rate': 1e-4,
     'momentum': 0.9,
     'beta_1': 0.9,
     'beta_2': 0.999,
@@ -41,10 +39,10 @@ opt_config = {
 nn = NeuralNetwork(layers_config, reg_config, opt_config)
 
 epochs = 500
-batch_size = 40
+batch_size = len(CUP_data_splitter.x_trains[0])
+print(batch_size)
 early_stop = EarlyStopping(epochs)
 
-train_val = ModelSelection(CUP_data_splitter, epochs, batch_size, loss_functions['mse'], d_loss_functions['d_mse'], nn, early_stop)
 train_val = ModelSelection(CUP_data_splitter, epochs, batch_size, loss_functions['mse'], d_loss_functions['d_mse'], nn, early_stop)
 train_error_tot, val_error_tot = train_val.train_fold()
 
@@ -103,6 +101,6 @@ manager.full_screen_toggle()
 plt.pause(2)  # Pausa di 2 secondi
 
 # Salvare il grafico in PDF con alta risoluzione
-plt.savefig('grafici/17.pdf', bbox_inches = 'tight', dpi = 1200)
+plt.savefig('grafici/23.pdf', bbox_inches = 'tight', dpi = 1200)
 
 plt.show()

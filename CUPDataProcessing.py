@@ -23,7 +23,7 @@ target = target.to_numpy()
 
 # Splitting the CUP labelled data into training set, validation set and test set.
 # A K-Fold Cross Validation with K = 6 will be performed during Model Selection.
-CUP_data_splitter = DataProcessing(data, target, test_perc = 0.2, K = 6)
+CUP_data_splitter = DataProcessing(data, target, test_perc = 0.2, K = 5)
 
 # Importing blind data
 file_path_blind = "ML-CUP24-TS.csv"
