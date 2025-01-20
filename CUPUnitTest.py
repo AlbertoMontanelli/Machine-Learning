@@ -6,6 +6,7 @@ from Functions import activation_functions, d_activation_functions, loss_functio
 from ModelSelectionClass import ModelSelection
 from CUPDataProcessing import CUP_data_splitter
 from EarlyStoppingClass import EarlyStopping
+from EarlyStoppingClass import EarlyStopping
 
 '''Unit test for NN'''
 np.random.seed(12)
@@ -40,8 +41,9 @@ nn = NeuralNetwork(layers_config, reg_config, opt_config)
 
 epochs = 500
 batch_size = 40
-early_stop = EarlyStopping(500)
+early_stop = EarlyStopping(epochs)
 
+train_val = ModelSelection(CUP_data_splitter, epochs, batch_size, loss_functions['mse'], d_loss_functions['d_mse'], nn, early_stop)
 train_val = ModelSelection(CUP_data_splitter, epochs, batch_size, loss_functions['mse'], d_loss_functions['d_mse'], nn, early_stop)
 train_error_tot, val_error_tot = train_val.train_fold()
 
