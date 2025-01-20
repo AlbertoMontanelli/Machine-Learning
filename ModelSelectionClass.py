@@ -83,8 +83,7 @@ class ModelSelection:
             target_train (array): targets corresponding to x_train.
             
         Returns:
-            train_error_epoch (float): average training error of one epoch. 
-            prediction (array): array of the outputs of the neural network for the training data.
+            train_error_epoch (float): average training error of one epoch.
         '''
         batches, target_batches = self.batch_generator(x_train, target_train)
         train_error_epoch = 0
@@ -121,11 +120,12 @@ class ModelSelection:
         val_error_epoch = self.loss_func(target_val, pred)/x_val.shape[0]
 
         return val_error_epoch
-   
 
 
     def train_fold(
-            self   
+            self,
+            early_stopping = False,
+            smoothness = True  
     ):
         '''
         Function that computes training and validation error averaged on the number of folds for each epoch.
@@ -138,40 +138,77 @@ class ModelSelection:
         train_error_tot = np.zeros(self.epochs)
         val_error_tot = np.zeros(self.epochs)
 
-        iterations = 0
+        # questo for lo fa 6 volte (ovvero k) dobbiamo trovare il modo di metterci insieme la early stopping perchè
+        # sennò fa casino quando somma gli array di errori
+        aa = -1
+        
+
         for x_train, target_train, x_val, target_val in zip(
             self.data_splitter.x_trains,
             self.data_splitter.target_trains,
             self.data_splitter.x_vals,
             self.data_splitter.target_vals
         ):
-            iterations += 1
-            #print(f'\n Begin iteration {iterations} \n')
+            aa += 1
+            bb = 0
+
             train_error = np.array([])
             val_error = np.array([])
 
+            stop_epoch = np.zeros(self.data_splitter.K)
+
             for i in range(self.epochs):
-                train_error_epoch = self.train_epoch(x_train, target_train)
-                train_error = np.append(train_error, train_error_epoch)
-                val_error_epoch = self.train_val(x_val, target_val)
-                val_error = np.append(val_error, val_error_epoch)
-                
-                # early_check = self.early_stop.stopping_check(i, val_error)
-                # if early_check:
-                #     print(f"epoch: {i}")
-                #     break
-                
+                if early_stopping: # True se voglio fare early stopping, false se non voglio
+                    early_check = self.early_stop.stopping_check(i, val_error) # true se si deve fermare
+                    if early_check:
+                        bb += 1
+                        if bb == 1:
+                            print(f"si è early stoppato alla epoca numero: {i}")
+                            stop_epoch[aa] = i
+
+                        train_error = np.append(train_error, train_error_epoch)
+                        val_error = np.append(val_error, val_error_epoch)
+                        
+                    else:
+                        train_error_epoch = self.train_epoch(x_train, target_train)
+                        val_error_epoch = self.train_val(x_val, target_val)
+
+                        train_error = np.append(train_error, train_error_epoch)
+                        val_error = np.append(val_error, val_error_epoch)
+                        
+                else:
+                    train_error_epoch = self.train_epoch(x_train, target_train)
+                    train_error = np.append(train_error, train_error_epoch)
+                    val_error_epoch = self.train_val(x_val, target_val)
+                    val_error = np.append(val_error, val_error_epoch)
+
+                # Da aggiungere anche il controllo dello smooth
+                '''
                 if ((i + 1) % 10 == 0):
                     print(f'epoch {i+1}, train error {train_error_epoch}, val error {val_error_epoch}')
-
-    
+                '''
+            
             val_error_tot += val_error
             train_error_tot += train_error
+            if early_stopping:
+                print(f'val error {aa+1}: \n {val_error}')
+                print(f'train error {aa+1}: \n {train_error}')
 
             self.neural_network.reinitialize_net_and_optimizers()
 
+
+        if early_stopping:
+            max_lenght = max(stop_epoch)
+            print(f"qual è il maggiore ?: {max_lenght}")
+
+            #tronco
+            val_error_tot = val_error_tot[:max_lenght]
+            train_error_tot = train_error_tot[:max_lenght]
+
         train_error_tot /= self.data_splitter.K
         val_error_tot /= self.data_splitter.K
+
+        
 
         return train_error_tot, val_error_tot
 

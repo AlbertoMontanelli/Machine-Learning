@@ -19,7 +19,7 @@ class NeuralNetwork:
         self.regularizer = Regularization(**reg_config)
         self.layers, self.optimizers = self.initialize_layers(layers_config, opt_config)
 
-    
+    '''
     def initialize_layers(self, layers_config, opt_config):
       
         layers = []
@@ -30,12 +30,11 @@ class NeuralNetwork:
            layers.append(layer)
            optimizers.append(optimizer)
         return layers, optimizers
-
+    '''
     
-    # def initialize_layers(self, layers_config, opt_config):
-    #     '''
-    #     Function that iniliatizes all the layers in the neural network.
-
+    def initialize_layers(self, layers_config, opt_config):
+        '''
+        Function that iniliatizes all the layers in the neural network.
     #     Args:
     #         layers_config (list): layers configuration as a list of N layers, each defined by the following parameters:
     #                               dim_prev_layer, dim_layer, activation_function, d_activation_function.
@@ -46,20 +45,20 @@ class NeuralNetwork:
     #         layers (list): list of the layers of the neural network.
     #         optimizers (list): list of optimization class instances, one for each layer of the neural network.
     #     '''
-    #     layers = []
-    #     optimizers = []
-    #     for config in layers_config:
-    #         # Decomposing GridSearchClass dictionary
-    #         layer = Layer(
-    #             dim_prev_layer=config['dim_prev_layer'],
-    #             dim_layer=config['dim_layer'],
-    #             activation_function=config['activation function'],
-    #             d_activation_function=config['d_activation_function']
-    #         )
-    #         optimizer = Optimization(layer.weights, layer.biases, regulizer = self.regularizer, **opt_config)
-    #         layers.append(layer)
-    #         optimizers.append(optimizer)
-    #     return layers, optimizers
+        layers = []
+        optimizers = []
+        for config in layers_config:
+            # Decomposing GridSearchClass dictionary
+            layer = Layer(
+                dim_prev_layer=config['dim_prev_layer'],
+                dim_layer=config['dim_layer'],
+                activation_function=config['activation function'],
+                d_activation_function=config['d_activation_function']
+            )
+            optimizer = Optimization(layer.weights, layer.biases, regulizer = self.regularizer, **opt_config)
+            layers.append(layer)
+            optimizers.append(optimizer)
+        return layers, optimizers
 
 
     def forward(self, input):
