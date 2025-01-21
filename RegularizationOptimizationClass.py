@@ -45,10 +45,7 @@ class Regularization:
         elif self.reg_type == 'lasso':
             self.alpha = 1 
         elif self.reg_type == 'elastic':
-            if (self.alpha == 0):
-                print("Using Tikhonov regularization")
-            if (self.alpha == 1):
-                print("Using Lasso regularization")
+            pass
         elif self.reg_type == 'none':
             self.Lambda = 0 # No regularization
         else:
