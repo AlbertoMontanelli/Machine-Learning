@@ -10,7 +10,7 @@ class ModelSelection:
             loss_func,
             d_loss_func,
             neural_network,
-            early_stop
+            loss_control
     ):
         '''
         Class focused on the actual training and validation of the neural network.
@@ -29,14 +29,14 @@ class ModelSelection:
             loss_func (func): loss function.
             d_loss_func (func): derivative of the loss function.
             neural_network (NeuralNetwork): instance of the class NeuralNetwork.
-            early_stop (EarlyStoppingClass): instance of EarlyStopping Class
+            RISCRIVERE early_stop (EarlyStoppingClass): RISCRIVEREE
         '''
         self.data_splitter = data_splitter
         self.epochs = epochs
         self.batch_size = batch_size
         self.loss_func = loss_func
         self.d_loss_func = d_loss_func
-        self.early_stop = early_stop
+        self.loss_control = loss_control
         self.neural_network = neural_network
 
 
@@ -88,8 +88,6 @@ class ModelSelection:
         batches, target_batches = self.batch_generator(x_train, target_train)
         train_error_epoch = 0
         
-
-
         for batch, target_batch in zip(batches, target_batches):
             pred = self.neural_network.forward(batch)
             train_error_epoch += self.loss_func(target_batch, pred)
@@ -125,7 +123,8 @@ class ModelSelection:
     def train_fold(
             self,
             early_stopping = False,
-            smoothness = True
+            smoothness = True,
+            overfitting = False
     ):
         '''
         Function that computes training and validation error averaged on the number of folds for each epoch.
@@ -135,87 +134,71 @@ class ModelSelection:
             val_error_tot (array): validation error for each epoch averaged on the number of folds.
         
         '''
-        train_error_tot = np.zeros(self.epochs)
-        val_error_tot = np.zeros(self.epochs)
+        train_error_tot = []
+        val_error_tot = []
 
-        aa = -1
-        stop_epoch = np.zeros(self.data_splitter.K)
-        
-        for x_train, target_train, x_val, target_val in zip(
-            self.data_splitter.x_trains,
-            self.data_splitter.target_trains,
-            self.data_splitter.x_vals,
-            self.data_splitter.target_vals
+        # Indici per monitorare eventuale early stopping
+        stop_epochs = np.zeros(self.data_splitter.K, dtype=int)
+
+        for fold_idx, (x_train, target_train, x_val, target_val) in enumerate(
+            zip(
+                self.data_splitter.x_trains,
+                self.data_splitter.target_trains,
+                self.data_splitter.x_vals,
+                self.data_splitter.target_vals,
+            )
         ):
-            aa += 1
-            bb = 0
-            print(f'fold n: {aa +1}')
+            #print(f'fold n: {fold_idx + 1}')
+            train_error = []
+            val_error = []
 
-            train_error = np.array([])
-            val_error = np.array([])
-
-        
             for i in range(self.epochs):
-                if early_stopping: # True se voglio fare early stopping, false se non voglio
-                    early_check = self.early_stop.stopping_check(i, val_error) # true se si deve fermare
+                train_error_epoch = self.train_epoch(x_train, target_train)
+                val_error_epoch = self.train_val(x_val, target_val)
+
+                train_error.append(train_error_epoch)
+                val_error.append(val_error_epoch)
+
+                if early_stopping:
+                    early_check = self.loss_control.stopping_check(i, val_error)
                     if early_check:
-                        bb += 1
-                        if bb == 1:
-                            print(f"si è early stoppato alla epoca numero: {i}")
-                            stop_epoch[aa] = i
+                        print(f"Early stopping at epoch {i} for fold {fold_idx + 1}")
+                        stop_epochs[fold_idx] = i + 1  # Registra l'epoca di stop (inclusiva)
+                        break
+            else:
+                stop_epochs[fold_idx] = self.epochs  # Se non si interrompe, registra il massimo delle epoche
 
-                        train_error = np.append(train_error, train_error_epoch)
-                        val_error = np.append(val_error, val_error_epoch)
-                        
-                    else:
-                        train_error_epoch = self.train_epoch(x_train, target_train)
-                        val_error_epoch = self.train_val(x_val, target_val)
-
-                        train_error = np.append(train_error, train_error_epoch)
-                        val_error = np.append(val_error, val_error_epoch)
-                        
-                else:
-                    train_error_epoch = self.train_epoch(x_train, target_train)
-                    train_error = np.append(train_error, train_error_epoch)
-                    val_error_epoch = self.train_val(x_val, target_val)
-                    val_error = np.append(val_error, val_error_epoch)
-
-                # Da aggiungere anche il controllo dello smooth
-                
-                if ((i + 1) % 10 == 0):
-                    print(f'epoch {i+1}, train error {train_error_epoch}, val error {val_error_epoch}')
-                
-            
-            val_error_tot += val_error
-            train_error_tot += train_error
+            train_error_tot.append(train_error)
+            val_error_tot.append(val_error)
 
             if early_stopping:
-                if stop_epoch[aa] == 0:
-                    stop_epoch[aa] = self.epochs
-                # rinizializzo in modo che alla prossima iterazione parta di nuovo da 0
-                self.early_stop.stop_count = 0
-                #print(f'val error {aa+1}: \n {val_error}')
-                #print(f'train error {aa+1}: \n {train_error}')
+                self.loss_control.stop_count = 0
+            
+            '''
+            if ((i + 1) % 10 == 0):
+                    print(f'epoch {i+1}, train error {train_error_epoch}, val error {val_error_epoch}')
+            '''
 
             self.neural_network.reinitialize_net_and_optimizers()
 
+        # Epoca massima su tutti i fold
+        max_epoch = np.max(stop_epochs)
 
-        if early_stopping:
-            max_lenght = int(max(stop_epoch))
-            print(f"qual è il maggiore ?: {max_lenght}")
-            print(f'stop epoch: \n {stop_epoch}')
+        # Normalizza le lunghezze degli array di errori dei fold
+        for fold_idx in range(self.data_splitter.K):
+            train_error_tot[fold_idx] += [train_error_tot[fold_idx][-1]] * (max_epoch - len(train_error_tot[fold_idx]))
+            val_error_tot[fold_idx] += [val_error_tot[fold_idx][-1]] * (max_epoch - len(val_error_tot[fold_idx]))
 
-            #tronco
-            val_error_tot = val_error_tot[:max_lenght]
-            train_error_tot = train_error_tot[:max_lenght]
+        # Media sui fold
+        train_error_avg = np.mean(train_error_tot, axis=0)
+        val_error_avg = np.mean(val_error_tot, axis=0)
 
-        train_error_tot /= self.data_splitter.K
-        val_error_tot /= self.data_splitter.K
+        '''
+        print(f'last val error: \n {val_error_avg[-1]}')
+        print(f'last train error: \n {train_error_avg[-1]}')
+        '''
 
-        print(f'val_error tot: \n {val_error_tot[-1]}')
-        print(f'train error tot: \n {train_error_tot[-1]}')
-
-        return train_error_tot, val_error_tot
+        return train_error_avg, val_error_avg
 
 '''
 Unit test for batches
