@@ -30,12 +30,13 @@ class EarlyStopping:
                   return True if it should stop.
         '''
         self.actual_epoch = actual_epoch
+        #print(f'stop count: {self.stop_count}')
 
         self.perc = self.actual_epoch/self.epochs
 
         if self.perc >= 0.2:
             relative_error_improvement = (val_errors[actual_epoch - 2] - val_errors[actual_epoch - 1]) / val_errors[actual_epoch - 2]
-            if relative_error_improvement <= 0.001:
+            if relative_error_improvement <= 0.0001:
                 self.stop_count += 1
                 # print(f"count: {self.stop_count}. diff: {relative_error_improvement}")
             else:

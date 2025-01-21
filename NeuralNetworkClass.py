@@ -18,7 +18,7 @@ class NeuralNetwork:
         '''
         self.regularizer = Regularization(**reg_config)
         self.layers, self.optimizers = self.initialize_layers(layers_config, opt_config)
-
+    
     # per CUPUnitTest
     def initialize_layers(self, layers_config, opt_config):
       
@@ -30,6 +30,7 @@ class NeuralNetwork:
            layers.append(layer)
            optimizers.append(optimizer)
         return layers, optimizers
+    
     
     # per GridSearchClass
     '''
