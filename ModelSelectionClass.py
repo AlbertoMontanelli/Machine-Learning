@@ -149,6 +149,7 @@ class ModelSelection:
         ):
             aa += 1
             bb = 0
+            print(f'fold n: {aa +1}')
 
             train_error = np.array([])
             val_error = np.array([])
@@ -180,15 +181,17 @@ class ModelSelection:
                     val_error = np.append(val_error, val_error_epoch)
 
                 # Da aggiungere anche il controllo dello smooth
-                '''
+                
                 if ((i + 1) % 10 == 0):
                     print(f'epoch {i+1}, train error {train_error_epoch}, val error {val_error_epoch}')
-                '''
+                
             
             val_error_tot += val_error
             train_error_tot += train_error
 
             if early_stopping:
+                if stop_epoch[aa] == 0:
+                    stop_epoch[aa] = self.epochs
                 # rinizializzo in modo che alla prossima iterazione parta di nuovo da 0
                 self.early_stop.stop_count = 0
                 #print(f'val error {aa+1}: \n {val_error}')

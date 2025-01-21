@@ -147,7 +147,7 @@ def hyperband(nn_combo, brackets, min_resources, max_resources):
             val_errors = []
             for i in range(len(batch_size)):
                 train_val = ModelSelection(CUP_data_splitter, resources, batch_size[i], loss_functions['mse'], d_loss_functions['d_mse'], nn, early_stop)
-                train_error_tot, val_error_tot = train_val.train_fold(False, True)
+                train_error_tot, val_error_tot = train_val.train_fold(False)
                 train_errors.append(train_error_tot)
                 val_errors.append(val_error_tot)
             
@@ -181,7 +181,7 @@ def Training_best_config(nn, batch_size, epochs):
     '''
     early_stop = EarlyStopping(epochs)
     train_val = ModelSelection(CUP_data_splitter, epochs, batch_size, loss_functions['mse'], d_loss_functions['d_mse'], nn, early_stop)
-    train_error_tot, val_error_tot = train_val.train_fold(True, True)
+    train_error_tot, val_error_tot = train_val.train_fold(True)
 
     return train_error_tot[-1], val_error_tot[-1]
 
@@ -189,14 +189,13 @@ def Training_best_config(nn, batch_size, epochs):
 # hyperband application
 best_configs = hyperband(nn_combo, brackets, min_resources, max_resources)
 for i in range(0, 10, 1):
-    print(f'quale? {i+1}')
     # selection of the best performing configuration
     final_best_result = best_configs[-1][i]  # La configurazione migliore (val_error minimo)
     
     final_best_nn = final_best_result['nn']
 
     # Print the best configuration's details along with batch_size and val_error
-    print(f"\n Best configuration after Hyperband n: {i} \n")
+    print(f"\n Best configuration after Hyperband n: {i+1} \n")
     print(f"Batch Size: {final_best_result['batch_size']}")
     print(f"Validation Error: {final_best_result['val_error']}")
     print_nn_details(final_best_nn)
