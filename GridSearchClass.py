@@ -203,6 +203,6 @@ for i in range(0, 10, 1):
     print(f"Validation Error: {final_best_result['val_error']}")
     print_nn_details(final_best_nn)
 
-    train_error, val_error = Training_best_config(final_best_result['nn'], final_best_result['batch_size'], 500)
+    train_error, val_error = training_best_config(final_best_result['nn'], final_best_result['batch_size'], 500)
     print(f'ultimo error train: {train_error}')
     print(f'ultimo error val: {val_error}')
