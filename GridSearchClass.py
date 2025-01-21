@@ -178,7 +178,7 @@ def hyperband(nn_combo, brackets, min_resources, max_resources):
     return all_results
 
 
-def Training_best_config(nn, batch_size, epochs):
+def training_best_config(nn, batch_size, epochs):
     '''
     doc
     '''

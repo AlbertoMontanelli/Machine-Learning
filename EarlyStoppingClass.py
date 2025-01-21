@@ -14,57 +14,94 @@ class EarlyStopping:
         self.epochs = epochs
         self.stop_count = 0
         self.smooth_count = 0
+        self.overfitting_count = 0
 
     
-    def stopping_check(self, actual_epoch, val_errors):
+    def stopping_check(self, actual_epoch, val_errors, stopping_patience = 20):
         '''
-        Function that keep tracks of the relative improvement of the validation error, and if it remains below a certain threshold
+        Function that keeps track of the relative improvement of the validation error. If it remains below a certain threshold
         for 20 consecutive epochs, it returns True.
 
         Args:
             actual_epoch (int): current epoch of the training.
             val_errors (array): array containing all validation errors from epoch 0 to the current epoch.
+            stopping_patience (int): number of epochs to wait for a significant improvement for val_error.
 
         Return:
-            bool: Return False if the training algorithm should continue;
-                  return True if it should stop.
+            bool: Returns False if the training algorithm should continue;
+                  returns True if it should stop.
         '''
-        self.actual_epoch = actual_epoch
         #print(f'stop count: {self.stop_count}')
 
-        self.perc = self.actual_epoch/self.epochs
+        perc = actual_epoch/self.epochs
 
-        if self.perc >= 0.2:
+        if perc >= 0.2:
             relative_error_improvement = (val_errors[actual_epoch - 2] - val_errors[actual_epoch - 1]) / val_errors[actual_epoch - 2]
-            if relative_error_improvement <= 0.0001:
+            if (0 <= relative_error_improvement <= 0.0001):
                 self.stop_count += 1
                 # print(f"count: {self.stop_count}. diff: {relative_error_improvement}")
             else:
                 self.stop_count = 0
 
-        if self.stop_count >= 20:
+        if self.stop_count >= stopping_patience:
             return True
         else:
             return False
     
 
-    def smoothness_check(self, error_array):
+    def smoothness_check(self, actual_epoch, error_array, smooth_patience = 10):
         '''
-        Function that check if the curve is smooth or not.
+        Function that checks if the curve is smooth or not.
 
         Args: 
-            error_array (array): validation or training error array
+            actual_epoch (int): current epoch of the training.
+            error_array (array): validation or training error array.
+            smooth_patience (int): number of epochs for which fluctations of the val_error are tolerated.
 
         Returns:
-            bool: Returns False if the curve is not smooth;
-                  return True if it is smooth.
+            bool: returns False if the curve is not smooth;
+                  returns True if it is smooth.
         '''
-        
-        if self.perc > 0.2:
-            if error_array[self.actual_epoch] > error_array[self.actual_epoch - 1]:
+        perc = actual_epoch/self.epochs
+
+        if perc > 0.2:
+            if error_array[actual_epoch] > error_array[actual_epoch - 1]:
                 self.smooth_count += 1
             
-            if self.smooth_count > 10:
+            if self.smooth_count >= smooth_patience:
                 return False
             else:
-                return True    
+                return True
+            
+    def overfitting_check(self, actual_epoch, train_error, val_error, overfitting_patience = 10):
+        '''
+        Function that checks the overfitting, respectively checking whether the validation error rises, or the velocities
+        of the loss function computed for the validation and the training error vary too differently, or if the difference 
+        between training error and validation error for successive epochs is above a certain threshold.
+
+        Args:
+            actual_epoch (int): current epoch of the training.
+            train_error (array): array of the training errors.
+            val_error (array): array of the validation errors.
+            overfitting_patience (int): number of epochs for which the risk of overfitting is tolerated.
+
+        Returns:
+            bool: returns True if there is overfitting,
+                  False if there is no overfitting.
+        '''
+        perc = actual_epoch/self.epochs
+        if perc > 0.2:
+            if ((val_error[actual_epoch] - val_error[actual_epoch - 1] > 0) 
+                or 
+                ((train_error[actual_epoch] - train_error[actual_epoch - 1]) / (val_error[actual_epoch] - val_error[actual_epoch - 1]) > 2)
+                or
+                (((val_error[actual_epoch] - train_error[actual_epoch]) - (val_error[actual_epoch - 1] - train_error[actual_epoch - 1]) > 0.01 * (val_error[actual_epoch - 1] - train_error[actual_epoch - 1])) and (val_error[actual_epoch] > train_error[actual_epoch]))
+                ):
+                    self.overfitting_count += 1
+            else:
+                self.overfitting_count = 0
+
+            if self.overfitting_count >= overfitting_patience:
+                return True
+            else:
+                return False
