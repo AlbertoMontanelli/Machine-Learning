@@ -5,7 +5,7 @@ from RegularizationOptimizationClass import Regularization, Optimization
 
 class NeuralNetwork:
 
-    def __init__(self, layers_config, reg_config, opt_config):
+    def __init__(self, layers_config, reg_config, opt_config, grid_search = False):
         '''
         Class for the neural network  
 
@@ -16,14 +16,33 @@ class NeuralNetwork:
             opt_config (dict): a dictionary for optimization configuration defined by the following keys:
                                opt_type, learning_rate, momentum, beta_1, beta_2, epsilon.
         '''
+        self.grid_search = grid_search
         self.regularizer = Regularization(**reg_config)
-        self.layers, self.optimizers = self.initialize_layers(layers_config, opt_config)
+        if self.grid_search:
+            self.layers, self.optimizers = self.initialize_layers_grid_search(layers_config, opt_config)
+        else:
+            self.layers, self.optimizers = self.initialize_layers_default(layers_config, opt_config)
 
-
-    def initialize_layers(self, layers_config, opt_config):
+        
+    
+    # per CUPUnitTest
+    def initialize_layers_default(self, layers_config, opt_config):
+      
+        layers = []
+        optimizers = []
+        for config in layers_config:
+           layer = Layer(*config)
+           optimizer = Optimization(layer.weights, layer.biases, regulizer = self.regularizer, **opt_config)
+           layers.append(layer)
+           optimizers.append(optimizer)
+        return layers, optimizers
+    
+    
+    # per GridSearchClass
+    
+    def initialize_layers_grid_search(self, layers_config, opt_config):
         '''
         Function that iniliatizes all the layers in the neural network.
-
         Args:
             layers_config (list): layers configuration as a list of N layers, each defined by the following parameters:
                                   dim_prev_layer, dim_layer, activation_function, d_activation_function.
@@ -34,15 +53,22 @@ class NeuralNetwork:
             layers (list): list of the layers of the neural network.
             optimizers (list): list of optimization class instances, one for each layer of the neural network.
         '''
+       
         layers = []
         optimizers = []
         for config in layers_config:
-           layer = Layer(*config)
-           optimizer = Optimization(layer.weights, layer.biases, regulizer = self.regularizer, **opt_config)
-           layers.append(layer)
-           optimizers.append(optimizer)
+            # Decomposing GridSearchClass dictionary
+            layer = Layer(
+                dim_prev_layer=config['dim_prev_layer'],
+                dim_layer=config['dim_layer'],
+                activation_function=config['activation function'],
+                d_activation_function=config['d_activation_function']
+            )
+            optimizer = Optimization(layer.weights, layer.biases, regulizer = self.regularizer, **opt_config)
+            layers.append(layer)
+            optimizers.append(optimizer)
         return layers, optimizers
-
+    
 
     def forward(self, input):
         '''

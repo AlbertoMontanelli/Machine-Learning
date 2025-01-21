@@ -9,7 +9,8 @@ class ModelSelection:
             batch_size,
             loss_func,
             d_loss_func,
-            neural_network
+            neural_network,
+            loss_control
     ):
         '''
         Class focused on the actual training and validation of the neural network.
@@ -28,12 +29,14 @@ class ModelSelection:
             loss_func (func): loss function.
             d_loss_func (func): derivative of the loss function.
             neural_network (NeuralNetwork): instance of the class NeuralNetwork.
+            RISCRIVERE early_stop (EarlyStoppingClass): RISCRIVEREE
         '''
         self.data_splitter = data_splitter
         self.epochs = epochs
         self.batch_size = batch_size
         self.loss_func = loss_func
         self.d_loss_func = d_loss_func
+        self.loss_control = loss_control
         self.neural_network = neural_network
 
 
@@ -54,7 +57,7 @@ class ModelSelection:
             target_batches (list): list of arrays of labels corresponding to the data in x_batches.
         '''
         num_samples = x_train.shape[0]
-        if self.batch_size > len(num_samples):
+        if self.batch_size > num_samples:
             raise ValueError(f'Invalid batch size {self.batch_size}. Must be smaller than number of examples {num_samples}')
         x_batches = []
         target_batches = []
@@ -80,24 +83,22 @@ class ModelSelection:
             target_train (array): targets corresponding to x_train.
             
         Returns:
-            train_error_epoch (float): average training error of one epoch. 
-            prediction (array): array of the outputs of the neural network for the training data.
+            train_error_epoch (float): average training error of one epoch.
         '''
         batches, target_batches = self.batch_generator(x_train, target_train)
         train_error_epoch = 0
         
-        prediction = np.array([])
+
 
         for batch, target_batch in zip(batches, target_batches):
             pred = self.neural_network.forward(batch)
-            prediction = np.append(prediction, pred)
             train_error_epoch += self.loss_func(target_batch, pred)
             d_loss = self.d_loss_func(target_batch, pred)
             self.neural_network.backward(d_loss)
 
         train_error_epoch /= x_train.shape[0]
 
-        return train_error_epoch, prediction
+        return train_error_epoch
     
     
     def train_val(
@@ -119,11 +120,13 @@ class ModelSelection:
         val_error_epoch = self.loss_func(target_val, pred)/x_val.shape[0]
 
         return val_error_epoch
-   
 
 
     def train_fold(
-            self        
+            self,
+            early_stopping = False,
+            smoothness = True,
+            overfitting = False
     ):
         '''
         Function that computes training and validation error averaged on the number of folds for each epoch.
@@ -133,39 +136,60 @@ class ModelSelection:
             val_error_tot (array): validation error for each epoch averaged on the number of folds.
         
         '''
-        train_error_tot = np.zeros(self.epochs)
-        val_error_tot = np.zeros(self.epochs)
+        train_error_tot = []
+        val_error_tot = []
 
-        iterations = 0
-        for x_train, target_train, x_val, target_val in zip(
-            self.data_splitter.x_trains,
-            self.data_splitter.target_trains,
-            self.data_splitter.x_vals,
-            self.data_splitter.target_vals
+        # Indici per monitorare eventuale early stopping
+        stop_epochs = np.zeros(self.data_splitter.K, dtype=int)
+
+        for fold_idx, (x_train, target_train, x_val, target_val) in enumerate(
+            zip(
+                self.data_splitter.x_trains,
+                self.data_splitter.target_trains,
+                self.data_splitter.x_vals,
+                self.data_splitter.target_vals,
+            )
         ):
-            iterations += 1
-            print(f'\n Begin iteration {iterations} \n')
-            train_error = np.array([])
-            val_error = np.array([])
+            train_error = []
+            val_error = []
 
             for i in range(self.epochs):
-                train_error_epoch, prediction = self.train_epoch(x_train, target_train)
-                train_error = np.append(train_error, train_error_epoch)
+                train_error_epoch = self.train_epoch(x_train, target_train)
                 val_error_epoch = self.train_val(x_val, target_val)
-                val_error = np.append(val_error, val_error_epoch)
-                if ((i + 1) % 10 == 0):
-                    print(f'epoch {i+1}, train error {train_error_epoch}, val error {val_error_epoch}')
 
-    
-            val_error_tot += val_error
-            train_error_tot += train_error
+                train_error.append(train_error_epoch)
+                val_error.append(val_error_epoch)
+
+                if early_stopping:
+                    early_check = self.loss_control.stopping_check(i, val_error)
+                    if early_check:
+                        print(f"Early stopping at epoch {i} for fold {fold_idx + 1}")
+                        stop_epochs[fold_idx] = i + 1  # Registra l'epoca di stop (inclusiva)
+                        break
+            else:
+                stop_epochs[fold_idx] = self.epochs  # Se non si interrompe, registra il massimo delle epoche
+
+            train_error_tot.append(train_error)
+            val_error_tot.append(val_error)
+
+            if early_stopping:
+                self.loss_control.stop_count = 0
 
             self.neural_network.reinitialize_net_and_optimizers()
 
-        train_error_tot /= self.data_splitter.K
-        val_error_tot /= self.data_splitter.K
+        # Epoca massima su tutti i fold
+        max_epoch = np.max(stop_epochs)
 
-        return train_error_tot, val_error_tot
+        # Normalizza le lunghezze degli array di errori dei fold
+        for fold_idx in range(self.data_splitter.K):
+            train_error_tot[fold_idx] += [train_error_tot[fold_idx][-1]] * (max_epoch - len(train_error_tot[fold_idx]))
+            val_error_tot[fold_idx] += [val_error_tot[fold_idx][-1]] * (max_epoch - len(val_error_tot[fold_idx]))
+
+        # Media sui fold
+        train_error_avg = np.mean(train_error_tot, axis=0)
+        val_error_avg = np.mean(val_error_tot, axis=0)
+
+        return train_error_avg, val_error_avg
 
 '''
 Unit test for batches

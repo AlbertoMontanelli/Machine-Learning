@@ -5,6 +5,7 @@ from matplotlib.ticker import LogLocator, ScalarFormatter
 from NeuralNetworkClass import NeuralNetwork
 from Functions import activation_functions, d_activation_functions, loss_functions, d_loss_functions
 from ModelAssessmentClass import ModelAssessment
+from EarlyStoppingClass import EarlyStopping
 
 from MonkDataProcessing import monk_data
 
@@ -22,7 +23,7 @@ layers_config = [
 reg_config = {
     'Lambda': 1e-4,
     'alpha' : 0.5,
-    'reg_type': 'none'
+    'reg_type': 'elastic'
 }
 
 # Optimization configuration
@@ -47,6 +48,7 @@ batch_size = 20
 ########################################################################################################################
 
 nn_assessment = NeuralNetwork(layers_config, reg_config, opt_config)
+earlystopping = EarlyStopping(epochs)
 
 train_test = ModelAssessment(
     monk_data['training_set_1'], 
@@ -58,6 +60,7 @@ train_test = ModelAssessment(
     loss_functions['bce'], 
     d_loss_functions['d_bce'], 
     nn_assessment,
+    earlystopping,
     classification_problem = True
     )
 
