@@ -165,19 +165,18 @@ class ModelSelection:
                         print(f"Early stopping at epoch {i} for fold {fold_idx + 1}")
                         stop_epochs[fold_idx] = i + 1  # Registra l'epoca di stop (inclusiva)
                         break
-            else:
-                stop_epochs[fold_idx] = self.epochs  # Se non si interrompe, registra il massimo delle epoche
+                else:
+                    stop_epochs[fold_idx] = self.epochs  # Se non si interrompe, registra il massimo delle epoche
+            '''
+                if ((i + 1) % 10 == 0):
+                    print(f'epoch {i+1}, train error {train_error_epoch}, val error {val_error_epoch}')
+            '''
 
             train_error_tot.append(train_error)
             val_error_tot.append(val_error)
 
             if early_stopping:
                 self.loss_control.stop_count = 0
-            
-            '''
-            if ((i + 1) % 10 == 0):
-                    print(f'epoch {i+1}, train error {train_error_epoch}, val error {val_error_epoch}')
-            '''
 
             self.neural_network.reinitialize_net_and_optimizers()
 
