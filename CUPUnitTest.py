@@ -14,6 +14,8 @@ np.random.seed(12)
 layers_config = [
     (12, 128, activation_functions['leaky_ReLU'], d_activation_functions['d_leaky_ReLU']),
     (128, 3, activation_functions['linear'], d_activation_functions['d_linear'])
+    (12, 128, activation_functions['leaky_ReLU'], d_activation_functions['d_leaky_ReLU']),
+    (128, 3, activation_functions['linear'], d_activation_functions['d_linear'])
 ]
 
 # Regulizer configuration
@@ -26,6 +28,7 @@ reg_config = {
 # Optimizater configuration
 opt_config = {
     'opt_type': 'adam',
+    'opt_type': 'adam',
     'learning_rate': 1e-4,
     'momentum': 0.9,
     'beta_1': 0.9,
@@ -36,6 +39,7 @@ opt_config = {
 nn = NeuralNetwork(layers_config, reg_config, opt_config)
 
 epochs = 500
+batch_size = 25 # len(CUP_data_splitter.x_trains[0])
 batch_size = 25 # len(CUP_data_splitter.x_trains[0])
 print(f'batchsize: {batch_size}')
 early_stop = EarlyStopping(epochs)
