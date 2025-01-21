@@ -212,6 +212,9 @@ class ModelSelection:
         train_error_tot /= self.data_splitter.K
         val_error_tot /= self.data_splitter.K
 
+        print(f'val error tot: \n {val_error_tot[-1]}')
+        print(f'train error tot: \n {train_error_tot[-1]}')
+
         return train_error_tot, val_error_tot
 
 '''
