@@ -1,7 +1,11 @@
 import re
+import numpy as np
 
-from Functions import activation_functions, d_activation_functions
+from Functions import activation_functions, d_activation_functions, loss_functions, d_loss_functions
 from NeuralNetworkClass import NeuralNetwork
+from ModelSelectionClass import ModelSelection
+from LossControlClass import LossControl
+from CUPDataProcessing import CUP_data_splitter
 
 def parse_nn_configurations(file_path):
     configurations = []
@@ -16,6 +20,10 @@ def parse_nn_configurations(file_path):
     for raw_config in raw_configs:
         if not raw_config.strip():
             continue
+
+        # Parse Batch Size
+        batch_size_match = re.search(r"Batch Size:\s*(\d+)", raw_config)
+        batch_size = int(batch_size_match.group(1)) if batch_size_match else None
 
         # Parse Regularizer Configuration
         reg_match = re.search(r"Lambda:\s*(\S+)\n\s*alpha:\s*(\S+)\n\s*reg_type:\s*(\S+)", raw_config)
@@ -47,7 +55,7 @@ def parse_nn_configurations(file_path):
         } if opt_match else {}
 
         # Salva la configurazione come tupla
-        configurations.append((opt_config, reg_config, layers_config))
+        configurations.append((opt_config, reg_config, layers_config, batch_size))
 
     return configurations
 
@@ -63,6 +71,22 @@ for i in range(len(configurations)):
     nn = NeuralNetwork(layers_config=configurations[i][2], reg_config=configurations[i][1], opt_config=configurations[i][0])
     neural_networks.append(nn)
 
+
+epochs = 500
+loss_control = LossControl(epochs)
+
+train_error_config = np.zeros(len(neural_networks))
+val_error_config = np.zeros(len(neural_networks))
+smoothness_config = np.zeros(len(neural_networks))
+
+
+for nn, i in neural_networks, len(neural_networks):
+
+    train_val = ModelSelection(CUP_data_splitter, epochs, configurations[i][4], loss_functions['mse'], d_loss_functions['d_mse'], nn, loss_control)
+    train_error_tot, val_error_tot, smoothness = train_val.train_fold(True)
+    train_error_config[i] = train_error_tot
+    val_error_config[i] = val_error_tot
+    smoothness_config[i] = smoothness
 
 """
 def print_nn_details(nn):
