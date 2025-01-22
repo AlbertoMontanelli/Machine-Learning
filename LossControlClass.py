@@ -1,6 +1,6 @@
 import numpy as np
 
-class EarlyStopping:
+class LossControl:
 
     def __init__(self, epochs):
         '''
@@ -93,8 +93,8 @@ class EarlyStopping:
         if perc > 0.2:
             if ((val_error[actual_epoch] - val_error[actual_epoch - 1] > 0) 
                 or 
-                ((train_error[actual_epoch] - train_error[actual_epoch - 1]) / (val_error[actual_epoch] - val_error[actual_epoch - 1]) > 2)
-                or
+                #((train_error[actual_epoch] - train_error[actual_epoch - 1]) / (val_error[actual_epoch] - val_error[actual_epoch - 1]) > 2) # train speed = 2 * val speed
+                #or
                 (((val_error[actual_epoch] - train_error[actual_epoch]) - (val_error[actual_epoch - 1] - train_error[actual_epoch - 1]) > 0.01 * (val_error[actual_epoch - 1] - train_error[actual_epoch - 1])) and (val_error[actual_epoch] > train_error[actual_epoch]))
                 ):
                     self.overfitting_count += 1

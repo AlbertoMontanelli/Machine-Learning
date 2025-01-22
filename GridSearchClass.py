@@ -6,8 +6,8 @@ import time
 from NeuralNetworkClass import NeuralNetwork
 from Functions import activation_functions, d_activation_functions, loss_functions, d_loss_functions, activation_functions_grid, d_activation_functions_grid
 from ModelSelectionClass import ModelSelection
-from GridBuilding import combinations_grid, x_trains, CUP_data_splitter, batch_size
-from EarlyStoppingClass import EarlyStopping
+from GridBuilding_NAG_1 import combinations_grid, x_trains, CUP_data_splitter, batch_size
+from LossControlClass import LossControl
 
 def print_nn_details(nn):
     details = []
@@ -110,11 +110,11 @@ for config in combinations_grid:
             'epsilon': 1e-8 if config['opt_type'] == 'adam' else None
         })
 
-        nn = NeuralNetwork(layer_config, reg_config, opt_config)
+        nn = NeuralNetwork(layer_config, reg_config, opt_config, True)
         
         nn_combo.append(nn)
         
-print(f'finite le iterazioni \n tutte: {all_combination}, vere: {used_combination}')
+print(f'finite le iterazioni tutte: {all_combination}, vere: {used_combination}')
 
 combination = product(nn_combo, batch_size)
 list_combination = list(combination)
@@ -138,7 +138,7 @@ def hyperband(list_combination, brackets, min_resources, max_resources):
     # training for a small number of epochs for all configurations
     resources = min_resources
 
-    early_stop = EarlyStopping(resources)
+    loss_control = LossControl(resources)
     
     # generating all configuration combinations
     for bracket in range(brackets):
@@ -156,7 +156,7 @@ def hyperband(list_combination, brackets, min_resources, max_resources):
             #if a%10 == 0:
             #    print(f'entra? {a}')
 
-            train_val = ModelSelection(CUP_data_splitter, resources, batch, loss_functions['mse'], d_loss_functions['d_mse'], nn, early_stop)
+            train_val = ModelSelection(CUP_data_splitter, resources, batch, loss_functions['mse'], d_loss_functions['d_mse'], nn, loss_control)
             train_error_tot, val_error_tot = train_val.train_fold(False, True)
         
             # storing the result
@@ -184,22 +184,11 @@ def hyperband(list_combination, brackets, min_resources, max_resources):
     return best_results
 
 
-def training_best_config(nn, batch_size, epochs):
-    '''
-    doc
-    '''
-    early_stop = EarlyStopping(epochs)
-    train_val = ModelSelection(CUP_data_splitter, epochs, batch_size, loss_functions['mse'], d_loss_functions['d_mse'], nn, early_stop)
-    train_error_tot, val_error_tot = train_val.train_fold(True)
-
-    return train_error_tot[-1], val_error_tot[-1]
-
-
 # hyperband application
 best_configs = hyperband(list_combination, brackets, min_resources, max_resources)
     
 # Apri un file di testo in modalità scrittura
-with open("best_hyperband_configs.txt", "w") as file:
+with open("best_hyperband_configs_NAG_1.txt", "w") as file:
     for i in range(30):
         # Seleziona la i-esima combinazione migliore
         final_best_result = best_configs[i]
@@ -215,61 +204,3 @@ with open("best_hyperband_configs.txt", "w") as file:
 
 current_time = time.ctime()
 os.system('echo ' + current_time)
-
-
-
-# per stampare a schermo le migliori combinazioni
-'''
-for i in range(0, 10, 1):
-    # selection of the best performing configuration
-    final_best_result = best_configs[-1][i]  # La configurazione migliore (val_error minimo)
-    
-    final_best_nn = final_best_result['nn']
-
-    # Print the best configuration's details along with batch_size and val_error
-    print(f"\n Best configuration after Hyperband n: {i+1} \n")
-    print(f"Batch Size: {final_best_result['batch_size']}")
-    print(f"Validation Error: {final_best_result['val_error']}")
-    print_nn_details(final_best_nn)
-
-    # Train fino all'ultima epoca delle migliori combinazioni
-    train_error, val_error = training_best_config(final_best_result['nn'], final_best_result['batch_size'], 500)
-    print(f'ultimo error train: {train_error}')
-    print(f'ultimo error val: {val_error}')
-'''
-
-'''
-# Questo fa solo il print
-
-def print_nn_details(nn):
-    print("=== Neural Network Details ===")
-    
-    # Regolarizzazione
-    print("\nRegularizer Configuration:")
-    if hasattr(nn.regularizer, '__dict__'):
-        for key, value in nn.regularizer.__dict__.items():
-            print(f"  {key}: {value}")
-    else:
-        print("  No regularizer details available.")
-    
-    # Layer
-    print("\nLayers Configuration:")
-    for i, layer in enumerate(nn.layers):
-        print(f"    Layer {i + 1}:")
-        print(f"    dim_prev_layer: {layer.dim_prev_layer}")
-        print(f"    dim_layer: {layer.dim_layer}")
-        print(f"    activation_function: {layer.activation_function.__name__}")  # Nome della funzione
-        print(f"    d_activation_function: {layer.d_activation_function.__name__}")  # Nome della funzione derivata
-    
-    # Ottimizzatori
-    print("\nOptimizers Configuration:")
-    allowed_optimizer_keys = ['opt_type', 'learning_rate', 'momentum', 'beta_1', 'beta_2', 'epsilon']
-    for i, optimizer in enumerate(nn.optimizers):
-        print(f"  Optimizer {i + 1}:")
-        if hasattr(optimizer, '__dict__'):
-            for key, value in optimizer.__dict__.items():
-                if key in allowed_optimizer_keys:
-                    print(f"    {key}: {value}")
-        else:
-            print(f"    Optimizer {i + 1} details not available.")
-'''

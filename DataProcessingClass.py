@@ -1,5 +1,7 @@
 import numpy as np
 
+np.random.seed(12)
+
 class DataProcessing:
 
     def __init__(self, x_tot, target_tot, test_perc = 0.2, K = 1, train_perc = 0.75):

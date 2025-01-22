@@ -5,7 +5,7 @@ from NeuralNetworkClass import NeuralNetwork
 from Functions import activation_functions, d_activation_functions, loss_functions, d_loss_functions
 from ModelSelectionClass import ModelSelection
 from CUPDataProcessing import CUP_data_splitter
-from EarlyStoppingClass import EarlyStopping
+from LossControlClass import LossControl
 
 '''Unit test for NN'''
 np.random.seed(12)
@@ -19,15 +19,15 @@ layers_config = [
 
 # Regulizer configuration
 reg_config = {
-    'Lambda': 1e-3,
+    'Lambda': 1e-5,
     'alpha' : 0.5,
     'reg_type': 'elastic'
 }
 
 # Optimizater configuration
 opt_config = {
-    'opt_type': 'NAG',
-    'learning_rate': 1e-3,
+    'opt_type': 'adam',
+    'learning_rate': 1e-4,
     'momentum': 0.9,
     'beta_1': 0.9,
     'beta_2': 0.999,
@@ -39,9 +39,9 @@ nn = NeuralNetwork(layers_config, reg_config, opt_config)
 epochs = 500
 batch_size = 40 # len(CUP_data_splitter.x_trains[0])
 print(f'batchsize: {batch_size}')
-early_stop = EarlyStopping(epochs)
+loss_control = LossControl(epochs)
 
-train_val = ModelSelection(CUP_data_splitter, epochs, batch_size, loss_functions['mse'], d_loss_functions['d_mse'], nn, early_stop)
+train_val = ModelSelection(CUP_data_splitter, epochs, batch_size, loss_functions['mse'], d_loss_functions['d_mse'], nn, loss_control)
 train_error_tot, val_error_tot = train_val.train_fold(True)
 
 #############################################################################################################################
