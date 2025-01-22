@@ -113,9 +113,9 @@ loss_control = LossControl(epochs)
 total_config = np.zeros(len(neural_networks))
 
 
-for nn, i in neural_networks, len(neural_networks):
-
-    train_val = ModelSelection(CUP_data_splitter, epochs, configurations[i][4], loss_functions['mse'], d_loss_functions['d_mse'], nn, loss_control)
+for i in range(len(neural_networks)):
+    nn = neural_networks[i]
+    train_val = ModelSelection(CUP_data_splitter, epochs, configurations[i][3], loss_functions['mse'], d_loss_functions['d_mse'], nn, loss_control)
     train_error_tot, val_error_tot, smoothness = train_val.train_fold(True)
    
     total_config[i] = tuple(nn, smoothness, train_error_tot, val_error_tot)

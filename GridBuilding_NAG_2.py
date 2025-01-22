@@ -20,7 +20,7 @@ x_trains, target_trains, x_vals, target_vals = CUP_data_splitter.train_val_split
 
 # Adam Grid
 N_layer = [3]
-N_units = [32, 64, 128, 256]
+N_units = [32, 64, 128]
 
 nn_architecture = []
 
