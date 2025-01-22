@@ -29,7 +29,7 @@ class ModelSelection:
             loss_func (func): loss function.
             d_loss_func (func): derivative of the loss function.
             neural_network (NeuralNetwork): instance of the class NeuralNetwork.
-            RISCRIVERE early_stop (EarlyStoppingClass): RISCRIVEREE
+            RISCRIVERE loss_control (EarlyStoppingClass): RISCRIVEREE
         '''
         self.data_splitter = data_splitter
         self.epochs = epochs
@@ -167,10 +167,11 @@ class ModelSelection:
                         break
                 else:
                     stop_epochs[fold_idx] = self.epochs  # Se non si interrompe, registra il massimo delle epoche
-            '''
-                if ((i + 1) % 10 == 0):
-                    print(f'epoch {i+1}, train error {train_error_epoch}, val error {val_error_epoch}')
-            '''
+                
+                if self.neural_network.grid_search == False:
+                    if ((i + 1) % 10 == 0):
+                        print(f'epoch {i+1}, train error {train_error_epoch}, val error {val_error_epoch}')
+                
 
             train_error_tot.append(train_error)
             val_error_tot.append(val_error)
@@ -192,10 +193,10 @@ class ModelSelection:
         train_error_avg = np.mean(train_error_tot, axis=0)
         val_error_avg = np.mean(val_error_tot, axis=0)
 
-        '''
-        print(f'last val error: \n {val_error_avg[-1]}')
-        print(f'last train error: \n {train_error_avg[-1]}')
-        '''
+        if self.neural_network.grid_search == False:
+            print(f'last val error: \n {val_error_avg[-1]}')
+            print(f'last train error: \n {train_error_avg[-1]}')
+            
 
         return train_error_avg, val_error_avg
 
