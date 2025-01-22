@@ -1,19 +1,7 @@
 import re
 
-from Functions import *
+from Functions import activation_functions, d_activation_functions
 from NeuralNetworkClass import NeuralNetwork
-
-# Funzioni di attivazione disponibili
-activation_functions_grid = {
-    "tanh": tanh,
-    "leaky_ReLU": leaky_relu,
-    "linear": linear
-}
-d_activation_functions = {
-    'd_leaky_ReLU': d_leaky_relu,
-    'd_linear': d_linear,
-    'd_tanh': d_tanh
-}
 
 def parse_nn_configurations(file_path):
     configurations = []
@@ -43,7 +31,7 @@ def parse_nn_configurations(file_path):
         for match in layer_matches:
             dim_prev_layer = int(match[0])
             dim_layer = int(match[1])
-            activation_function = activation_functions_grid.get(match[2], match[2])
+            activation_function = activation_functions.get(match[2], match[2])
             d_activation_function = d_activation_functions.get(match[3], match[3])
             layers_config.append((dim_prev_layer, dim_layer, activation_function, d_activation_function))
 
@@ -70,10 +58,13 @@ configurations = parse_nn_configurations(file_path)
 # Stampa la prima configurazione per verifica
 print(configurations[0])
 
-nn = NeuralNetwork(layers_config=configurations[0][2], reg_config=configurations[0][1], opt_config=configurations[0][0])
+neural_networks = []
+for i in range(len(configurations)):
+    nn = NeuralNetwork(layers_config=configurations[i][2], reg_config=configurations[i][1], opt_config=configurations[i][0])
+    neural_networks.append(nn)
 
 
-
+"""
 def print_nn_details(nn):
     print("=== Neural Network Details ===")
     
@@ -105,5 +96,5 @@ def print_nn_details(nn):
                     print(f"    {key}: {value}")
         else:
             print(f"    Optimizer {i + 1} details not available.")
+"""
 
-print_nn_details(nn)
