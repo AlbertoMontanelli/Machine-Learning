@@ -139,7 +139,7 @@ class ModelSelection:
 
         # Indici per monitorare eventuale early stopping
         stop_epochs = np.zeros(self.data_splitter.K, dtype=int)
-        smoothness_fold = np.zeros(self.data_splitter.K, dtype=int)
+        smoothness_fold = np.zeros(self.data_splitter.K, dtype=bool)
 
         for fold_idx, (x_train, target_train, x_val, target_val) in enumerate(
             zip(
@@ -167,15 +167,17 @@ class ModelSelection:
                         print(f"Overfitting at epoch {i} for fold {fold_idx + 1}")
                         stop_epochs[fold_idx] = i + 1  # Registra l'epoca di stop (inclusiva)
                         break
+                    else:
+                        stop_epochs[fold_idx] = self.epochs 
 
-                elif early_stopping:
+                if early_stopping:
                     early_check = self.loss_control.stopping_check(i, val_error)
                     if early_check:
                         print(f"Early stopping at epoch {i} for fold {fold_idx + 1}")
                         stop_epochs[fold_idx] = i + 1  # Registra l'epoca di stop (inclusiva)
                         break
-                else:
-                    stop_epochs[fold_idx] = self.epochs  # Se non si interrompe, registra il massimo delle epoche
+                    else:
+                        stop_epochs[fold_idx] = self.epochs  # Se non si interrompe, registra il massimo delle epoche
 
                 if smoothness:
                     smoothness_check_train = self.loss_control.smoothness_check(i, train_error)
@@ -224,9 +226,12 @@ class ModelSelection:
             print(f'last val error: \n {val_error_avg[-1]}')
             print(f'last train error: \n {train_error_avg[-1]}')
 
-        smoothness_outcome = all(smoothness_fold)    
-
-        return train_error_avg, val_error_avg, smoothness_outcome
+        smoothness_outcome = all(smoothness_fold) # if there is one False in the smoothness of the folds, smoothness_outcome is False 
+        
+        if smoothness:
+            return train_error_avg, val_error_avg, smoothness_outcome
+        else:
+            return train_error_avg, val_error_avg
 
 '''
 Unit test for batches

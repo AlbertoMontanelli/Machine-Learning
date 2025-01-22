@@ -157,7 +157,7 @@ def hyperband(list_combination, brackets, min_resources, max_resources):
             #    print(f'entra? {a}')
 
             train_val = ModelSelection(CUP_data_splitter, resources, batch, loss_functions['mse'], d_loss_functions['d_mse'], nn, loss_control)
-            train_error_tot, val_error_tot = train_val.train_fold(False, True)
+            train_error_tot, val_error_tot = train_val.train_fold()
         
             # storing the result
             results.append({

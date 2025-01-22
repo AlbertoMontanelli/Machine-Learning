@@ -18,7 +18,7 @@ BETA_2 = 0.999
 # Splitting CUP data
 x_trains, target_trains, x_vals, target_vals = CUP_data_splitter.train_val_split()
 
-# Adam Grid
+# NAG Grid
 N_layer = [1, 2]
 N_units = [32, 64, 128, 256]
 

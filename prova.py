@@ -9,6 +9,38 @@ from ModelSelectionClass import ModelSelection
 from LossControlClass import LossControl
 from CUPDataProcessing import CUP_data_splitter
 
+def print_nn_details(nn):
+    print("=== Neural Network Details ===")
+    
+    # Regolarizzazione
+    print("\nRegularizer Configuration:")
+    if hasattr(nn.regularizer, '__dict__'):
+        for key, value in nn.regularizer.__dict__.items():
+            print(f"  {key}: {value}")
+    else:
+        print("  No regularizer details available.")
+    
+    # Layer
+    print("\nLayers Configuration:")
+    for i, layer in enumerate(nn.layers):
+        print(f"    Layer {i + 1}:")
+        print(f"    dim_prev_layer: {layer.dim_prev_layer}")
+        print(f"    dim_layer: {layer.dim_layer}")
+        print(f"    activation_function: {layer.activation_function.__name__}")  # Nome della funzione
+        print(f"    d_activation_function: {layer.d_activation_function.__name__}")  # Nome della funzione derivata
+    
+    # Ottimizzatori
+    print("\nOptimizers Configuration:")
+    allowed_optimizer_keys = ['opt_type', 'learning_rate', 'momentum', 'beta_1', 'beta_2', 'epsilon']
+    for i, optimizer in enumerate(nn.optimizers):
+        print(f"  Optimizer {i + 1}:")
+        if hasattr(optimizer, '__dict__'):
+            for key, value in optimizer.__dict__.items():
+                if key in allowed_optimizer_keys:
+                    print(f"    {key}: {value}")
+        else:
+            print(f"    Optimizer {i + 1} details not available.")
+
 def parse_nn_configurations(file_path):
     configurations = []
 
@@ -50,7 +82,7 @@ def parse_nn_configurations(file_path):
         opt_config = {
             'opt_type': opt_match.group(1),
             'learning_rate': float(opt_match.group(2)),
-            'momentum': float(opt_match.group(3)),
+            'momentum': float(opt_match.group(3)) if opt_match.group(3) != 'None' else None,
             'beta_1': float(opt_match.group(4)) if opt_match.group(4) != 'None' else None,
             'beta_2': float(opt_match.group(5)) if opt_match.group(5) != 'None' else None,
             'epsilon': float(opt_match.group(6)) if opt_match.group(6) != 'None' else None
@@ -77,54 +109,19 @@ for i in range(len(configurations)):
 epochs = 500
 loss_control = LossControl(epochs)
 
-train_error_config = np.zeros(len(neural_networks))
-val_error_config = np.zeros(len(neural_networks))
-smoothness_config = np.zeros(len(neural_networks))
-config_smooth = np.zeros(len(neural_networks))
+
+total_config = np.zeros(len(neural_networks))
 
 
 for nn, i in neural_networks, len(neural_networks):
 
     train_val = ModelSelection(CUP_data_splitter, epochs, configurations[i][4], loss_functions['mse'], d_loss_functions['d_mse'], nn, loss_control)
     train_error_tot, val_error_tot, smoothness = train_val.train_fold(True)
-    train_error_config[i] = train_error_tot
-    val_error_config[i] = val_error_tot
-    smoothness_config[i] = smoothness
-    config_smooth[i] = zip(nn, smoothness_config[i], train_error_config[i], val_error_config[i])
-
-print(config_smooth)
-
-"""
-def print_nn_details(nn):
-    print("=== Neural Network Details ===")
-    
-    # Regolarizzazione
-    print("\nRegularizer Configuration:")
-    if hasattr(nn.regularizer, '__dict__'):
-        for key, value in nn.regularizer.__dict__.items():
-            print(f"  {key}: {value}")
-    else:
-        print("  No regularizer details available.")
-    
-    # Layer
-    print("\nLayers Configuration:")
-    for i, layer in enumerate(nn.layers):
-        print(f"    Layer {i + 1}:")
-        print(f"    dim_prev_layer: {layer.dim_prev_layer}")
-        print(f"    dim_layer: {layer.dim_layer}")
-        print(f"    activation_function: {layer.activation_function.__name__}")  # Nome della funzione
-        print(f"    d_activation_function: {layer.d_activation_function.__name__}")  # Nome della funzione derivata
-    
-    # Ottimizzatori
-    print("\nOptimizers Configuration:")
-    allowed_optimizer_keys = ['opt_type', 'learning_rate', 'momentum', 'beta_1', 'beta_2', 'epsilon']
-    for i, optimizer in enumerate(nn.optimizers):
-        print(f"  Optimizer {i + 1}:")
-        if hasattr(optimizer, '__dict__'):
-            for key, value in optimizer.__dict__.items():
-                if key in allowed_optimizer_keys:
-                    print(f"    {key}: {value}")
-        else:
-            print(f"    Optimizer {i + 1} details not available.")
-"""
+   
+    total_config[i] = tuple(nn, smoothness, train_error_tot, val_error_tot)
+    print(f'combinazione {i+1} \n ')
+    print_nn_details(nn)
+    print(f'smoothness: {smoothness}')
+    print(f'errore training {train_error_tot[-1]}')
+    print(f'errore validation {val_error_tot[-1]}')
 
