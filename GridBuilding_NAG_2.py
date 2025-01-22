@@ -20,7 +20,7 @@ x_trains, target_trains, x_vals, target_vals = CUP_data_splitter.train_val_split
 
 # Adam Grid
 N_layer = [3]
-N_units = [32, 128]
+N_units = [32, 64, 128, 256]
 
 nn_architecture = []
 
@@ -34,8 +34,8 @@ param_grid = {
     'activation_function' : list(activation_functions_grid.keys()),
     'd_activation_function' : list(d_activation_functions_grid.keys()),
     'learning_rate' : np.logspace(-5, -3, num = 3),  
-    'lambda': [0, 0.0001, 0.00001],
-    'alpha': [0, 0.5, 1]
+    'lambda': [0, 1e-2, 1e-4, 1e-6],
+    'alpha': [0, 0.33, 0.66, 1]
     }
 
 batch_size = [1, 40, 160]
