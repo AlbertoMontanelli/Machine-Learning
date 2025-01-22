@@ -1,99 +1,76 @@
 import re
-from Functions import activation_functions, d_activation_functions
+
+from Functions import *
 from NeuralNetworkClass import NeuralNetwork
 
-import re
-from Functions import activation_functions, d_activation_functions
+# Funzioni di attivazione disponibili
+activation_functions_grid = {
+    "tanh": tanh,
+    "leaky_ReLU": leaky_relu,
+    "linear": linear
+}
+d_activation_functions = {
+    'd_leaky_ReLU': d_leaky_relu,
+    'd_linear': d_linear,
+    'd_tanh': d_tanh
+}
 
-def normalize_key(key, dictionary):
-    """
-    Normalize a key to match the dictionary.
-    If not found, raise a KeyError.
-    """
-    normalized_key = key.lower().replace("_relu", "_ReLU")
-    if normalized_key not in dictionary:
-        raise KeyError(f"Key '{key}' not found in the dictionary.")
-    return dictionary[normalized_key]
+def parse_nn_configurations(file_path):
+    configurations = []
 
-def parse_configurations(file_path):
-    with open(file_path, "r") as file:
-        content = file.read()
-    
-    # Split configurations by the delimiter line
-    configurations = content.split("-" * 30)
-    
-    parsed_configs = []
-    
-    for config in configurations:
-        if not config.strip():
-            continue  # Skip empty parts
+    # Leggi il file
+    with open(file_path, 'r') as file:
+        data = file.read()
 
-        # Regularizer Configuration
-        reg_config_pattern = r"Regularizer Configuration:\s+Lambda: ([\d.e-]+)\s+alpha: ([\d.e-]+)\s+reg_type: (\w+)"
-        reg_config_match = re.search(reg_config_pattern, config)
+    # Dividi le configurazioni separate da "--------------------------------------------------"
+    raw_configs = data.split('--------------------------------------------------')
+
+    for raw_config in raw_configs:
+        if not raw_config.strip():
+            continue
+
+        # Parse Regularizer Configuration
+        reg_match = re.search(r"Lambda:\s*(\S+)\n\s*alpha:\s*(\S+)\n\s*reg_type:\s*(\S+)", raw_config)
         reg_config = {
-            "Lambda": float(reg_config_match.group(1)),
-            "alpha": float(reg_config_match.group(2)),
-            "reg_type": reg_config_match.group(3)
-        }
+            'Lambda': float(reg_match.group(1)),
+            'alpha': float(reg_match.group(2)),
+            'reg_type': reg_match.group(3)
+        } if reg_match else {}
 
-        # Layers Configuration
+        # Parse Layers Configuration
         layers_config = []
-        layers_pattern = r"Layer \d+:\s+dim_prev_layer: (\d+)\s+dim_layer: (\d+)\s+activation_function: (\w+)\s+d_activation_function: (\w+)"
-        for match in re.finditer(layers_pattern, config):
-            dim_prev_layer, dim_layer, activation, d_activation = match.groups()
-            layers_config.append((
-                int(dim_prev_layer),
-                int(dim_layer),
-                normalize_key(activation, activation_functions),
-                normalize_key(d_activation, d_activation_functions)
-            ))
+        layer_matches = re.findall(r"Layer \d+:\n\s*dim_prev_layer:\s*(\d+)\n\s*dim_layer:\s*(\d+)\n\s*activation_function:\s*(\S+)\n\s*d_activation_function:\s*(\S+)", raw_config)
+        for match in layer_matches:
+            dim_prev_layer = int(match[0])
+            dim_layer = int(match[1])
+            activation_function = activation_functions_grid.get(match[2], match[2])
+            d_activation_function = d_activation_functions.get(match[3], match[3])
+            layers_config.append((dim_prev_layer, dim_layer, activation_function, d_activation_function))
 
-        # Optimizer Configuration
-        opt_config_pattern = (
-            r"Optimizers Configuration:\s+Optimizer \d+:\s+opt_type: (\w+)\s+"
-            r"learning_rate: ([\d.e-]+)\s+momentum: ([\d.e-]+)\s+"
-            r"beta_1: ([\d.e-]+|None)\s+beta_2: ([\d.e-]+|None)\s+epsilon: ([\d.e-]+|None)"
-        )
-        opt_config_match = re.search(opt_config_pattern, config)
+        # Parse Optimizers Configuration
+        opt_match = re.search(r"opt_type:\s*(\S+)\n\s*learning_rate:\s*(\S+)\n\s*momentum:\s*(\S+)\n\s*beta_1:\s*(\S+)\n\s*beta_2:\s*(\S+)\n\s*epsilon:\s*(\S+)", raw_config)
         opt_config = {
-            "opt_type": opt_config_match.group(1),
-            "learning_rate": float(opt_config_match.group(2)),
-            "momentum": float(opt_config_match.group(3)),
-            "beta_1": float(opt_config_match.group(4)) if opt_config_match.group(4) != "None" else None,
-            "beta_2": float(opt_config_match.group(5)) if opt_config_match.group(5) != "None" else None,
-            "epsilon": float(opt_config_match.group(6)) if opt_config_match.group(6) != "None" else None
-        }
-        
-        # Append the parsed configuration
-        parsed_configs.append({
-            "layers_config": layers_config,
-            "reg_config": reg_config,
-            "opt_config": opt_config
-        })
-    
-    return parsed_configs
+            'opt_type': opt_match.group(1),
+            'learning_rate': float(opt_match.group(2)),
+            'momentum': float(opt_match.group(3)),
+            'beta_1': float(opt_match.group(4)) if opt_match.group(4) != 'None' else None,
+            'beta_2': float(opt_match.group(5)) if opt_match.group(5) != 'None' else None,
+            'epsilon': float(opt_match.group(6)) if opt_match.group(6) != 'None' else None
+        } if opt_match else {}
 
-# Path to the configuration file
-file_path = "best_hyperband_configs_NAG_2.txt"
+        # Salva la configurazione come tupla
+        configurations.append((opt_config, reg_config, layers_config))
 
-# Parse all configurations
-parsed_configs = parse_configurations(file_path)
+    return configurations
 
-# Initialize neural networks for each configuration
-neural_networks = []
-for config in parsed_configs:
-    nn = NeuralNetwork(config["layers_config"], config["reg_config"], config["opt_config"])
-    neural_networks.append(nn)
+# Percorso al file txt
+file_path = '/home/alberto-montanelli/Unipi/Git Repositories/Machine-Learning/best_hyperband_configs_NAG_1.txt'
+configurations = parse_nn_configurations(file_path)
 
-# Output summary
-for idx, config in enumerate(parsed_configs):
-    print(f"Configuration {idx + 1}:")
-    print("Layers Config:", config["layers_config"])
-    print("Regularizer Config:", config["reg_config"])
-    print("Optimizer Config:", config["opt_config"])
-    print()
+# Stampa la prima configurazione per verifica
+print(configurations[0])
 
+nn = NeuralNetwork(layers_config=configurations[0][2], reg_config=configurations[0][1], opt_config=configurations[0][0])
 
 
 
@@ -129,4 +106,4 @@ def print_nn_details(nn):
         else:
             print(f"    Optimizer {i + 1} details not available.")
 
-print_nn_details(neural_networks)
+print_nn_details(nn)
