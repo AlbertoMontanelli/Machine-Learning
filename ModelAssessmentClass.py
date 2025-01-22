@@ -15,7 +15,7 @@ class ModelAssessment:
             loss_func,
             d_loss_func,
             neural_network,
-            early_stop,
+            loss_control,
             classification_problem = False
     ):
         '''
@@ -34,7 +34,7 @@ class ModelAssessment:
             loss_func (func): loss function.
             d_loss_func (func): derivative of the loss function.
             neural_network (NeuralNetwork): instance of the class NeuralNetwork.
-            early_stop (): instance of EarlyStopping Class
+            ????? early_stop (): instance of EarlyStopping Class
             classification_problem (bool): checking whether the problem consists of regression (default) 
                                            or classification. If classification_problem = True, accuracy
                                            is computed.
@@ -48,7 +48,7 @@ class ModelAssessment:
         self.loss_func = loss_func
         self.d_loss_func = d_loss_func
         self.neural_network = neural_network
-        self.early_stop = early_stop
+        self.loss_control = loss_control
         self.classification_problem = classification_problem
         '''
         if classification_problem:
@@ -208,14 +208,14 @@ class ModelAssessment:
                 accuracy_retrain_tot = np.append(accuracy_retrain_tot, accuracy_retrain)
                 accuracy_test_tot = np.append(accuracy_test_tot, accuracy_test)
 
-                early_check = self.early_stop.stopping_check(i, test_error_tot)
+                early_check = self.loss_control.stopping_check(i, test_error_tot)
                 if early_check:
                     print(f"epoch: {i}")
                     break
 
-                smoothness_train = self.early_stop.smoothness_check(retrain_error_tot)
-                smoothness_test = self.early_stop.smoothness_check(test_error_tot)
-                if smoothness_test or smoothness_train:
+                smoothness_train = self.loss_control.smoothness_check(i, retrain_error_tot)
+                smoothness_test = self.loss_control.smoothness_check(i, test_error_tot)
+                if (smoothness_test == False) or (smoothness_train == False):
                     print("NO SMOOTH")
                     break
 
