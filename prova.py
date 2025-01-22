@@ -1,3 +1,5 @@
+
+
 import re
 import numpy as np
 
@@ -60,7 +62,7 @@ def parse_nn_configurations(file_path):
     return configurations
 
 # Percorso al file txt
-file_path = '/home/alberto-montanelli/Unipi/Git Repositories/Machine-Learning/best_hyperband_configs_NAG_1.txt'
+file_path = 'best_hyperband_configs_adam.txt'
 configurations = parse_nn_configurations(file_path)
 
 # Stampa la prima configurazione per verifica
@@ -78,6 +80,7 @@ loss_control = LossControl(epochs)
 train_error_config = np.zeros(len(neural_networks))
 val_error_config = np.zeros(len(neural_networks))
 smoothness_config = np.zeros(len(neural_networks))
+config_smooth = np.zeros(len(neural_networks))
 
 
 for nn, i in neural_networks, len(neural_networks):
@@ -87,6 +90,9 @@ for nn, i in neural_networks, len(neural_networks):
     train_error_config[i] = train_error_tot
     val_error_config[i] = val_error_tot
     smoothness_config[i] = smoothness
+    config_smooth[i] = zip(nn, smoothness_config[i], train_error_config[i], val_error_config[i])
+
+print(config_smooth)
 
 """
 def print_nn_details(nn):
