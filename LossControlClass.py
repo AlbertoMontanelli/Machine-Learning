@@ -36,10 +36,10 @@ class LossControl:
         perc = actual_epoch/self.epochs
 
         if perc >= 0.2:
-            relative_error_improvement = (val_errors[actual_epoch - 2] - val_errors[actual_epoch - 1]) / val_errors[actual_epoch - 2]
+            relative_error_improvement = (val_errors[actual_epoch - 1] - val_errors[actual_epoch]) / val_errors[actual_epoch - 1]
             if (0 <= relative_error_improvement <= 0.0001):
                 self.stop_count += 1
-                # print(f"count: {self.stop_count}. diff: {relative_error_improvement}")
+                #print(f"early stopping = count: {self.stop_count}. diff: {relative_error_improvement}")
             else:
                 self.stop_count = 0
 
@@ -73,7 +73,7 @@ class LossControl:
             else:
                 return True
             
-    def overfitting_check(self, actual_epoch, train_error, val_error, overfitting_patience = 10):
+    def overfitting_check(self, actual_epoch, train_error, val_error, overfitting_patience = 20):
         '''
         Function that checks the overfitting, respectively checking whether the validation error rises, or the velocities
         of the loss function computed for the validation and the training error vary too differently, or if the difference 
@@ -90,14 +90,16 @@ class LossControl:
                   False if there is no overfitting.
         '''
         perc = actual_epoch/self.epochs
+        relative_distance = ((val_error[actual_epoch] - train_error[actual_epoch]) - (val_error[actual_epoch - 1] - train_error[actual_epoch - 1]))/(val_error[actual_epoch - 1] - train_error[actual_epoch - 1])
         if perc > 0.2:
-            if ((val_error[actual_epoch] - val_error[actual_epoch - 1] > 0) 
+            if ((val_error[actual_epoch] - val_error[actual_epoch - 1] >= 0) 
                 or 
                 #((train_error[actual_epoch] - train_error[actual_epoch - 1]) / (val_error[actual_epoch] - val_error[actual_epoch - 1]) > 2) # train speed = 2 * val speed
                 #or
-                (((val_error[actual_epoch] - train_error[actual_epoch]) - (val_error[actual_epoch - 1] - train_error[actual_epoch - 1]) > 0.01 * (val_error[actual_epoch - 1] - train_error[actual_epoch - 1])) and (val_error[actual_epoch] > train_error[actual_epoch]))
+                ((relative_distance > 0.1) and (val_error[actual_epoch] > train_error[actual_epoch]))
                 ):
                     self.overfitting_count += 1
+                    print(f"overfitting = count: {self.overfitting_count}, actual epoch: {actual_epoch}, relative distance: {relative_distance}, diff: {val_error[actual_epoch] - val_error[actual_epoch - 1]}")
             else:
                 self.overfitting_count = 0
 

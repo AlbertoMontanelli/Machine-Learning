@@ -1,85 +1,14 @@
 import numpy as np
-import os
-import time
 
-from ModelSelectionClass import ModelSelection
-from LossControlClass import LossControl
-from CUPDataProcessing import CUP_data_splitter
+# from DataProcessingClass import DataProcessing
 from NeuralNetworkClass import NeuralNetwork
 from Functions import activation_functions, d_activation_functions, loss_functions, d_loss_functions
+from ModelSelectionClass import ModelSelection
+from CUPDataProcessing import CUP_data_splitter
+from LossControlClass import LossControl
 
+np.random.seed(12)
 
-def unpacking_config(config_text):
-    """Parsa una singola configurazione dal testo."""
-    config_dict = {}
-    lines = config_text.split("\n")
-    
-    layers_config = []  # Lista per i layer
-    current_layer = None
-    
-    for line in lines:
-        line = line.strip()
-        if line.startswith("Batch Size:"):
-            config_dict["batch_size"] = int(line.split(":")[1].strip())
-        elif line.startswith("Validation Error:"):
-            config_dict["val_error"] = float(line.split(":")[1].strip())
-        elif line.startswith("Lambda:"):
-            config_dict.setdefault("regularization", {})["Lambda"] = float(line.split(":")[1].strip())
-        elif line.startswith("alpha:"):
-            config_dict["regularization"]["alpha"] = float(line.split(":")[1].strip())
-        elif line.startswith("reg_type:"):
-            config_dict["regularization"]["reg_type"] = line.split(":")[1].strip()
-        elif line.startswith("dim_prev_layer:"):
-            if current_layer:
-                layers_config.append(current_layer)
-            current_layer = [int(line.split(":")[1].strip())]  # Inizia un nuovo layer
-        elif line.startswith("dim_layer:"):
-            current_layer.append(int(line.split(":")[1].strip()))
-        elif line.startswith("activation_function:"):
-            func_name = line.split(":")[1].strip()
-            current_layer.append(activation_functions[func_name])  # Usa il dizionario definito
-        elif line.startswith("d_activation_function:"):
-            func_name = line.split(":")[1].strip()
-            current_layer.append(d_activation_functions[func_name])  # Usa il dizionario definito
-        elif line.startswith("opt_type:"):
-            config_dict.setdefault("optimizers", []).append({
-                "opt_type": line.split(":")[1].strip()
-            })
-        elif line.startswith("learning_rate:"):
-            config_dict["optimizers"][-1]["learning_rate"] = float(line.split(":")[1].strip())
-        elif line.startswith("momentum:"):
-            config_dict["optimizers"][-1]["momentum"] = float(line.split(":")[1].strip())
-        elif line.startswith("beta_1:"):
-            beta_1 = line.split(":")[1].strip()
-            config_dict["optimizers"][-1]["beta_1"] = None if beta_1 == "None" else float(beta_1)
-        elif line.startswith("beta_2:"):
-            beta_2 = line.split(":")[1].strip()
-            config_dict["optimizers"][-1]["beta_2"] = None if beta_2 == "None" else float(beta_2)
-        elif line.startswith("epsilon:"):
-            epsilon = line.split(":")[1].strip()
-            config_dict["optimizers"][-1]["epsilon"] = None if epsilon == "None" else float(epsilon)
-
-    # Aggiungi l'ultimo layer
-    if current_layer:
-        layers_config.append(current_layer)
-    
-    config_dict["layers_config"] = layers_config
-    return config_dict
-
-
-
-def training_best_config(nn, batch_size, epochs):
-    '''
-    doc
-    '''
-    loss_control = LossControl(epochs)
-    train_val = ModelSelection(CUP_data_splitter, epochs, batch_size, loss_functions['mse'], d_loss_functions['d_mse'], nn, loss_control)
-    train_error_tot, val_error_tot = train_val.train_fold(True)
-
-    return train_error_tot[-1], val_error_tot[-1]
-
-
-# Questo fa solo il print
 def print_nn_details(nn):
     print("=== Neural Network Details ===")
     
@@ -113,48 +42,101 @@ def print_nn_details(nn):
             print(f"    Optimizer {i + 1} details not available.")
 
 
-# Leggi il file
-with open("best_hyperband_configs_NAG_1.txt", "r") as file:
-    lines = file.readlines()
+# Layer configuration: [(input_dim, output_dim, activation_function, d_activation_function), ...]
+layers_config = [
+    (12, 16, activation_functions['leaky_ReLU'], d_activation_functions['d_leaky_ReLU']),
+    (16, 3, activation_functions['linear'], d_activation_functions['d_linear'])
+]
 
-# Processa le configurazioni
-configs = []
-current_config = []
-separator = "--------------------------------------------------"
+# Regulizer configuration
+reg_config = {
+    'Lambda': 1e-5,
+    'alpha' : 0.5,
+    'reg_type': 'elastic'
+}
 
-for line in lines:
-    if line.strip() == separator:
-        if current_config:
-            config_text = "\n".join(current_config)
-            configs.append(unpacking_config(config_text))
-            current_config = []
-    else:
-        current_config.append(line.strip())
+# Optimizater configuration
+opt_config = {
+    'opt_type': 'adam',
+    'learning_rate': 1e-3,
+    'momentum': 0.9,
+    'beta_1': 0.9,
+    'beta_2': 0.999,
+    'epsilon': 1e-8,
+}
 
-print(f"Caricate {len(configs)} configurazioni!")
+nn = NeuralNetwork(layers_config, reg_config, opt_config)
 
-# Training delle 30 migliori
-for config in configs:
+epochs = 500
+batch_size = 1
 
-    print(config['layers_config'])
-    print(config["regularization"])
-    print(config["optimizers"])
-    
-    nn = NeuralNetwork(
-        layers=config["layers_config"],
-        regularization=config["regularization"],
-        optimizers=config["optimizers"]
-    )
+loss_control = LossControl(epochs)
 
-    # Print the best configuration's details along with batch_size and val_error
-    print(f"\n Best configuration after Hyperband\n")
-    print(f"Batch Size: {config['batch_size']}")
-    print(f"Validation Error: {config['val_error']}")
-    print_nn_details(nn)
+train_val = ModelSelection(CUP_data_splitter, epochs, batch_size, loss_functions['mse'], d_loss_functions['d_mse'], nn, loss_control)
+train_error_tot, val_error_tot, smoothness = train_val.train_fold(True, True, True)
+#train_error_tot, val_error_tot = train_val.train_fold()
 
-    '''
-    train_error, val_error = training_best_config(nn, config["batch_size"], 1000)
-    print(f'ultimo error train: {train_error}')
-    print(f'ultimo error val: {val_error}')
-    '''
-    
+
+print_nn_details(nn)
+#print(f'smoothness: {smoothness}')
+print(f'errore training {train_error_tot[-1]}')
+print(f'errore validation {val_error_tot[-1]}')
+
+
+#############################################################################################################################
+
+# PLOT
+
+##############################################################################################################################
+
+import matplotlib.pyplot as plt
+
+
+network_details = [
+    ('Number of Hidden Layers', f'{len(layers_config)}'),
+    ('Units per Layer', f'{layers_config[0][1]}'),
+    ('Activation function', 'sigmoid'),
+    ('Loss function', 'Leaky ReLU'),
+    ('Learning Rate', f"{opt_config['learning_rate']}"),
+    ('Regularization', f"{reg_config['reg_type']}"),
+    ('Lambda', f"{reg_config['Lambda']}"),
+    ('Optimizer',f"{opt_config['opt_type']}"),
+    ('Batch-size',f"{batch_size}")
+]
+
+# Aggiungere informazioni della rete come stringa multilinea
+legend_info = "\n".join([f"{param}: {value}" for param, value in network_details])
+
+line_train, = plt.plot(train_error_tot, label='Training Error')
+line_val, = plt.plot(val_error_tot, label='Validation Error')
+
+plt.xlabel('Epochs', fontsize = 16, fontweight = 'bold')
+plt.ylabel('Error', fontsize = 16, fontweight = 'bold')
+plt.yscale('log')
+plt.grid()
+plt.legend(handles = [line_train, line_val], labels = ['Training Error', 'Validation Error'], fontsize = 18, loc = 'best')
+
+
+# Aggiungere un riquadro con informazioni della rete
+props = dict(boxstyle='round', facecolor='white', edgecolor='black', alpha=0.9)  # Impostazioni della casella
+plt.text(
+    0.45, 0.95, legend_info, transform=plt.gca().transAxes, fontsize=16,
+    verticalalignment='top', horizontalalignment='left', bbox=props
+)
+
+# Aggiungere padding tra i subplot
+plt.tight_layout()
+
+plt.tick_params(axis = 'x', labelsize = 16)  # Dimensione xticks
+plt.tick_params(axis = 'y', labelsize = 16)  # Dimensione yticks
+
+# Mettere il grafico a schermo intero
+manager = plt.get_current_fig_manager()
+manager.full_screen_toggle() 
+
+plt.pause(2)  # Pausa di 2 secondi
+
+# Salvare il grafico in PDF con alta risoluzione
+plt.savefig('grafici/48_con_overfitting.pdf', bbox_inches = 'tight', dpi = 1200)
+
+plt.show()
