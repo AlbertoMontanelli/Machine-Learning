@@ -189,7 +189,7 @@ best_configs = hyperband(list_combination, brackets, min_resources, max_resource
     
 # Apri un file di testo in modalità scrittura
 with open("01_23_best_hyperband_configs_NAG_2.txt", "w") as file:
-    for i in range(30):
+    for i in range(len(best_configs)):
         # Seleziona la i-esima combinazione migliore
         final_best_result = best_configs[i]
         final_best_nn = final_best_result['nn']

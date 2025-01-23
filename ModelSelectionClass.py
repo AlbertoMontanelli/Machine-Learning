@@ -130,9 +130,8 @@ class ModelSelection:
         '''
         doc
         '''
-        epochs = len(train_error)
-        stop_epoch = epochs
-        for epoch in range(epochs):
+        stop_epoch = self.epochs
+        for epoch in range(self.epochs):
             if overfitting:
                 overfitting_check = self.loss_control.overfitting_check(epoch, train_error, val_error)
                 if overfitting_check:
@@ -216,6 +215,10 @@ class ModelSelection:
             smoothness_outcome, stop_epoch = self.loss_control_avg(train_error_avg, val_error_avg, overfitting, early_stopping, smoothness)
             train_error_avg = train_error_avg[:stop_epoch]
             val_error_avg = val_error_avg[:stop_epoch]
+            self.loss_control.stop_count = 0
+            self.loss_control.smooth_count = 0
+            self.loss_control.overfitting_count = 0
+            
             
         if self.neural_network.grid_search == False:
             print(f'last val error: \n {val_error_avg[-1]}')

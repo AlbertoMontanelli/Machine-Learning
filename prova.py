@@ -1,5 +1,3 @@
-
-
 import re
 import numpy as np
 
@@ -44,6 +42,10 @@ def print_nn_details(nn):
 def parse_nn_configurations(file_path):
     configurations = []
 
+    # Normalizzazione dei dizionari per rendere le chiavi case-insensitive
+    activation_functions_lower = {key.lower(): value for key, value in activation_functions.items()}
+    d_activation_functions_lower = {key.lower(): value for key, value in d_activation_functions.items()}
+
     # Leggi il file
     with open(file_path, 'r') as file:
         data = file.read()
@@ -73,8 +75,13 @@ def parse_nn_configurations(file_path):
         for match in layer_matches:
             dim_prev_layer = int(match[0])
             dim_layer = int(match[1])
-            activation_function = activation_functions.get(match[2], match[2])
-            d_activation_function = d_activation_functions.get(match[3], match[3])
+            
+            try:
+                activation_function = activation_functions_lower[match[2].lower()]
+                d_activation_function = d_activation_functions_lower[match[3].lower()]
+            except KeyError as e:
+                raise ValueError(f"Funzione di attivazione non trovata: {e}")
+
             layers_config.append((dim_prev_layer, dim_layer, activation_function, d_activation_function))
 
         # Parse Optimizers Configuration
@@ -93,8 +100,9 @@ def parse_nn_configurations(file_path):
 
     return configurations
 
+
 # Percorso al file txt
-file_path = 'best_hyperband_configs_adam.txt'
+file_path = '01_23_best_hyperband_configs_NAG_1.txt'
 configurations = parse_nn_configurations(file_path)
 
 # Stampa la prima configurazione per verifica
@@ -106,22 +114,59 @@ for i in range(len(configurations)):
     neural_networks.append(nn)
 
 
-epochs = 500
+epochs = 1000
 loss_control = LossControl(epochs)
 
-
-total_config = np.zeros(len(neural_networks))
-
+total_config = []
 
 for i in range(len(neural_networks)):
     nn = neural_networks[i]
     train_val = ModelSelection(CUP_data_splitter, epochs, configurations[i][3], loss_functions['mse'], d_loss_functions['d_mse'], nn, loss_control)
-    train_error_tot, val_error_tot, smoothness = train_val.train_fold(True)
+    train_error_tot, val_error_tot, smoothness = train_val.train_fold(True, True, True)
    
-    total_config[i] = tuple(nn, smoothness, train_error_tot, val_error_tot)
+    total_config.append([nn, smoothness, train_error_tot, val_error_tot])
     print(f'combinazione {i+1} \n ')
     print_nn_details(nn)
     print(f'smoothness: {smoothness}')
     print(f'errore training {train_error_tot[-1]}')
     print(f'errore validation {val_error_tot[-1]}')
 
+print('\n')
+print('\n')
+print('Plot e salvataggio dei grafici')
+print('\n')
+
+import matplotlib.pyplot as plt
+
+for i in range(len(total_config)):
+
+    plt.figure()
+
+    print(f'best configuration n {i}, smoothness: {total_config[i][1]}')
+    line_train, = plt.plot(total_config[i][2], label='Training Error')
+    line_val, = plt.plot(total_config[i][3], label='Validation Error')
+
+    plt.xlabel('Epochs', fontsize = 16, fontweight = 'bold')
+    plt.ylabel('Error', fontsize = 16, fontweight = 'bold')
+    plt.yscale('log')
+    plt.grid()
+    plt.legend(handles = [line_train, line_val], labels = ['Training Error', 'Validation Error'], fontsize = 18, loc = 'best')
+
+    # Aggiungere padding tra i subplot
+    plt.tight_layout()
+
+    plt.tick_params(axis = 'x', labelsize = 16)  # Dimensione xticks
+    plt.tick_params(axis = 'y', labelsize = 16)  # Dimensione yticks
+
+    # Mettere il grafico a schermo intero
+    manager = plt.get_current_fig_manager()
+    manager.full_screen_toggle() 
+
+    plt.pause(2)  # Pausa di 2 secondi
+
+    # Salvare il grafico in PDF con alta risoluzione
+    plt.savefig(f'grafici/01_23_best_NAG1_{i}.pdf', bbox_inches = 'tight', dpi = 1200)
+
+    plt.close()
+
+    #plt.show()
