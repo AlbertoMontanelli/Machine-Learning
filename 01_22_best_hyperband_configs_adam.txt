@@ -1,0 +1,1482 @@
+
+ Best configuration after Hyperband n: 1 
+Batch Size: 1
+Validation Error: 1.030559080252408
+NN Details:
+=== Neural Network Details ===
+
+Regularizer Configuration:
+  Lambda: 0
+  alpha: 0.5
+  reg_type: elastic
+
+Layers Configuration:
+    Layer 1:
+    dim_prev_layer: 12
+    dim_layer: 64
+    activation_function: leaky_relu
+    d_activation_function: d_leaky_relu
+    Layer 2:
+    dim_prev_layer: 64
+    dim_layer: 3
+    activation_function: linear
+    d_activation_function: d_linear
+
+Optimizers Configuration:
+  Optimizer 1:
+    opt_type: adam
+    learning_rate: 0.001
+    momentum: None
+    beta_1: 0.9
+    beta_2: 0.999
+    epsilon: 1e-08
+  Optimizer 2:
+    opt_type: adam
+    learning_rate: 0.001
+    momentum: None
+    beta_1: 0.9
+    beta_2: 0.999
+    epsilon: 1e-08
+
+--------------------------------------------------
+
+ Best configuration after Hyperband n: 2 
+Batch Size: 1
+Validation Error: 1.0357736122454562
+NN Details:
+=== Neural Network Details ===
+
+Regularizer Configuration:
+  Lambda: 0.001
+  alpha: 0.5
+  reg_type: elastic
+
+Layers Configuration:
+    Layer 1:
+    dim_prev_layer: 12
+    dim_layer: 128
+    activation_function: leaky_relu
+    d_activation_function: d_leaky_relu
+    Layer 2:
+    dim_prev_layer: 128
+    dim_layer: 3
+    activation_function: linear
+    d_activation_function: d_linear
+
+Optimizers Configuration:
+  Optimizer 1:
+    opt_type: adam
+    learning_rate: 0.001
+    momentum: None
+    beta_1: 0.9
+    beta_2: 0.999
+    epsilon: 1e-08
+  Optimizer 2:
+    opt_type: adam
+    learning_rate: 0.001
+    momentum: None
+    beta_1: 0.9
+    beta_2: 0.999
+    epsilon: 1e-08
+
+--------------------------------------------------
+
+ Best configuration after Hyperband n: 3 
+Batch Size: 1
+Validation Error: 1.03862999189892
+NN Details:
+=== Neural Network Details ===
+
+Regularizer Configuration:
+  Lambda: 0.001
+  alpha: 0.5
+  reg_type: elastic
+
+Layers Configuration:
+    Layer 1:
+    dim_prev_layer: 12
+    dim_layer: 64
+    activation_function: leaky_relu
+    d_activation_function: d_leaky_relu
+    Layer 2:
+    dim_prev_layer: 64
+    dim_layer: 3
+    activation_function: linear
+    d_activation_function: d_linear
+
+Optimizers Configuration:
+  Optimizer 1:
+    opt_type: adam
+    learning_rate: 0.001
+    momentum: None
+    beta_1: 0.9
+    beta_2: 0.999
+    epsilon: 1e-08
+  Optimizer 2:
+    opt_type: adam
+    learning_rate: 0.001
+    momentum: None
+    beta_1: 0.9
+    beta_2: 0.999
+    epsilon: 1e-08
+
+--------------------------------------------------
+
+ Best configuration after Hyperband n: 4 
+Batch Size: 1
+Validation Error: 1.04832816285754
+NN Details:
+=== Neural Network Details ===
+
+Regularizer Configuration:
+  Lambda: 0
+  alpha: 0.5
+  reg_type: elastic
+
+Layers Configuration:
+    Layer 1:
+    dim_prev_layer: 12
+    dim_layer: 128
+    activation_function: leaky_relu
+    d_activation_function: d_leaky_relu
+    Layer 2:
+    dim_prev_layer: 128
+    dim_layer: 3
+    activation_function: linear
+    d_activation_function: d_linear
+
+Optimizers Configuration:
+  Optimizer 1:
+    opt_type: adam
+    learning_rate: 0.001
+    momentum: None
+    beta_1: 0.9
+    beta_2: 0.999
+    epsilon: 1e-08
+  Optimizer 2:
+    opt_type: adam
+    learning_rate: 0.001
+    momentum: None
+    beta_1: 0.9
+    beta_2: 0.999
+    epsilon: 1e-08
+
+--------------------------------------------------
+
+ Best configuration after Hyperband n: 5 
+Batch Size: 1
+Validation Error: 1.0814091579540812
+NN Details:
+=== Neural Network Details ===
+
+Regularizer Configuration:
+  Lambda: 0.001
+  alpha: 0.5
+  reg_type: elastic
+
+Layers Configuration:
+    Layer 1:
+    dim_prev_layer: 12
+    dim_layer: 32
+    activation_function: leaky_relu
+    d_activation_function: d_leaky_relu
+    Layer 2:
+    dim_prev_layer: 32
+    dim_layer: 3
+    activation_function: linear
+    d_activation_function: d_linear
+
+Optimizers Configuration:
+  Optimizer 1:
+    opt_type: adam
+    learning_rate: 0.001
+    momentum: None
+    beta_1: 0.9
+    beta_2: 0.999
+    epsilon: 1e-08
+  Optimizer 2:
+    opt_type: adam
+    learning_rate: 0.001
+    momentum: None
+    beta_1: 0.9
+    beta_2: 0.999
+    epsilon: 1e-08
+
+--------------------------------------------------
+
+ Best configuration after Hyperband n: 6 
+Batch Size: 1
+Validation Error: 1.1202487402825152
+NN Details:
+=== Neural Network Details ===
+
+Regularizer Configuration:
+  Lambda: 0.001
+  alpha: 0.5
+  reg_type: elastic
+
+Layers Configuration:
+    Layer 1:
+    dim_prev_layer: 12
+    dim_layer: 256
+    activation_function: leaky_relu
+    d_activation_function: d_leaky_relu
+    Layer 2:
+    dim_prev_layer: 256
+    dim_layer: 3
+    activation_function: linear
+    d_activation_function: d_linear
+
+Optimizers Configuration:
+  Optimizer 1:
+    opt_type: adam
+    learning_rate: 0.001
+    momentum: None
+    beta_1: 0.9
+    beta_2: 0.999
+    epsilon: 1e-08
+  Optimizer 2:
+    opt_type: adam
+    learning_rate: 0.001
+    momentum: None
+    beta_1: 0.9
+    beta_2: 0.999
+    epsilon: 1e-08
+
+--------------------------------------------------
+
+ Best configuration after Hyperband n: 7 
+Batch Size: 1
+Validation Error: 1.1287701981205447
+NN Details:
+=== Neural Network Details ===
+
+Regularizer Configuration:
+  Lambda: 0.001
+  alpha: 0.5
+  reg_type: elastic
+
+Layers Configuration:
+    Layer 1:
+    dim_prev_layer: 12
+    dim_layer: 32
+    activation_function: leaky_relu
+    d_activation_function: d_leaky_relu
+    Layer 2:
+    dim_prev_layer: 32
+    dim_layer: 256
+    activation_function: leaky_relu
+    d_activation_function: d_leaky_relu
+    Layer 3:
+    dim_prev_layer: 256
+    dim_layer: 3
+    activation_function: linear
+    d_activation_function: d_linear
+
+Optimizers Configuration:
+  Optimizer 1:
+    opt_type: adam
+    learning_rate: 0.001
+    momentum: None
+    beta_1: 0.9
+    beta_2: 0.999
+    epsilon: 1e-08
+  Optimizer 2:
+    opt_type: adam
+    learning_rate: 0.001
+    momentum: None
+    beta_1: 0.9
+    beta_2: 0.999
+    epsilon: 1e-08
+  Optimizer 3:
+    opt_type: adam
+    learning_rate: 0.001
+    momentum: None
+    beta_1: 0.9
+    beta_2: 0.999
+    epsilon: 1e-08
+
+--------------------------------------------------
+
+ Best configuration after Hyperband n: 8 
+Batch Size: 1
+Validation Error: 1.1354937972211185
+NN Details:
+=== Neural Network Details ===
+
+Regularizer Configuration:
+  Lambda: 0
+  alpha: 0.5
+  reg_type: elastic
+
+Layers Configuration:
+    Layer 1:
+    dim_prev_layer: 12
+    dim_layer: 256
+    activation_function: leaky_relu
+    d_activation_function: d_leaky_relu
+    Layer 2:
+    dim_prev_layer: 256
+    dim_layer: 3
+    activation_function: linear
+    d_activation_function: d_linear
+
+Optimizers Configuration:
+  Optimizer 1:
+    opt_type: adam
+    learning_rate: 0.001
+    momentum: None
+    beta_1: 0.9
+    beta_2: 0.999
+    epsilon: 1e-08
+  Optimizer 2:
+    opt_type: adam
+    learning_rate: 0.001
+    momentum: None
+    beta_1: 0.9
+    beta_2: 0.999
+    epsilon: 1e-08
+
+--------------------------------------------------
+
+ Best configuration after Hyperband n: 9 
+Batch Size: 1
+Validation Error: 1.1363980907437754
+NN Details:
+=== Neural Network Details ===
+
+Regularizer Configuration:
+  Lambda: 0
+  alpha: 0.5
+  reg_type: elastic
+
+Layers Configuration:
+    Layer 1:
+    dim_prev_layer: 12
+    dim_layer: 32
+    activation_function: leaky_relu
+    d_activation_function: d_leaky_relu
+    Layer 2:
+    dim_prev_layer: 32
+    dim_layer: 64
+    activation_function: leaky_relu
+    d_activation_function: d_leaky_relu
+    Layer 3:
+    dim_prev_layer: 64
+    dim_layer: 3
+    activation_function: linear
+    d_activation_function: d_linear
+
+Optimizers Configuration:
+  Optimizer 1:
+    opt_type: adam
+    learning_rate: 0.001
+    momentum: None
+    beta_1: 0.9
+    beta_2: 0.999
+    epsilon: 1e-08
+  Optimizer 2:
+    opt_type: adam
+    learning_rate: 0.001
+    momentum: None
+    beta_1: 0.9
+    beta_2: 0.999
+    epsilon: 1e-08
+  Optimizer 3:
+    opt_type: adam
+    learning_rate: 0.001
+    momentum: None
+    beta_1: 0.9
+    beta_2: 0.999
+    epsilon: 1e-08
+
+--------------------------------------------------
+
+ Best configuration after Hyperband n: 10 
+Batch Size: 1
+Validation Error: 1.161021175471065
+NN Details:
+=== Neural Network Details ===
+
+Regularizer Configuration:
+  Lambda: 0
+  alpha: 0.5
+  reg_type: elastic
+
+Layers Configuration:
+    Layer 1:
+    dim_prev_layer: 12
+    dim_layer: 64
+    activation_function: leaky_relu
+    d_activation_function: d_leaky_relu
+    Layer 2:
+    dim_prev_layer: 64
+    dim_layer: 32
+    activation_function: leaky_relu
+    d_activation_function: d_leaky_relu
+    Layer 3:
+    dim_prev_layer: 32
+    dim_layer: 3
+    activation_function: linear
+    d_activation_function: d_linear
+
+Optimizers Configuration:
+  Optimizer 1:
+    opt_type: adam
+    learning_rate: 0.001
+    momentum: None
+    beta_1: 0.9
+    beta_2: 0.999
+    epsilon: 1e-08
+  Optimizer 2:
+    opt_type: adam
+    learning_rate: 0.001
+    momentum: None
+    beta_1: 0.9
+    beta_2: 0.999
+    epsilon: 1e-08
+  Optimizer 3:
+    opt_type: adam
+    learning_rate: 0.001
+    momentum: None
+    beta_1: 0.9
+    beta_2: 0.999
+    epsilon: 1e-08
+
+--------------------------------------------------
+
+ Best configuration after Hyperband n: 11 
+Batch Size: 1
+Validation Error: 1.1620064234251013
+NN Details:
+=== Neural Network Details ===
+
+Regularizer Configuration:
+  Lambda: 0
+  alpha: 0.5
+  reg_type: elastic
+
+Layers Configuration:
+    Layer 1:
+    dim_prev_layer: 12
+    dim_layer: 32
+    activation_function: leaky_relu
+    d_activation_function: d_leaky_relu
+    Layer 2:
+    dim_prev_layer: 32
+    dim_layer: 3
+    activation_function: linear
+    d_activation_function: d_linear
+
+Optimizers Configuration:
+  Optimizer 1:
+    opt_type: adam
+    learning_rate: 0.001
+    momentum: None
+    beta_1: 0.9
+    beta_2: 0.999
+    epsilon: 1e-08
+  Optimizer 2:
+    opt_type: adam
+    learning_rate: 0.001
+    momentum: None
+    beta_1: 0.9
+    beta_2: 0.999
+    epsilon: 1e-08
+
+--------------------------------------------------
+
+ Best configuration after Hyperband n: 12 
+Batch Size: 1
+Validation Error: 1.1851504883667512
+NN Details:
+=== Neural Network Details ===
+
+Regularizer Configuration:
+  Lambda: 0.001
+  alpha: 0.5
+  reg_type: elastic
+
+Layers Configuration:
+    Layer 1:
+    dim_prev_layer: 12
+    dim_layer: 64
+    activation_function: leaky_relu
+    d_activation_function: d_leaky_relu
+    Layer 2:
+    dim_prev_layer: 64
+    dim_layer: 32
+    activation_function: leaky_relu
+    d_activation_function: d_leaky_relu
+    Layer 3:
+    dim_prev_layer: 32
+    dim_layer: 3
+    activation_function: linear
+    d_activation_function: d_linear
+
+Optimizers Configuration:
+  Optimizer 1:
+    opt_type: adam
+    learning_rate: 0.001
+    momentum: None
+    beta_1: 0.9
+    beta_2: 0.999
+    epsilon: 1e-08
+  Optimizer 2:
+    opt_type: adam
+    learning_rate: 0.001
+    momentum: None
+    beta_1: 0.9
+    beta_2: 0.999
+    epsilon: 1e-08
+  Optimizer 3:
+    opt_type: adam
+    learning_rate: 0.001
+    momentum: None
+    beta_1: 0.9
+    beta_2: 0.999
+    epsilon: 1e-08
+
+--------------------------------------------------
+
+ Best configuration after Hyperband n: 13 
+Batch Size: 1
+Validation Error: 1.1873283793271023
+NN Details:
+=== Neural Network Details ===
+
+Regularizer Configuration:
+  Lambda: 0.001
+  alpha: 0.5
+  reg_type: elastic
+
+Layers Configuration:
+    Layer 1:
+    dim_prev_layer: 12
+    dim_layer: 32
+    activation_function: leaky_relu
+    d_activation_function: d_leaky_relu
+    Layer 2:
+    dim_prev_layer: 32
+    dim_layer: 128
+    activation_function: leaky_relu
+    d_activation_function: d_leaky_relu
+    Layer 3:
+    dim_prev_layer: 128
+    dim_layer: 3
+    activation_function: linear
+    d_activation_function: d_linear
+
+Optimizers Configuration:
+  Optimizer 1:
+    opt_type: adam
+    learning_rate: 0.001
+    momentum: None
+    beta_1: 0.9
+    beta_2: 0.999
+    epsilon: 1e-08
+  Optimizer 2:
+    opt_type: adam
+    learning_rate: 0.001
+    momentum: None
+    beta_1: 0.9
+    beta_2: 0.999
+    epsilon: 1e-08
+  Optimizer 3:
+    opt_type: adam
+    learning_rate: 0.001
+    momentum: None
+    beta_1: 0.9
+    beta_2: 0.999
+    epsilon: 1e-08
+
+--------------------------------------------------
+
+ Best configuration after Hyperband n: 14 
+Batch Size: 1
+Validation Error: 1.1915514388548476
+NN Details:
+=== Neural Network Details ===
+
+Regularizer Configuration:
+  Lambda: 0.001
+  alpha: 0.5
+  reg_type: elastic
+
+Layers Configuration:
+    Layer 1:
+    dim_prev_layer: 12
+    dim_layer: 256
+    activation_function: tanh
+    d_activation_function: d_tanh
+    Layer 2:
+    dim_prev_layer: 256
+    dim_layer: 3
+    activation_function: linear
+    d_activation_function: d_linear
+
+Optimizers Configuration:
+  Optimizer 1:
+    opt_type: adam
+    learning_rate: 0.001
+    momentum: None
+    beta_1: 0.9
+    beta_2: 0.999
+    epsilon: 1e-08
+  Optimizer 2:
+    opt_type: adam
+    learning_rate: 0.001
+    momentum: None
+    beta_1: 0.9
+    beta_2: 0.999
+    epsilon: 1e-08
+
+--------------------------------------------------
+
+ Best configuration after Hyperband n: 15 
+Batch Size: 1
+Validation Error: 1.1935743649333255
+NN Details:
+=== Neural Network Details ===
+
+Regularizer Configuration:
+  Lambda: 0
+  alpha: 0.5
+  reg_type: elastic
+
+Layers Configuration:
+    Layer 1:
+    dim_prev_layer: 12
+    dim_layer: 32
+    activation_function: leaky_relu
+    d_activation_function: d_leaky_relu
+    Layer 2:
+    dim_prev_layer: 32
+    dim_layer: 256
+    activation_function: leaky_relu
+    d_activation_function: d_leaky_relu
+    Layer 3:
+    dim_prev_layer: 256
+    dim_layer: 3
+    activation_function: linear
+    d_activation_function: d_linear
+
+Optimizers Configuration:
+  Optimizer 1:
+    opt_type: adam
+    learning_rate: 0.001
+    momentum: None
+    beta_1: 0.9
+    beta_2: 0.999
+    epsilon: 1e-08
+  Optimizer 2:
+    opt_type: adam
+    learning_rate: 0.001
+    momentum: None
+    beta_1: 0.9
+    beta_2: 0.999
+    epsilon: 1e-08
+  Optimizer 3:
+    opt_type: adam
+    learning_rate: 0.001
+    momentum: None
+    beta_1: 0.9
+    beta_2: 0.999
+    epsilon: 1e-08
+
+--------------------------------------------------
+
+ Best configuration after Hyperband n: 16 
+Batch Size: 1
+Validation Error: 1.196412146257009
+NN Details:
+=== Neural Network Details ===
+
+Regularizer Configuration:
+  Lambda: 0
+  alpha: 0.5
+  reg_type: elastic
+
+Layers Configuration:
+    Layer 1:
+    dim_prev_layer: 12
+    dim_layer: 256
+    activation_function: tanh
+    d_activation_function: d_tanh
+    Layer 2:
+    dim_prev_layer: 256
+    dim_layer: 3
+    activation_function: linear
+    d_activation_function: d_linear
+
+Optimizers Configuration:
+  Optimizer 1:
+    opt_type: adam
+    learning_rate: 0.001
+    momentum: None
+    beta_1: 0.9
+    beta_2: 0.999
+    epsilon: 1e-08
+  Optimizer 2:
+    opt_type: adam
+    learning_rate: 0.001
+    momentum: None
+    beta_1: 0.9
+    beta_2: 0.999
+    epsilon: 1e-08
+
+--------------------------------------------------
+
+ Best configuration after Hyperband n: 17 
+Batch Size: 1
+Validation Error: 1.2091861108182727
+NN Details:
+=== Neural Network Details ===
+
+Regularizer Configuration:
+  Lambda: 0.001
+  alpha: 0.5
+  reg_type: elastic
+
+Layers Configuration:
+    Layer 1:
+    dim_prev_layer: 12
+    dim_layer: 32
+    activation_function: leaky_relu
+    d_activation_function: d_leaky_relu
+    Layer 2:
+    dim_prev_layer: 32
+    dim_layer: 64
+    activation_function: leaky_relu
+    d_activation_function: d_leaky_relu
+    Layer 3:
+    dim_prev_layer: 64
+    dim_layer: 3
+    activation_function: linear
+    d_activation_function: d_linear
+
+Optimizers Configuration:
+  Optimizer 1:
+    opt_type: adam
+    learning_rate: 0.001
+    momentum: None
+    beta_1: 0.9
+    beta_2: 0.999
+    epsilon: 1e-08
+  Optimizer 2:
+    opt_type: adam
+    learning_rate: 0.001
+    momentum: None
+    beta_1: 0.9
+    beta_2: 0.999
+    epsilon: 1e-08
+  Optimizer 3:
+    opt_type: adam
+    learning_rate: 0.001
+    momentum: None
+    beta_1: 0.9
+    beta_2: 0.999
+    epsilon: 1e-08
+
+--------------------------------------------------
+
+ Best configuration after Hyperband n: 18 
+Batch Size: 1
+Validation Error: 1.2092200020013366
+NN Details:
+=== Neural Network Details ===
+
+Regularizer Configuration:
+  Lambda: 0
+  alpha: 0.5
+  reg_type: elastic
+
+Layers Configuration:
+    Layer 1:
+    dim_prev_layer: 12
+    dim_layer: 256
+    activation_function: leaky_relu
+    d_activation_function: d_leaky_relu
+    Layer 2:
+    dim_prev_layer: 256
+    dim_layer: 256
+    activation_function: leaky_relu
+    d_activation_function: d_leaky_relu
+    Layer 3:
+    dim_prev_layer: 256
+    dim_layer: 3
+    activation_function: linear
+    d_activation_function: d_linear
+
+Optimizers Configuration:
+  Optimizer 1:
+    opt_type: adam
+    learning_rate: 0.0001
+    momentum: None
+    beta_1: 0.9
+    beta_2: 0.999
+    epsilon: 1e-08
+  Optimizer 2:
+    opt_type: adam
+    learning_rate: 0.0001
+    momentum: None
+    beta_1: 0.9
+    beta_2: 0.999
+    epsilon: 1e-08
+  Optimizer 3:
+    opt_type: adam
+    learning_rate: 0.0001
+    momentum: None
+    beta_1: 0.9
+    beta_2: 0.999
+    epsilon: 1e-08
+
+--------------------------------------------------
+
+ Best configuration after Hyperband n: 19 
+Batch Size: 1
+Validation Error: 1.2181923718514764
+NN Details:
+=== Neural Network Details ===
+
+Regularizer Configuration:
+  Lambda: 0
+  alpha: 0.5
+  reg_type: elastic
+
+Layers Configuration:
+    Layer 1:
+    dim_prev_layer: 12
+    dim_layer: 32
+    activation_function: leaky_relu
+    d_activation_function: d_leaky_relu
+    Layer 2:
+    dim_prev_layer: 32
+    dim_layer: 128
+    activation_function: leaky_relu
+    d_activation_function: d_leaky_relu
+    Layer 3:
+    dim_prev_layer: 128
+    dim_layer: 3
+    activation_function: linear
+    d_activation_function: d_linear
+
+Optimizers Configuration:
+  Optimizer 1:
+    opt_type: adam
+    learning_rate: 0.001
+    momentum: None
+    beta_1: 0.9
+    beta_2: 0.999
+    epsilon: 1e-08
+  Optimizer 2:
+    opt_type: adam
+    learning_rate: 0.001
+    momentum: None
+    beta_1: 0.9
+    beta_2: 0.999
+    epsilon: 1e-08
+  Optimizer 3:
+    opt_type: adam
+    learning_rate: 0.001
+    momentum: None
+    beta_1: 0.9
+    beta_2: 0.999
+    epsilon: 1e-08
+
+--------------------------------------------------
+
+ Best configuration after Hyperband n: 20 
+Batch Size: 1
+Validation Error: 1.219639680662754
+NN Details:
+=== Neural Network Details ===
+
+Regularizer Configuration:
+  Lambda: 0
+  alpha: 0.5
+  reg_type: elastic
+
+Layers Configuration:
+    Layer 1:
+    dim_prev_layer: 12
+    dim_layer: 128
+    activation_function: tanh
+    d_activation_function: d_tanh
+    Layer 2:
+    dim_prev_layer: 128
+    dim_layer: 3
+    activation_function: linear
+    d_activation_function: d_linear
+
+Optimizers Configuration:
+  Optimizer 1:
+    opt_type: adam
+    learning_rate: 0.001
+    momentum: None
+    beta_1: 0.9
+    beta_2: 0.999
+    epsilon: 1e-08
+  Optimizer 2:
+    opt_type: adam
+    learning_rate: 0.001
+    momentum: None
+    beta_1: 0.9
+    beta_2: 0.999
+    epsilon: 1e-08
+
+--------------------------------------------------
+
+ Best configuration after Hyperband n: 21 
+Batch Size: 1
+Validation Error: 1.2206736015253157
+NN Details:
+=== Neural Network Details ===
+
+Regularizer Configuration:
+  Lambda: 0
+  alpha: 0.5
+  reg_type: elastic
+
+Layers Configuration:
+    Layer 1:
+    dim_prev_layer: 12
+    dim_layer: 64
+    activation_function: leaky_relu
+    d_activation_function: d_leaky_relu
+    Layer 2:
+    dim_prev_layer: 64
+    dim_layer: 128
+    activation_function: leaky_relu
+    d_activation_function: d_leaky_relu
+    Layer 3:
+    dim_prev_layer: 128
+    dim_layer: 3
+    activation_function: linear
+    d_activation_function: d_linear
+
+Optimizers Configuration:
+  Optimizer 1:
+    opt_type: adam
+    learning_rate: 0.001
+    momentum: None
+    beta_1: 0.9
+    beta_2: 0.999
+    epsilon: 1e-08
+  Optimizer 2:
+    opt_type: adam
+    learning_rate: 0.001
+    momentum: None
+    beta_1: 0.9
+    beta_2: 0.999
+    epsilon: 1e-08
+  Optimizer 3:
+    opt_type: adam
+    learning_rate: 0.001
+    momentum: None
+    beta_1: 0.9
+    beta_2: 0.999
+    epsilon: 1e-08
+
+--------------------------------------------------
+
+ Best configuration after Hyperband n: 22 
+Batch Size: 1
+Validation Error: 1.225022455242978
+NN Details:
+=== Neural Network Details ===
+
+Regularizer Configuration:
+  Lambda: 0
+  alpha: 0.5
+  reg_type: elastic
+
+Layers Configuration:
+    Layer 1:
+    dim_prev_layer: 12
+    dim_layer: 32
+    activation_function: leaky_relu
+    d_activation_function: d_leaky_relu
+    Layer 2:
+    dim_prev_layer: 32
+    dim_layer: 32
+    activation_function: leaky_relu
+    d_activation_function: d_leaky_relu
+    Layer 3:
+    dim_prev_layer: 32
+    dim_layer: 128
+    activation_function: leaky_relu
+    d_activation_function: d_leaky_relu
+    Layer 4:
+    dim_prev_layer: 128
+    dim_layer: 3
+    activation_function: linear
+    d_activation_function: d_linear
+
+Optimizers Configuration:
+  Optimizer 1:
+    opt_type: adam
+    learning_rate: 0.001
+    momentum: None
+    beta_1: 0.9
+    beta_2: 0.999
+    epsilon: 1e-08
+  Optimizer 2:
+    opt_type: adam
+    learning_rate: 0.001
+    momentum: None
+    beta_1: 0.9
+    beta_2: 0.999
+    epsilon: 1e-08
+  Optimizer 3:
+    opt_type: adam
+    learning_rate: 0.001
+    momentum: None
+    beta_1: 0.9
+    beta_2: 0.999
+    epsilon: 1e-08
+  Optimizer 4:
+    opt_type: adam
+    learning_rate: 0.001
+    momentum: None
+    beta_1: 0.9
+    beta_2: 0.999
+    epsilon: 1e-08
+
+--------------------------------------------------
+
+ Best configuration after Hyperband n: 23 
+Batch Size: 1
+Validation Error: 1.228095625779536
+NN Details:
+=== Neural Network Details ===
+
+Regularizer Configuration:
+  Lambda: 0.001
+  alpha: 0.5
+  reg_type: elastic
+
+Layers Configuration:
+    Layer 1:
+    dim_prev_layer: 12
+    dim_layer: 128
+    activation_function: tanh
+    d_activation_function: d_tanh
+    Layer 2:
+    dim_prev_layer: 128
+    dim_layer: 3
+    activation_function: linear
+    d_activation_function: d_linear
+
+Optimizers Configuration:
+  Optimizer 1:
+    opt_type: adam
+    learning_rate: 0.001
+    momentum: None
+    beta_1: 0.9
+    beta_2: 0.999
+    epsilon: 1e-08
+  Optimizer 2:
+    opt_type: adam
+    learning_rate: 0.001
+    momentum: None
+    beta_1: 0.9
+    beta_2: 0.999
+    epsilon: 1e-08
+
+--------------------------------------------------
+
+ Best configuration after Hyperband n: 24 
+Batch Size: 1
+Validation Error: 1.2307257052056442
+NN Details:
+=== Neural Network Details ===
+
+Regularizer Configuration:
+  Lambda: 0.001
+  alpha: 0.5
+  reg_type: elastic
+
+Layers Configuration:
+    Layer 1:
+    dim_prev_layer: 12
+    dim_layer: 64
+    activation_function: leaky_relu
+    d_activation_function: d_leaky_relu
+    Layer 2:
+    dim_prev_layer: 64
+    dim_layer: 256
+    activation_function: leaky_relu
+    d_activation_function: d_leaky_relu
+    Layer 3:
+    dim_prev_layer: 256
+    dim_layer: 3
+    activation_function: linear
+    d_activation_function: d_linear
+
+Optimizers Configuration:
+  Optimizer 1:
+    opt_type: adam
+    learning_rate: 0.001
+    momentum: None
+    beta_1: 0.9
+    beta_2: 0.999
+    epsilon: 1e-08
+  Optimizer 2:
+    opt_type: adam
+    learning_rate: 0.001
+    momentum: None
+    beta_1: 0.9
+    beta_2: 0.999
+    epsilon: 1e-08
+  Optimizer 3:
+    opt_type: adam
+    learning_rate: 0.001
+    momentum: None
+    beta_1: 0.9
+    beta_2: 0.999
+    epsilon: 1e-08
+
+--------------------------------------------------
+
+ Best configuration after Hyperband n: 25 
+Batch Size: 1
+Validation Error: 1.2443346190185405
+NN Details:
+=== Neural Network Details ===
+
+Regularizer Configuration:
+  Lambda: 0
+  alpha: 0.5
+  reg_type: elastic
+
+Layers Configuration:
+    Layer 1:
+    dim_prev_layer: 12
+    dim_layer: 128
+    activation_function: leaky_relu
+    d_activation_function: d_leaky_relu
+    Layer 2:
+    dim_prev_layer: 128
+    dim_layer: 32
+    activation_function: leaky_relu
+    d_activation_function: d_leaky_relu
+    Layer 3:
+    dim_prev_layer: 32
+    dim_layer: 3
+    activation_function: linear
+    d_activation_function: d_linear
+
+Optimizers Configuration:
+  Optimizer 1:
+    opt_type: adam
+    learning_rate: 0.001
+    momentum: None
+    beta_1: 0.9
+    beta_2: 0.999
+    epsilon: 1e-08
+  Optimizer 2:
+    opt_type: adam
+    learning_rate: 0.001
+    momentum: None
+    beta_1: 0.9
+    beta_2: 0.999
+    epsilon: 1e-08
+  Optimizer 3:
+    opt_type: adam
+    learning_rate: 0.001
+    momentum: None
+    beta_1: 0.9
+    beta_2: 0.999
+    epsilon: 1e-08
+
+--------------------------------------------------
+
+ Best configuration after Hyperband n: 26 
+Batch Size: 1
+Validation Error: 1.24771208781533
+NN Details:
+=== Neural Network Details ===
+
+Regularizer Configuration:
+  Lambda: 0
+  alpha: 0.5
+  reg_type: elastic
+
+Layers Configuration:
+    Layer 1:
+    dim_prev_layer: 12
+    dim_layer: 128
+    activation_function: leaky_relu
+    d_activation_function: d_leaky_relu
+    Layer 2:
+    dim_prev_layer: 128
+    dim_layer: 32
+    activation_function: leaky_relu
+    d_activation_function: d_leaky_relu
+    Layer 3:
+    dim_prev_layer: 32
+    dim_layer: 32
+    activation_function: leaky_relu
+    d_activation_function: d_leaky_relu
+    Layer 4:
+    dim_prev_layer: 32
+    dim_layer: 3
+    activation_function: linear
+    d_activation_function: d_linear
+
+Optimizers Configuration:
+  Optimizer 1:
+    opt_type: adam
+    learning_rate: 0.001
+    momentum: None
+    beta_1: 0.9
+    beta_2: 0.999
+    epsilon: 1e-08
+  Optimizer 2:
+    opt_type: adam
+    learning_rate: 0.001
+    momentum: None
+    beta_1: 0.9
+    beta_2: 0.999
+    epsilon: 1e-08
+  Optimizer 3:
+    opt_type: adam
+    learning_rate: 0.001
+    momentum: None
+    beta_1: 0.9
+    beta_2: 0.999
+    epsilon: 1e-08
+  Optimizer 4:
+    opt_type: adam
+    learning_rate: 0.001
+    momentum: None
+    beta_1: 0.9
+    beta_2: 0.999
+    epsilon: 1e-08
+
+--------------------------------------------------
+
+ Best configuration after Hyperband n: 27 
+Batch Size: 1
+Validation Error: 1.2479799553243067
+NN Details:
+=== Neural Network Details ===
+
+Regularizer Configuration:
+  Lambda: 0
+  alpha: 0.5
+  reg_type: elastic
+
+Layers Configuration:
+    Layer 1:
+    dim_prev_layer: 12
+    dim_layer: 64
+    activation_function: leaky_relu
+    d_activation_function: d_leaky_relu
+    Layer 2:
+    dim_prev_layer: 64
+    dim_layer: 64
+    activation_function: leaky_relu
+    d_activation_function: d_leaky_relu
+    Layer 3:
+    dim_prev_layer: 64
+    dim_layer: 3
+    activation_function: linear
+    d_activation_function: d_linear
+
+Optimizers Configuration:
+  Optimizer 1:
+    opt_type: adam
+    learning_rate: 0.001
+    momentum: None
+    beta_1: 0.9
+    beta_2: 0.999
+    epsilon: 1e-08
+  Optimizer 2:
+    opt_type: adam
+    learning_rate: 0.001
+    momentum: None
+    beta_1: 0.9
+    beta_2: 0.999
+    epsilon: 1e-08
+  Optimizer 3:
+    opt_type: adam
+    learning_rate: 0.001
+    momentum: None
+    beta_1: 0.9
+    beta_2: 0.999
+    epsilon: 1e-08
+
+--------------------------------------------------
+
+ Best configuration after Hyperband n: 28 
+Batch Size: 1
+Validation Error: 1.248448772487649
+NN Details:
+=== Neural Network Details ===
+
+Regularizer Configuration:
+  Lambda: 0.001
+  alpha: 0.5
+  reg_type: elastic
+
+Layers Configuration:
+    Layer 1:
+    dim_prev_layer: 12
+    dim_layer: 32
+    activation_function: leaky_relu
+    d_activation_function: d_leaky_relu
+    Layer 2:
+    dim_prev_layer: 32
+    dim_layer: 32
+    activation_function: leaky_relu
+    d_activation_function: d_leaky_relu
+    Layer 3:
+    dim_prev_layer: 32
+    dim_layer: 3
+    activation_function: linear
+    d_activation_function: d_linear
+
+Optimizers Configuration:
+  Optimizer 1:
+    opt_type: adam
+    learning_rate: 0.001
+    momentum: None
+    beta_1: 0.9
+    beta_2: 0.999
+    epsilon: 1e-08
+  Optimizer 2:
+    opt_type: adam
+    learning_rate: 0.001
+    momentum: None
+    beta_1: 0.9
+    beta_2: 0.999
+    epsilon: 1e-08
+  Optimizer 3:
+    opt_type: adam
+    learning_rate: 0.001
+    momentum: None
+    beta_1: 0.9
+    beta_2: 0.999
+    epsilon: 1e-08
+
+--------------------------------------------------
+
+ Best configuration after Hyperband n: 29 
+Batch Size: 1
+Validation Error: 1.2513214441362996
+NN Details:
+=== Neural Network Details ===
+
+Regularizer Configuration:
+  Lambda: 0
+  alpha: 0.5
+  reg_type: elastic
+
+Layers Configuration:
+    Layer 1:
+    dim_prev_layer: 12
+    dim_layer: 128
+    activation_function: leaky_relu
+    d_activation_function: d_leaky_relu
+    Layer 2:
+    dim_prev_layer: 128
+    dim_layer: 64
+    activation_function: leaky_relu
+    d_activation_function: d_leaky_relu
+    Layer 3:
+    dim_prev_layer: 64
+    dim_layer: 3
+    activation_function: linear
+    d_activation_function: d_linear
+
+Optimizers Configuration:
+  Optimizer 1:
+    opt_type: adam
+    learning_rate: 0.001
+    momentum: None
+    beta_1: 0.9
+    beta_2: 0.999
+    epsilon: 1e-08
+  Optimizer 2:
+    opt_type: adam
+    learning_rate: 0.001
+    momentum: None
+    beta_1: 0.9
+    beta_2: 0.999
+    epsilon: 1e-08
+  Optimizer 3:
+    opt_type: adam
+    learning_rate: 0.001
+    momentum: None
+    beta_1: 0.9
+    beta_2: 0.999
+    epsilon: 1e-08
+
+--------------------------------------------------
+
+ Best configuration after Hyperband n: 30 
+Batch Size: 1
+Validation Error: 1.255621975925871
+NN Details:
+=== Neural Network Details ===
+
+Regularizer Configuration:
+  Lambda: 0
+  alpha: 0.5
+  reg_type: elastic
+
+Layers Configuration:
+    Layer 1:
+    dim_prev_layer: 12
+    dim_layer: 32
+    activation_function: leaky_relu
+    d_activation_function: d_leaky_relu
+    Layer 2:
+    dim_prev_layer: 32
+    dim_layer: 128
+    activation_function: leaky_relu
+    d_activation_function: d_leaky_relu
+    Layer 3:
+    dim_prev_layer: 128
+    dim_layer: 32
+    activation_function: leaky_relu
+    d_activation_function: d_leaky_relu
+    Layer 4:
+    dim_prev_layer: 32
+    dim_layer: 3
+    activation_function: linear
+    d_activation_function: d_linear
+
+Optimizers Configuration:
+  Optimizer 1:
+    opt_type: adam
+    learning_rate: 0.001
+    momentum: None
+    beta_1: 0.9
+    beta_2: 0.999
+    epsilon: 1e-08
+  Optimizer 2:
+    opt_type: adam
+    learning_rate: 0.001
+    momentum: None
+    beta_1: 0.9
+    beta_2: 0.999
+    epsilon: 1e-08
+  Optimizer 3:
+    opt_type: adam
+    learning_rate: 0.001
+    momentum: None
+    beta_1: 0.9
+    beta_2: 0.999
+    epsilon: 1e-08
+  Optimizer 4:
+    opt_type: adam
+    learning_rate: 0.001
+    momentum: None
+    beta_1: 0.9
+    beta_2: 0.999
+    epsilon: 1e-08
+
+--------------------------------------------------
