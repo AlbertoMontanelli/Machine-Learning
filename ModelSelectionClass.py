@@ -119,6 +119,45 @@ class ModelSelection:
 
         return val_error_epoch
 
+    def loss_control_avg(
+            self, 
+            train_error,
+            val_error,
+            overfitting,
+            early_stopping,
+            smoothness
+    ):
+        '''
+        doc
+        '''
+        epochs = len(train_error)
+        stop_epoch = epochs
+        for epoch in range(epochs):
+            if overfitting:
+                overfitting_check = self.loss_control.overfitting_check(epoch, train_error, val_error)
+                if overfitting_check:
+                    print(f"Overfitting at epoch {epoch}")
+                    stop_epoch = epoch - self.loss_control.overfitting_patience  # Registra l'epoca di stop (inclusiva) 
+                    break
+
+            if early_stopping:
+                early_check = self.loss_control.stopping_check(epoch, val_error)
+                if early_check:
+                    print(f"Early stopping at epoch {epoch}")
+                    stop_epoch = epoch - self.loss_control.stopping_patience  # Registra l'epoca di stop (inclusiva)
+                    break
+
+            if smoothness:
+                smoothness_check_train = self.loss_control.smoothness_check(epoch, train_error)
+                
+                if (smoothness_check_train == False):
+                    #print(f"Loss function not smooth for fold {fold_idx+1}")
+                    smoothness_check = False
+                else:
+                    smoothness_check = True
+
+        return smoothness_check, stop_epoch                 
+
 
     def train_fold(
             self,
@@ -137,6 +176,69 @@ class ModelSelection:
         train_error_tot = []
         val_error_tot = []
 
+        for fold_idx, (x_train, target_train, x_val, target_val) in enumerate(
+            zip(
+                self.data_splitter.x_trains,
+                self.data_splitter.target_trains,
+                self.data_splitter.x_vals,
+                self.data_splitter.target_vals,
+            )
+        ):
+            if self.neural_network.grid_search == False:
+                print(f'fold n: {fold_idx + 1}')
+
+            train_error = []
+            val_error = []
+
+            for i in range(self.epochs):
+                train_error_epoch = self.train_epoch(x_train, target_train)
+                val_error_epoch = self.train_val(x_val, target_val)
+
+                train_error.append(train_error_epoch)
+                val_error.append(val_error_epoch)          
+
+                if self.neural_network.grid_search == False:
+                    if ((i + 1) % 30 == 0):
+                        print(f'epoch {i+1}, train error {train_error_epoch}, val error {val_error_epoch}')
+                
+            train_error_tot.append(train_error)
+            val_error_tot.append(val_error)
+
+            self.neural_network.reinitialize_net_and_optimizers()
+
+
+        # Media sui fold
+        train_error_avg = np.mean(train_error_tot, axis=0)
+        val_error_avg = np.mean(val_error_tot, axis=0)
+
+        if smoothness or early_stopping or overfitting:
+            print('entra?')
+            smoothness_outcome, stop_epoch = self.loss_control_avg(train_error_avg, val_error_avg, overfitting, early_stopping, smoothness)
+
+        for i in range (stop_epoch, self.epochs, 1):
+            train_error_avg[i] = train_error_avg[stop_epoch]
+            val_error_avg[i] = val_error_avg[stop_epoch]
+
+        if self.neural_network.grid_search == False:
+            print(f'last val error: \n {val_error_avg[-1]}')
+            print(f'last train error: \n {train_error_avg[-1]}')
+
+        if smoothness:
+            return train_error_avg, val_error_avg, smoothness_outcome
+        else:
+            return train_error_avg, val_error_avg
+
+    '''
+    def train_fold(
+            self,
+            early_stopping = False,
+            smoothness = False,
+            overfitting = False
+    ):
+
+        train_error_tot = []
+        val_error_tot = []
+
         # Indici per monitorare eventuale early stopping
         stop_epochs = np.zeros(self.data_splitter.K, dtype=int)
         smoothness_fold = np.zeros(self.data_splitter.K, dtype=bool)
@@ -149,7 +251,8 @@ class ModelSelection:
                 self.data_splitter.target_vals,
             )
         ):
-            #print(f'fold n: {fold_idx + 1}')
+            if self.neural_network.grid_search == False:
+                print(f'fold n: {fold_idx + 1}')
             train_error = []
             val_error = []
 
@@ -181,10 +284,10 @@ class ModelSelection:
 
                 if smoothness:
                     smoothness_check_train = self.loss_control.smoothness_check(i, train_error)
-                    smoothness_check_val = self.loss_control.smoothness_check(i, val_error)
+                    # smoothness_check_val = self.loss_control.smoothness_check(i, val_error)
                     
-                    if ((smoothness_check_train == False) or (smoothness_check_val == False)):
-                        print(f"Loss function not smooth for fold {fold_idx+1}")
+                    if (smoothness_check_train == False):
+                        #print(f"Loss function not smooth for fold {fold_idx+1}")
                         smoothness_fold[fold_idx] = False
 
                     else:
@@ -192,7 +295,7 @@ class ModelSelection:
 
                 
                 if self.neural_network.grid_search == False:
-                    if ((i + 1) % 10 == 0):
+                    if ((i + 1) % 30 == 0):
                         print(f'epoch {i+1}, train error {train_error_epoch}, val error {val_error_epoch}')
                 
 
@@ -232,6 +335,7 @@ class ModelSelection:
             return train_error_avg, val_error_avg, smoothness_outcome
         else:
             return train_error_avg, val_error_avg
+    '''
 
 '''
 Unit test for batches
