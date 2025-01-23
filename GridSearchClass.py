@@ -6,7 +6,7 @@ import time
 from NeuralNetworkClass import NeuralNetwork
 from Functions import activation_functions, d_activation_functions, loss_functions, d_loss_functions, activation_functions_grid, d_activation_functions_grid
 from ModelSelectionClass import ModelSelection
-from GridBuilding_NAG_1 import combinations_grid, x_trains, CUP_data_splitter, batch_size
+from GridBuilding_NAG_2 import combinations_grid, x_trains, CUP_data_splitter, batch_size
 from LossControlClass import LossControl
 
 def print_nn_details(nn):
@@ -157,7 +157,7 @@ def hyperband(list_combination, brackets, min_resources, max_resources):
             #    print(f'entra? {a}')
 
             train_val = ModelSelection(CUP_data_splitter, resources, batch, loss_functions['mse'], d_loss_functions['d_mse'], nn, loss_control)
-            train_error_tot, val_error_tot = train_val.train_fold(False, True)
+            train_error_tot, val_error_tot = train_val.train_fold()
         
             # storing the result
             results.append({
@@ -188,7 +188,7 @@ def hyperband(list_combination, brackets, min_resources, max_resources):
 best_configs = hyperband(list_combination, brackets, min_resources, max_resources)
     
 # Apri un file di testo in modalità scrittura
-with open("best_hyperband_configs_NAG_1.txt", "w") as file:
+with open("01_22_best_hyperband_configs_NAG_2.txt", "w") as file:
     for i in range(30):
         # Seleziona la i-esima combinazione migliore
         final_best_result = best_configs[i]

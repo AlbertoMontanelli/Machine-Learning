@@ -123,7 +123,7 @@ class ModelSelection:
     def train_fold(
             self,
             early_stopping = False,
-            smoothness = True,
+            smoothness = False,
             overfitting = False
     ):
         '''
@@ -139,6 +139,7 @@ class ModelSelection:
 
         # Indici per monitorare eventuale early stopping
         stop_epochs = np.zeros(self.data_splitter.K, dtype=int)
+        smoothness_fold = np.zeros(self.data_splitter.K, dtype=bool)
 
         for fold_idx, (x_train, target_train, x_val, target_val) in enumerate(
             zip(
@@ -159,25 +160,51 @@ class ModelSelection:
                 train_error.append(train_error_epoch)
                 val_error.append(val_error_epoch)
 
+
+                if overfitting:
+                    overfitting_check = self.loss_control.overfitting_check(i, train_error, val_error)
+                    if overfitting_check:
+                        print(f"Overfitting at epoch {i} for fold {fold_idx + 1}")
+                        stop_epochs[fold_idx] = i + 1  # Registra l'epoca di stop (inclusiva)
+                        break
+                    else:
+                        stop_epochs[fold_idx] = self.epochs 
+
                 if early_stopping:
                     early_check = self.loss_control.stopping_check(i, val_error)
                     if early_check:
                         print(f"Early stopping at epoch {i} for fold {fold_idx + 1}")
                         stop_epochs[fold_idx] = i + 1  # Registra l'epoca di stop (inclusiva)
                         break
-                else:
-                    stop_epochs[fold_idx] = self.epochs  # Se non si interrompe, registra il massimo delle epoche
+                    else:
+                        stop_epochs[fold_idx] = self.epochs  # Se non si interrompe, registra il massimo delle epoche
+
+                if smoothness:
+                    smoothness_check_train = self.loss_control.smoothness_check(i, train_error)
+                    smoothness_check_val = self.loss_control.smoothness_check(i, val_error)
+                    
+                    if ((smoothness_check_train == False) or (smoothness_check_val == False)):
+                        print(f"Loss function not smooth for fold {fold_idx+1}")
+                        smoothness_fold[fold_idx] = False
+
+                    else:
+                        smoothness_fold[fold_idx] = True                   
+
                 
                 if self.neural_network.grid_search == False:
                     if ((i + 1) % 10 == 0):
                         print(f'epoch {i+1}, train error {train_error_epoch}, val error {val_error_epoch}')
                 
 
+
             train_error_tot.append(train_error)
             val_error_tot.append(val_error)
 
             if early_stopping:
                 self.loss_control.stop_count = 0
+
+            if overfitting:
+                self.loss_control.overfitting_count = 0
 
             self.neural_network.reinitialize_net_and_optimizers()
 
@@ -189,6 +216,8 @@ class ModelSelection:
             train_error_tot[fold_idx] += [train_error_tot[fold_idx][-1]] * (max_epoch - len(train_error_tot[fold_idx]))
             val_error_tot[fold_idx] += [val_error_tot[fold_idx][-1]] * (max_epoch - len(val_error_tot[fold_idx]))
 
+        
+
         # Media sui fold
         train_error_avg = np.mean(train_error_tot, axis=0)
         val_error_avg = np.mean(val_error_tot, axis=0)
@@ -196,9 +225,13 @@ class ModelSelection:
         if self.neural_network.grid_search == False:
             print(f'last val error: \n {val_error_avg[-1]}')
             print(f'last train error: \n {train_error_avg[-1]}')
-            
 
-        return train_error_avg, val_error_avg
+        smoothness_outcome = all(smoothness_fold) # if there is one False in the smoothness of the folds, smoothness_outcome is False 
+        
+        if smoothness:
+            return train_error_avg, val_error_avg, smoothness_outcome
+        else:
+            return train_error_avg, val_error_avg
 
 '''
 Unit test for batches
