@@ -198,7 +198,7 @@ class ModelSelection:
                 val_error.append(val_error_epoch)          
 
                 if self.neural_network.grid_search == False:
-                    if ((i + 1) % 30 == 0):
+                    if ((i + 1) % 10 == 0):
                         print(f'epoch {i+1}, train error {train_error_epoch}, val error {val_error_epoch}')
                 
             train_error_tot.append(train_error)
@@ -214,11 +214,11 @@ class ModelSelection:
         if smoothness or early_stopping or overfitting:
             print('entra?')
             smoothness_outcome, stop_epoch = self.loss_control_avg(train_error_avg, val_error_avg, overfitting, early_stopping, smoothness)
-
+            '''
             for i in range (stop_epoch, self.epochs, 1):
                 train_error_avg[i] = train_error_avg[stop_epoch]
                 val_error_avg[i] = val_error_avg[stop_epoch]
-
+            '''
         if self.neural_network.grid_search == False:
             print(f'last val error: \n {val_error_avg[-1]}')
             print(f'last train error: \n {train_error_avg[-1]}')
