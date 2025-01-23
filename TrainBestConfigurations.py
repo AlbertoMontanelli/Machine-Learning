@@ -139,6 +139,6 @@ manager.full_screen_toggle()
 plt.pause(2)  # Pausa di 2 secondi
 
 # Salvare il grafico in PDF con alta risoluzione
-plt.savefig('grafici/39_con_overfitting.pdf', bbox_inches = 'tight', dpi = 1200)
+plt.savefig('grafici/39.pdf', bbox_inches = 'tight', dpi = 1200)
 
 plt.show()

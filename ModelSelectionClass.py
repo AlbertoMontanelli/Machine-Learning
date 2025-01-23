@@ -215,9 +215,9 @@ class ModelSelection:
             print('entra?')
             smoothness_outcome, stop_epoch = self.loss_control_avg(train_error_avg, val_error_avg, overfitting, early_stopping, smoothness)
 
-        for i in range (stop_epoch, self.epochs, 1):
-            train_error_avg[i] = train_error_avg[stop_epoch]
-            val_error_avg[i] = val_error_avg[stop_epoch]
+            for i in range (stop_epoch, self.epochs, 1):
+                train_error_avg[i] = train_error_avg[stop_epoch]
+                val_error_avg[i] = val_error_avg[stop_epoch]
 
         if self.neural_network.grid_search == False:
             print(f'last val error: \n {val_error_avg[-1]}')
