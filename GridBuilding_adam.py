@@ -34,8 +34,8 @@ param_grid = {
     'activation_function' : list(activation_functions_grid.keys()),
     'd_activation_function' : list(d_activation_functions_grid.keys()),
     'learning_rate' : [5e-3, 1e-3, 5e-4],
-    'learning_rate' : [1e-4, 5e-5, 1e-5],
-    'learning_rate' : [5e-6, 1e-6],  
+    #'learning_rate' : [1e-4, 5e-5, 1e-5],
+    #'learning_rate' : [5e-6, 1e-6],  
     'lambda': [0, 1e-3, 1e-5],
     'alpha': [0.5]
     }

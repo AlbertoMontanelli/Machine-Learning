@@ -2,7 +2,7 @@ import numpy as np
 
 class LossControl:
 
-    def __init__(self, epochs, stopping_patience = 20, overfitting_patience = 10, smooth_patience = 50):
+    def __init__(self, epochs, stopping_patience = 20, overfitting_patience = 10, smooth_patience = 15):
         '''
         Class that implements a mechanism to monitor validation metrics during the training of a model, in order to prematurely
         stop the optimization process.
