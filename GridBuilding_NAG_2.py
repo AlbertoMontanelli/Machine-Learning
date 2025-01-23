@@ -47,6 +47,7 @@ all_combinations = list(product(*param_grid.values()))
 valid_combinations = [
     dict(zip(param_grid.keys(), values))
     for values in all_combinations
+    if not (dict(zip(param_grid.keys(), values))['lambda'] == 0 and dict(zip(param_grid.keys(), values))['alpha'] != 0)
 ]
 
 combinations_grid = [

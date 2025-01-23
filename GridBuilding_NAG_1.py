@@ -35,7 +35,7 @@ param_grid = {
     'd_activation_function' : list(d_activation_functions_grid.keys()),
     'learning_rate' : np.logspace(-5, -3, num = 3),  
     'lambda': [0, 1e-2, 1e-4, 1e-6],
-    'alpha': [0, 0.33, 0.66, 1]
+    'alpha' : [0, 0.33, 0.66, 1]
     }
 
 batch_size = [1, 40, 160]
@@ -47,7 +47,9 @@ all_combinations = list(product(*param_grid.values()))
 valid_combinations = [
     dict(zip(param_grid.keys(), values))
     for values in all_combinations
+    if not (dict(zip(param_grid.keys(), values))['lambda'] == 0 and dict(zip(param_grid.keys(), values))['alpha'] != 0)
 ]
+
 
 combinations_grid = [
     {**nn_architecture_list, **valid_combinations_list}
