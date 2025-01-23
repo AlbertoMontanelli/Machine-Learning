@@ -137,14 +137,14 @@ class ModelSelection:
                 overfitting_check = self.loss_control.overfitting_check(epoch, train_error, val_error)
                 if overfitting_check:
                     print(f"Overfitting at epoch {epoch}")
-                    stop_epoch = epoch + 1  # perché + 1 ? Registra l'epoca di stop (inclusiva) 
+                    stop_epoch = epoch - self.loss_control.overfitting_patience  # Registra l'epoca di stop (inclusiva) 
                     break
 
             if early_stopping:
                 early_check = self.loss_control.stopping_check(epoch, val_error)
                 if early_check:
                     print(f"Early stopping at epoch {epoch}")
-                    stop_epoch = epoch + 1  # Registra l'epoca di stop (inclusiva)
+                    stop_epoch = epoch - self.loss_control.stopping_patience  # Registra l'epoca di stop (inclusiva)
                     break
 
             if smoothness:

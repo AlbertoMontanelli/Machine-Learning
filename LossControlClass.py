@@ -2,7 +2,7 @@ import numpy as np
 
 class LossControl:
 
-    def __init__(self, epochs):
+    def __init__(self, epochs, stopping_patience = 20, overfitting_patience = 10, smooth_patience = 50):
         '''
         Class that implements a mechanism to monitor validation metrics during the training of a model, in order to prematurely
         stop the optimization process.
@@ -15,9 +15,12 @@ class LossControl:
         self.stop_count = 0
         self.smooth_count = 0
         self.overfitting_count = 0
+        self.stopping_patience = stopping_patience
+        self.overfitting_patience = overfitting_patience
+        self.smooth_patience = smooth_patience
 
     
-    def stopping_check(self, actual_epoch, val_errors, stopping_patience = 20):
+    def stopping_check(self, actual_epoch, val_errors):
         '''
         Function that keeps track of the relative improvement of the validation error. If it remains below a certain threshold
         for 20 consecutive epochs, it returns True.
@@ -43,13 +46,13 @@ class LossControl:
             else:
                 self.stop_count = 0
 
-        if self.stop_count >= stopping_patience:
+        if self.stop_count >= self.stopping_patience:
             return True
         else:
             return False
     
 
-    def smoothness_check(self, actual_epoch, error_array, smooth_patience = 10):
+    def smoothness_check(self, actual_epoch, error_array):
         '''
         Function that checks if the curve is smooth or not.
 
@@ -68,12 +71,12 @@ class LossControl:
             if error_array[actual_epoch] > error_array[actual_epoch - 1]:
                 self.smooth_count += 1
             
-            if self.smooth_count >= smooth_patience:
+            if self.smooth_count >= self.smooth_patience:
                 return False
             else:
                 return True
             
-    def overfitting_check(self, actual_epoch, train_error, val_error, overfitting_patience = 20):
+    def overfitting_check(self, actual_epoch, train_error, val_error):
         '''
         Function that checks the overfitting, respectively checking whether the validation error rises, or the velocities
         of the loss function computed for the validation and the training error vary too differently, or if the difference 
@@ -90,20 +93,24 @@ class LossControl:
                   False if there is no overfitting.
         '''
         perc = actual_epoch/self.epochs
-        relative_distance = ((val_error[actual_epoch] - train_error[actual_epoch]) - (val_error[actual_epoch - 1] - train_error[actual_epoch - 1]))/(val_error[actual_epoch - 1] - train_error[actual_epoch - 1])
+        #diff_act = (val_error[actual_epoch] - train_error[actual_epoch]) - (val_error[actual_epoch - 1] - train_error[actual_epoch - 1])
+        #diff_prec = (val_error[actual_epoch - 50] - train_error[actual_epoch - 50]) - (val_error[actual_epoch - 51] - train_error[actual_epoch - 51])
+        #relative_distance = ((val_error[actual_epoch] - train_error[actual_epoch]) - (val_error[actual_epoch - 1] - train_error[actual_epoch - 1]))/(val_error[actual_epoch - 1] - train_error[actual_epoch - 1])
         if perc > 0.2:
             if ((val_error[actual_epoch] - val_error[actual_epoch - 1] >= 0) 
-                or 
+                #or 
                 #((train_error[actual_epoch] - train_error[actual_epoch - 1]) / (val_error[actual_epoch] - val_error[actual_epoch - 1]) > 2) # train speed = 2 * val speed
                 #or
-                ((relative_distance > 0.1) and (val_error[actual_epoch] > train_error[actual_epoch]))
+                #((relative_distance > 0.1) and (val_error[actual_epoch] > train_error[actual_epoch]))
+                #or 
+                #((diff_act > diff_prec) and (val_error[actual_epoch] > train_error[actual_epoch]))
                 ):
                     self.overfitting_count += 1
-                    print(f"overfitting = count: {self.overfitting_count}, actual epoch: {actual_epoch}, relative distance: {relative_distance}, diff: {val_error[actual_epoch] - val_error[actual_epoch - 1]}")
+                    #print(f"overfitting = count: {self.overfitting_count}, actual epoch: {actual_epoch}, relative distance: {diff_act - diff_prec}, diff: {val_error[actual_epoch] - val_error[actual_epoch - 1]}")
             else:
                 self.overfitting_count = 0
 
-            if self.overfitting_count >= overfitting_patience:
+            if self.overfitting_count >= self.overfitting_patience:
                 return True
             else:
                 return False
