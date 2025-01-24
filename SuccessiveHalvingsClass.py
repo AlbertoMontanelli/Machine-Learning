@@ -6,12 +6,8 @@ import time
 from NeuralNetworkClass import NeuralNetwork
 from Functions import activation_functions, d_activation_functions, loss_functions, d_loss_functions, activation_functions_grid, d_activation_functions_grid
 from ModelSelectionClass import ModelSelection
-from GridBuilding_adam_fine_1hl import combinations_grid, x_trains, CUP_data_splitter, batch_size
+from GridBuilding_adam import combinations_grid, x_trains, CUP_data_splitter, batch_size
 from LossControlClass import LossControl
-
-#######################################################################################################################
-
-# PRINT details nn
 
 def print_nn_details(nn):
     details = []
@@ -48,7 +44,13 @@ def print_nn_details(nn):
     
     return "\n".join(details)
 
-#######################################################################################################################
+
+# cose da fare:
+# fare training con ogni configurazione di iperparametri per x epoche
+# scartare tutte le opzioni tranne le migliori y
+# portare a termine quelle y e valutare la metrica aggiungendo early stopping
+# classifica
+# selezione il set di iperparametri migliore
 
 current_time = time.ctime()
 os.system('echo ' + current_time)
@@ -117,81 +119,88 @@ print(f'finite le iterazioni tutte: {all_combination}, vere: {used_combination}'
 combination = product(nn_combo, batch_size)
 list_combination = list(combination)
 
-epochs = 500
-loss_control = LossControl(epochs)
+# Hyperband parameters
+brackets = 3  # number of brackets (times the number of configuration is reduced)
+min_resources = 5  # min resources per configuration (= min epochs)
+max_resources = 300  # max resources per configuration (= max epochs)
 
 
-i = 0
-results = []
+def hyperband(list_combination, brackets, min_resources, max_resources):
+    '''
+    Function that performs hyperband grid search on the hyperparameters
 
-for nn, batch in (list_combination):
+    Args:
+        sbagliayo nn_combo (dict): dictionary of the neural network combinations.
+        brackets (int): number of splits being performed on the combinations of hyperparameter.
+        min_resources (int): minimum number of epochs to perform training and validation before evaluating the set of hyperparameters.
+        max_resources (int): maximum number of epochs.
+    '''
+    # training for a small number of epochs for all configurations
+    resources = min_resources
 
-    train_val = ModelSelection(CUP_data_splitter, epochs, batch, loss_functions['mse'], d_loss_functions['d_mse'], nn, loss_control)
-    train_error_tot, val_error_tot, smoothness = train_val.train_fold(True, True, True)
-    print(f'combinazione {i+1}')
-    print(f'smoothness: {smoothness}')
-    print(f'errore training {train_error_tot[-1]}')
-    print(f'errore validation {val_error_tot[-1]}')
-    results.append([train_error_tot, val_error_tot, smoothness, i+1])
-    i = i+1
-    print('\n')
+    loss_control = LossControl(resources)
+    
+    # generating all configuration combinations
+    for bracket in range(brackets):
+        print(f"Bracket {bracket+1}/{brackets}")
+
+        current_time = time.ctime()
+        os.system('echo ' + current_time)
+
+        # actual training
+        results = []
+        #a = 0
+
+        for nn, batch in list_combination:
+            #a+=1
+            #if a%10 == 0:
+            #    print(f'entra? {a}')
+
+            train_val = ModelSelection(CUP_data_splitter, resources, batch, loss_functions['mse'], d_loss_functions['d_mse'], nn, loss_control)
+            train_error_tot, val_error_tot = train_val.train_fold()
+        
+            # storing the result
+            results.append({
+                'nn': nn,
+                'batch_size' : batch,
+                'val_error': val_error_tot[-1],
+                'train_error': train_error_tot[-1]  # validation error is used to evaluate the performance
+            })
+        
+        # ordering the configurations according to their performance and keeping half of them
+        results.sort(key = lambda x: x['val_error'])
+
+        best_results = results[:len(results) // 2]
+
+        # more resources for the best configurations        
+        list_combination = list(zip([r['nn'] for r in best_results], [r['batch_size'] for r in best_results]))
+
+        resources = min(resources * 2, max_resources)  
+        
+        # Controlla quanti elementi ci sono in best_configs
+        num_elements = len(best_results)
+        print(f'n element: {num_elements}')
+
+    return best_results
 
 
-print('\n')
-print('\n')
-print('Plot e salvataggio dei grafici')
-print('\n')
-
-import matplotlib.pyplot as plt
-
-
-for i in range(len(results)):
-
-    plt.figure()
-
-    print(f'best configuration n {results[i][3]}, smoothness: {results[i][2]}')
-    line_train, = plt.plot(results[i][0], label='Training Error')
-    line_val, = plt.plot(results[i][1], label='Validation Error')
-
-    plt.xlabel('Epochs', fontsize = 16, fontweight = 'bold')
-    plt.ylabel('Error', fontsize = 16, fontweight = 'bold')
-    plt.yscale('log')
-    plt.grid()
-    plt.legend(handles = [line_train, line_val], labels = ['Training Error', 'Validation Error'], fontsize = 18, loc = 'best')
-
-    # Aggiungere padding tra i subplot
-    plt.tight_layout()
-
-    plt.tick_params(axis = 'x', labelsize = 16)  # Dimensione xticks
-    plt.tick_params(axis = 'y', labelsize = 16)  # Dimensione yticks
-
-    # Mettere il grafico a schermo intero
-    manager = plt.get_current_fig_manager()
-    manager.full_screen_toggle() 
-
-    plt.pause(2)  # Pausa di 2 secondi
-
-    # Salvare il grafico in PDF con alta risoluzione
-    plt.savefig(f'grafici/01_24_adam_fine_hl1_{i}.pdf', bbox_inches = 'tight', dpi = 1200)
-
-    plt.close()
-
-    #plt.show()
-
-j = 0
+# hyperband application
+best_configs = hyperband(list_combination, brackets, min_resources, max_resources)
+    
 # Apri un file di testo in modalità scrittura
-with open("01_24_best_configs_adam_fine_hl1.txt", "w") as file:
-    for nn, batch in (list_combination):
+with open("01_23_best_hyperband_configs_adam_grande.txt", "w") as file:
+    for i in range(len(best_configs)):
         # Seleziona la i-esima combinazione migliore
+        final_best_result = best_configs[i]
+        final_best_nn = final_best_result['nn']
         
         # Scrivi i dettagli della configurazione migliore nel file
-        file.write(f"\n Configuration n: {j+1} \n")
-        file.write(f"Batch Size: {batch}\n")
-        file.write(f"Validation Error: {results[j][1][-1]}\n")
+        file.write(f"\n Best configuration after Hyperband n: {i+1} \n")
+        file.write(f"Batch Size: {final_best_result['batch_size']}\n")
+        file.write(f"Validation Error: {final_best_result['val_error']}\n")
         file.write("NN Details:\n")
-        file.write(f"{print_nn_details(nn)}\n")  # Supponendo che print_nn_details ritorni una stringa
+        file.write(f"{print_nn_details(final_best_nn)}\n")  # Supponendo che print_nn_details ritorni una stringa
         file.write("\n" + "-"*50 + "\n")
-        j = j+1
 
 current_time = time.ctime()
 os.system('echo ' + current_time)

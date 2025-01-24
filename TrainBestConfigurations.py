@@ -44,14 +44,14 @@ def print_nn_details(nn):
 
 # Layer configuration: [(input_dim, output_dim, activation_function, d_activation_function), ...]
 layers_config = [
-    (12, 256, activation_functions['tanh'], d_activation_functions['d_tanh']),
+    (12, 128, activation_functions['leaky_ReLU'], d_activation_functions['d_leaky_ReLU']),
     #(256, 256, activation_functions['leaky_ReLU'], d_activation_functions['d_leaky_ReLU']),
-    (256, 3, activation_functions['linear'], d_activation_functions['d_linear'])
+    (128, 3, activation_functions['linear'], d_activation_functions['d_linear'])
 ]
 
 # Regulizer configuration
 reg_config = {
-    'Lambda': 0,
+    'Lambda': 0.001,
     'alpha' : 0.5,
     'reg_type': 'elastic'
 }
@@ -59,7 +59,7 @@ reg_config = {
 # Optimizater configuration
 opt_config = {
     'opt_type': 'adam',
-    'learning_rate': 1e-5,
+    'learning_rate': 0.0005,
     'momentum': 0.9,
     'beta_1': 0.9,
     'beta_2': 0.999,
@@ -140,6 +140,6 @@ manager.full_screen_toggle()
 plt.pause(2)  # Pausa di 2 secondi
 
 # Salvare il grafico in PDF con alta risoluzione
-plt.savefig('grafici/adam_config_16.pdf', bbox_inches = 'tight', dpi = 1200)
+plt.savefig('grafici/adam_grande_24.pdf', bbox_inches = 'tight', dpi = 1200)
 
 plt.show()

@@ -19,8 +19,8 @@ BETA_2 = 0.999
 x_trains, target_trains, x_vals, target_vals = CUP_data_splitter.train_val_split()
 
 # Adam Grid
-N_layer = [1, 2, 3]
-N_units = [32, 64, 128, 256]
+N_layer = [1]
+N_units = [256]
 
 nn_architecture = []
 
@@ -33,12 +33,12 @@ param_grid = {
     'opt_type' : ['adam'], 
     'activation_function' : list(activation_functions_grid.keys()),
     'd_activation_function' : list(d_activation_functions_grid.keys()),
-    'learning_rate' : [5e-3, 1e-3, 5e-4], 
-    'lambda': [0, 1e-3, 1e-5],
+    'learning_rate' : np.linspace(1e-5, 1e-4, num = 10), 
+    'lambda': [1e-5],
     'alpha': [0.5]
     }
 
-batch_size = [1, 40]
+batch_size = [1, 16, 40]
 
 # Genera tutte le combinazioni
 all_combinations = list(product(*param_grid.values()))

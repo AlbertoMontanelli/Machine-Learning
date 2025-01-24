@@ -213,13 +213,13 @@ d_activation_functions = {
 
 # Dictionary for the activation functions used for grid search
 activation_functions_grid = {
-    "tanh": tanh,
+    #"tanh": tanh,
     "leaky_ReLU": leaky_relu
 }
 
 # Dictionary for the derivative of activation functions used for grid search
 d_activation_functions_grid = {
-    "d_tanh": d_tanh,
+    #"d_tanh": d_tanh,
     "d_leaky_ReLU": d_leaky_relu
 }
 
