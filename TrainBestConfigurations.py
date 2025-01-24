@@ -9,39 +9,6 @@ from LossControlClass import LossControl
 
 np.random.seed(12)
 
-def print_nn_details(nn):
-    print("=== Neural Network Details ===")
-    
-    # Regolarizzazione
-    print("\nRegularizer Configuration:")
-    if hasattr(nn.regularizer, '__dict__'):
-        for key, value in nn.regularizer.__dict__.items():
-            print(f"  {key}: {value}")
-    else:
-        print("  No regularizer details available.")
-    
-    # Layer
-    print("\nLayers Configuration:")
-    for i, layer in enumerate(nn.layers):
-        print(f"    Layer {i + 1}:")
-        print(f"    dim_prev_layer: {layer.dim_prev_layer}")
-        print(f"    dim_layer: {layer.dim_layer}")
-        print(f"    activation_function: {layer.activation_function.__name__}")  # Nome della funzione
-        print(f"    d_activation_function: {layer.d_activation_function.__name__}")  # Nome della funzione derivata
-    
-    # Ottimizzatori
-    print("\nOptimizers Configuration:")
-    allowed_optimizer_keys = ['opt_type', 'learning_rate', 'momentum', 'beta_1', 'beta_2', 'epsilon']
-    for i, optimizer in enumerate(nn.optimizers):
-        print(f"  Optimizer {i + 1}:")
-        if hasattr(optimizer, '__dict__'):
-            for key, value in optimizer.__dict__.items():
-                if key in allowed_optimizer_keys:
-                    print(f"    {key}: {value}")
-        else:
-            print(f"    Optimizer {i + 1} details not available.")
-
-
 # Layer configuration: [(input_dim, output_dim, activation_function, d_activation_function), ...]
 layers_config = [
     (12, 128, activation_functions['leaky_ReLU'], d_activation_functions['d_leaky_ReLU']),
