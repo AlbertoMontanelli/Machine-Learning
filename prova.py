@@ -102,7 +102,7 @@ def parse_nn_configurations(file_path):
 
 
 # Percorso al file txt
-file_path = '01_23_best_hyperband_configs_NAG_1.txt'
+file_path = '01_22_best_hyperband_configs_adam.txt'
 configurations = parse_nn_configurations(file_path)
 
 # Stampa la prima configurazione per verifica
@@ -114,12 +114,13 @@ for i in range(len(configurations)):
     neural_networks.append(nn)
 
 
-epochs = 1000
+
+epochs = 500
 loss_control = LossControl(epochs)
 
 total_config = []
 
-for i in range(len(neural_networks)):
+for i in range(0, 2, 1):
     nn = neural_networks[i]
     train_val = ModelSelection(CUP_data_splitter, epochs, configurations[i][3], loss_functions['mse'], d_loss_functions['d_mse'], nn, loss_control)
     train_error_tot, val_error_tot, smoothness = train_val.train_fold(True, True, True)
@@ -165,7 +166,7 @@ for i in range(len(total_config)):
     plt.pause(2)  # Pausa di 2 secondi
 
     # Salvare il grafico in PDF con alta risoluzione
-    plt.savefig(f'grafici/01_23_best_NAG1_{i}.pdf', bbox_inches = 'tight', dpi = 1200)
+    plt.savefig(f'grafici/01_22_best_adam_{i}.pdf', bbox_inches = 'tight', dpi = 1200)
 
     plt.close()
 

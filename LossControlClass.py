@@ -68,7 +68,7 @@ class LossControl:
         perc = actual_epoch/self.epochs
 
         if perc > 0.2:
-            if error_array[actual_epoch] > error_array[actual_epoch - 1]:
+            if (error_array[actual_epoch]-error_array[actual_epoch - 1])/ error_array[actual_epoch - 1] > 0.001:
                 self.smooth_count += 1
             
             if self.smooth_count >= self.smooth_patience:

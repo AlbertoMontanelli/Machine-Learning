@@ -12,14 +12,16 @@ np.random.seed(12)
 
 # Layer configuration: [(input_dim, output_dim, activation_function, d_activation_function), ...]
 layers_config = [
-    (12, 256, activation_functions['leaky_ReLU'], d_activation_functions['d_leaky_ReLU']),
-    (256, 256, activation_functions['leaky_ReLU'], d_activation_functions['d_leaky_ReLU']),
-    (256, 3, activation_functions['linear'], d_activation_functions['d_linear'])
+    (12, 32, activation_functions['leaky_ReLU'], d_activation_functions['d_leaky_ReLU']),
+    (32, 32, activation_functions['leaky_ReLU'], d_activation_functions['d_leaky_ReLU']),
+    (32, 32, activation_functions['leaky_ReLU'], d_activation_functions['d_leaky_ReLU']),
+    (32, 32, activation_functions['leaky_ReLU'], d_activation_functions['d_leaky_ReLU']),
+    (32, 3, activation_functions['linear'], d_activation_functions['d_linear'])
 ]
 
 # Regulizer configuration
 reg_config = {
-    'Lambda': 1e-5,
+    'Lambda': 1e-3,
     'alpha' : 0.5,
     'reg_type': 'elastic'
 }
@@ -27,7 +29,7 @@ reg_config = {
 # Optimizater configuration
 opt_config = {
     'opt_type': 'adam',
-    'learning_rate': 1e-4,
+    'learning_rate': 1e-3,
     'momentum': 0.9,
     'beta_1': 0.9,
     'beta_2': 0.999,
@@ -42,7 +44,9 @@ print(f'batchsize: {batch_size}')
 loss_control = LossControl(epochs)
 
 train_val = ModelSelection(CUP_data_splitter, epochs, batch_size, loss_functions['mse'], d_loss_functions['d_mse'], nn, loss_control)
-train_error_tot, val_error_tot = train_val.train_fold(True)
+train_error_tot, val_error_tot,smoothness = train_val.train_fold(True, True, True)
+
+print(f'smoothness: {smoothness}')
 
 #############################################################################################################################
 
@@ -98,6 +102,6 @@ manager.full_screen_toggle()
 plt.pause(2)  # Pausa di 2 secondi
 
 # Salvare il grafico in PDF con alta risoluzione
-plt.savefig('grafici/83.pdf', bbox_inches = 'tight', dpi = 1200)
+plt.savefig('grafici/12.pdf', bbox_inches = 'tight', dpi = 1200)
 
 plt.show()
