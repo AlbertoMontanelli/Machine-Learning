@@ -6,7 +6,7 @@ import time
 from NeuralNetworkClass import NeuralNetwork
 from Functions import activation_functions, d_activation_functions, loss_functions, d_loss_functions, activation_functions_grid, d_activation_functions_grid
 from ModelSelectionClass import ModelSelection
-from GridBuilding_adam_fine_1hl import combinations_grid, x_trains, CUP_data_splitter, batch_size
+from GridBuilding_adam_fine_3hl import combinations_grid, x_trains, CUP_data_splitter, batch_size
 from LossControlClass import LossControl
 
 #######################################################################################################################
@@ -125,10 +125,12 @@ i = 0
 results = []
 
 for nn, batch in (list_combination):
+    print(f'combinazione {i+1}')
 
     train_val = ModelSelection(CUP_data_splitter, epochs, batch, loss_functions['mse'], d_loss_functions['d_mse'], nn, loss_control)
     train_error_tot, val_error_tot, smoothness = train_val.train_fold(True, True, True)
-    print(f'combinazione {i+1}')
+
+    print_nn_details(nn)
     print(f'smoothness: {smoothness}')
     print(f'errore training {train_error_tot[-1]}')
     print(f'errore validation {val_error_tot[-1]}')
@@ -149,7 +151,7 @@ for i in range(len(results)):
 
     plt.figure()
 
-    print(f'best configuration n {results[i][3]}, smoothness: {results[i][2]}')
+    print(f'Configuration n {results[i][3]}, smoothness: {results[i][2]}')
     line_train, = plt.plot(results[i][0], label='Training Error')
     line_val, = plt.plot(results[i][1], label='Validation Error')
 
@@ -172,7 +174,7 @@ for i in range(len(results)):
     plt.pause(2)  # Pausa di 2 secondi
 
     # Salvare il grafico in PDF con alta risoluzione
-    plt.savefig(f'grafici/01_24_adam_fine_hl1_{i}.pdf', bbox_inches = 'tight', dpi = 1200)
+    plt.savefig(f'grafici/01_24_adam_fine_hl3_online_{i}.pdf', bbox_inches = 'tight', dpi = 1200)
 
     plt.close()
 
@@ -180,7 +182,7 @@ for i in range(len(results)):
 
 j = 0
 # Apri un file di testo in modalità scrittura
-with open("01_24_best_configs_adam_fine_hl1.txt", "w") as file:
+with open("01_24_configs_adam_fine_hl3_online.txt", "w") as file:
     for nn, batch in (list_combination):
         # Seleziona la i-esima combinazione migliore
         
