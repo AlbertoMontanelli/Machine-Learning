@@ -1,0 +1,14 @@
+1: non smooth, overfitting a 500 epoche, VAL = 1.7, lentissima
+2: non smooth, overfitting a 500 epoche, VAL = 1.12
+3: non smooth, overfitting a 500 epoche, VAL = 1.08
+4: non smooth, overfitting a 250 epoche, VAL = 1.00
+5: smooth, possibile underifitting? a 500 epoche VAL = 1.4, a 1000 1.34, a 1500 1.17, a 2000 1.17 con train sceso (OVER)
+6: non smooth, overfitting (train e val piatte da epoca 200 in poi), VAL = 1.31, TRAIN = 0.88
+7: non smooth, overfitting da 500, VAL = 1.17, TRAIN = 0.56
+8: non smooth all'inizio, overfitting (train e val piatte), VAL = 1.11, TRAIN = 0.76
+9: non smooth, overfitting da 500, VAL = 1.11, TRAIN = 0.57
+10: smooth, overfitting (train e val PIATTE), VAL = 1.29, TRAIN = 1.03
+11: non smooth, overfitting a 400, VAL = 1.13, TRAIN = 0.57
+12: non smooth, overfitting a 400, VAL = 1.12, TRAIN = 0.57
+13: non smooth, VAL = 1.78, TRAIN = 0.77
+14: non smooth, VAL = 2.24, TRAIN = 0.93
