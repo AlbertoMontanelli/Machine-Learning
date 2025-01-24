@@ -52,28 +52,29 @@ class LossControl:
             return False
     
 
-    def smoothness_check(self, actual_epoch, error_array):
-        '''
-        Function that checks if the curve is smooth or not.
-
-        Args: 
-            actual_epoch (int): current epoch of the training.
-            error_array (array): validation or training error array.
-            smooth_patience (int): number of epochs for which fluctations of the val_error are tolerated.
-
-        Returns:
-            bool: returns False if the curve is not smooth;
-                  returns True if it is smooth.
-        '''
-        perc = actual_epoch/self.epochs
-
-        if perc > 0.2:
-            if (error_array[actual_epoch]-error_array[actual_epoch - 1])/ error_array[actual_epoch - 1] > 0.001:
-                self.smooth_count += 1
-            
-            if self.smooth_count >= self.smooth_patience:
-                return False
-            else:
+    def smoothness_check(self, actual_epoch, error_array): 
+        ''' 
+        Function that checks if the curve is smooth or not. 
+ 
+        Args:  
+            actual_epoch (int): current epoch of the training. 
+            error_array (array): validation or training error array. 
+            smooth_patience (int): number of epochs for which fluctations of the val_error are tolerated. 
+ 
+        Returns: 
+            bool: returns False if the curve is not smooth; 
+                  returns True if it is smooth. 
+        ''' 
+        perc = actual_epoch/self.epochs 
+ 
+        if perc > 0.2: 
+            control = (error_array[actual_epoch]-error_array[actual_epoch-1])*(error_array[actual_epoch-1]-error_array[actual_epoch-2]) 
+            if control < 0: 
+                self.smooth_count += 1 
+             
+            if self.smooth_count >= self.smooth_patience: 
+                return False 
+            else: 
                 return True
             
     def overfitting_check(self, actual_epoch, train_error, val_error):
