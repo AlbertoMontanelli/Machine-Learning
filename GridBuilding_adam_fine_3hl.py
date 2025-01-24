@@ -33,7 +33,7 @@ param_grid = {
     'opt_type' : ['adam'], 
     'activation_function' : list(activation_functions_grid.keys()),
     'd_activation_function' : list(d_activation_functions_grid.keys()),
-    'learning_rate' : np.linspace(1e-6, 1e-5, num = 10), 
+    'learning_rate' : np.linspace(1e-5, 5e-5, num = 5), 
     'lambda': [1e-5],
     'alpha': [0.5]
     }
