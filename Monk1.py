@@ -36,10 +36,8 @@ opt_config = {
     'epsilon': 1e-8,
 }
 
-
 epochs = 500
 batch_size = 20
-
 
 ########################################################################################################################
 
@@ -77,7 +75,6 @@ ax[0].set_ylabel('Error', fontsize = 16, fontweight = 'bold')
 ax[0].set_yscale('log')
 ax[0].yaxis.set_major_locator(LogLocator(base=10.0, subs=np.arange(1.0, 10.0) * 0.1, numticks=10))  # Ticks tra i principali
 ax[0].yaxis.set_major_formatter(ScalarFormatter())  # Mostra i valori in formato decimale
-
 ax[0].grid()
 
 # Secondo grafico (Accuracy)
@@ -134,6 +131,6 @@ manager.full_screen_toggle()
 plt.pause(2)  # Pausa di 2 secondi
 
 # Salvare il grafico in PDF con alta risoluzione
-plt.savefig('grafici/monk1_prova.pdf', bbox_inches = 'tight', dpi = 1200)
+plt.savefig('grafici/monk1.pdf', bbox_inches = 'tight', dpi = 1200)
 
 plt.show()

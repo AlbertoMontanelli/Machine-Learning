@@ -119,18 +119,18 @@ print(f'finite le iterazioni tutte: {all_combination}, vere: {used_combination}'
 combination = product(nn_combo, batch_size)
 list_combination = list(combination)
 
-# Hyperband parameters
+# Successive Halvings parameters
 brackets = 3  # number of brackets (times the number of configuration is reduced)
 min_resources = 5  # min resources per configuration (= min epochs)
 max_resources = 300  # max resources per configuration (= max epochs)
 
 
-def hyperband(list_combination, brackets, min_resources, max_resources):
+def successive_halvings(list_combination, brackets, min_resources, max_resources):
     '''
-    Function that performs hyperband grid search on the hyperparameters
+    Function that performs successive halvings grid search on the hyperparameters
 
     Args:
-        sbagliayo nn_combo (dict): dictionary of the neural network combinations.
+        list_combination (list)
         brackets (int): number of splits being performed on the combinations of hyperparameter.
         min_resources (int): minimum number of epochs to perform training and validation before evaluating the set of hyperparameters.
         max_resources (int): maximum number of epochs.
@@ -184,18 +184,18 @@ def hyperband(list_combination, brackets, min_resources, max_resources):
     return best_results
 
 
-# hyperband application
-best_configs = hyperband(list_combination, brackets, min_resources, max_resources)
+# successive halvings application
+best_configs = successive_halvings(list_combination, brackets, min_resources, max_resources)
     
 # Apri un file di testo in modalità scrittura
-with open("01_23_best_hyperband_configs_adam_grande.txt", "w") as file:
+with open("01_23_best_successivehalvings_configs_adam_grande.txt", "w") as file:
     for i in range(len(best_configs)):
         # Seleziona la i-esima combinazione migliore
         final_best_result = best_configs[i]
         final_best_nn = final_best_result['nn']
         
         # Scrivi i dettagli della configurazione migliore nel file
-        file.write(f"\n Best configuration after Hyperband n: {i+1} \n")
+        file.write(f"\n Best configuration after Successive Halvings n: {i+1} \n")
         file.write(f"Batch Size: {final_best_result['batch_size']}\n")
         file.write(f"Validation Error: {final_best_result['val_error']}\n")
         file.write("NN Details:\n")

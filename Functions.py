@@ -1,6 +1,8 @@
 import numpy as np
 
-# Definition of activation functions and their derivative
+'''
+Definition of activation functions and their derivatives
+'''
 def sigmoid(net):
     """ 
     Sigmoid function.
@@ -178,7 +180,7 @@ def d_ELU(net):
         net (array): array computed as input * weights + bias.
 
     Returns:
-        new array (array): result of ELU function.
+        new array (array): result of the derivative of ELU function.
     """ 
     return np.ones_like(net) if(net>=0) else np.exp(net)
 
@@ -224,7 +226,9 @@ d_activation_functions_grid = {
 }
 
 
-# Definition of Loss functions and their derivative
+'''
+Definition of Loss functions and their derivatives
+'''
 def mean_squared_error(y_true, y_pred):
     """ 
     Mean Squared Error function.
@@ -341,7 +345,7 @@ def d_binary_cross_entropy(y_true, y_pred, epsilon = 1e-7):
         epsilon (float): constant that allows log to exist when y_pred = 0 or (1 - y_pred) = 0.
 
     Returns:
-        np.sum(loss) (float): result of derivative of Binary Cross Entropy.
+        np.sum(loss) (float): result of the derivative of Binary Cross Entropy.
     """ 
      return - (y_true / (y_pred + epsilon) - (1 - y_true) / (1 - y_pred + epsilon))
 

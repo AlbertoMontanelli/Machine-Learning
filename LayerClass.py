@@ -18,8 +18,8 @@ class Layer:
             dim_layer (int): number of units of the current layer.
             activation_function (func): activation function used in the layer.
             d_activation_function (func): derivative of the activation function used in the layer.
-
         '''
+
         self.dim_prev_layer = dim_prev_layer
         self.dim_layer = dim_layer
         self.activation_function = activation_function
@@ -27,20 +27,22 @@ class Layer:
         self.initialize_weights_biases()
 
 
-    def xavier_normal(self, shape, n_in, n_out):
-        '''
-        scrivere doc
-        '''
+    '''
+    def xavier_normal(self, shape, n_in, n_out):        
         stddev = np.sqrt(2 / (n_in + n_out))
         return np.random.normal(0, stddev, shape)
-    
+    '''
+
 
     def initialize_weights_biases(self):
         '''
         Function that initializes the Weights and the Biases of the network
         '''
-        self.weights = np.random.uniform(low=-1/np.sqrt(self.dim_prev_layer), high=1/np.sqrt(self.dim_prev_layer), 
-                                         size=(self.dim_prev_layer, self.dim_layer))
+
+        self.weights = np.random.uniform(low=-1/np.sqrt(self.dim_prev_layer), 
+                                         high=1/np.sqrt(self.dim_prev_layer), 
+                                         size=(self.dim_prev_layer, self.dim_layer)
+                                        )
         # self.weights = self.xavier_normal((self.dim_prev_layer, self.dim_layer), self.dim_prev_layer, self.dim_layer)
         self.biases = np.zeros((1, self.dim_layer))
 
@@ -50,12 +52,13 @@ class Layer:
         Function that computes the output of the current layer
 
         Args:
-            input (array): in case of the input layer, it is the data batch. 
-                           In case of a hidden layer, it is the output of the previous layer.
+            input (array): in case of the input layer, it is the data batch; 
+                           in case of a hidden layer, it is the output of the previous layer.
         
         Returns:
             output (array): computation of the output of the current layer.
         '''
+
         self.input = input
         self.net = np.dot(self.input, self.weights) + self.biases
         output = self.activation_function(self.net)
@@ -68,11 +71,12 @@ class Layer:
 
         Args:
             loss_gradient (array): gradient loss with respect to the layer output.
-            regularizer (Regularization): istance of Regularization class.
             optimizer (Optimization): istance of Optimization class.
+                Returns:
+                    sum_delta_weights (array): loss_gradient for hidden layer.
 
         Returns:
-            sum_delta_weights (array): loss_gradient for hidden layer
+            sum_delta_weights (array): loss_gradient for hidden layer.
         '''
 
         sum_delta_weights = optimizer.optimization(self.input, loss_gradient, self.d_activation_function)
@@ -80,7 +84,9 @@ class Layer:
         return sum_delta_weights
     
 
-'''unit test monk
+'''
+unit test monk
+
 from Functions import *
 from MonkDataProcessing import monk_data
 from RegularizationOptimizationClass import Regularization, Optimization
