@@ -235,14 +235,18 @@ class ModelSelection:
 
 
         # Averages on the folds
-        train_error_avg = np.mean(train_error_tot, axis=0)
-        val_error_avg = np.mean(val_error_tot, axis=0)
+        train_error_avg = np.mean(train_error_tot, axis = 0)
+        train_variance = np.std(train_error_tot, axis = 0, ddof = 1)
+        val_error_avg = np.mean(val_error_tot, axis = 0)
+        val_variance = np.std(val_error_tot, axis = 0, ddof = 1)
 
         if smoothness or early_stopping or overfitting:
             print('entra?')
             smoothness_outcome, stop_epoch = self.loss_control_avg(train_error_avg, val_error_avg, overfitting, early_stopping, smoothness)
             train_error_avg = train_error_avg[:stop_epoch]
             val_error_avg = val_error_avg[:stop_epoch]
+            train_variance = train_variance[:stop_epoch]
+            val_variance = val_variance[:stop_epoch]
             self.loss_control.stop_count = 0
             self.loss_control.smooth_count = 0
             self.loss_control.overfitting_count = 0
@@ -253,9 +257,9 @@ class ModelSelection:
             print(f'last train error: \n {train_error_avg[-1]}')
 
         if smoothness:
-            return train_error_avg, val_error_avg, smoothness_outcome
+            return train_error_avg, val_error_avg, train_variance, val_variance, smoothness_outcome
         else:
-            return train_error_avg, val_error_avg
+            return train_error_avg, val_error_avg, train_variance, val_variance
 
     '''
     def train_fold(

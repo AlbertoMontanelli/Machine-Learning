@@ -6,7 +6,7 @@ import time
 from NeuralNetworkClass import NeuralNetwork
 from Functions import activation_functions, d_activation_functions, loss_functions, d_loss_functions, activation_functions_grid, d_activation_functions_grid
 from ModelSelectionClass import ModelSelection
-from GridBuilding_adam_fine_3hl import combinations_grid, x_trains, CUP_data_splitter, batch_size
+from GridBuilding_adam_fine_1hl import combinations_grid, x_trains, CUP_data_splitter, batch_size
 from LossControlClass import LossControl
 
 #######################################################################################################################
@@ -127,14 +127,14 @@ results = []
 for nn, batch in (list_combination):
     print(f'combinazione {i+1}')
 
-    train_val = ModelSelection(CUP_data_splitter, epochs, batch, loss_functions['mse'], d_loss_functions['d_mse'], nn, loss_control)
-    train_error_tot, val_error_tot, smoothness = train_val.train_fold(True, True, True)
+    train_val = ModelSelection(CUP_data_splitter, epochs, batch, loss_functions['mee'], d_loss_functions['d_mee'], nn, loss_control)
+    train_error_tot, val_error_tot, train_variance, val_variance, smoothness = train_val.train_fold(True, True, True)
 
     print_nn_details(nn)
     print(f'smoothness: {smoothness}')
-    print(f'errore training {train_error_tot[-1]}')
-    print(f'errore validation {val_error_tot[-1]}')
-    results.append([train_error_tot, val_error_tot, smoothness, i+1])
+    print(f'errore training {train_error_tot[-1]} +- {train_variance[-1]}')
+    print(f'errore validation {val_error_tot[-1]} +- {val_variance[-1]}')
+    results.append([train_error_tot, val_error_tot, smoothness, train_variance, val_variance, i+1])
     i = i+1
     print('\n')
 
@@ -151,7 +151,7 @@ for i in range(len(results)):
 
     plt.figure()
 
-    print(f'Configuration n {results[i][3]}, smoothness: {results[i][2]}')
+    print(f'Configuration n {results[i][5]}, smoothness: {results[i][2]}')
     line_train, = plt.plot(results[i][0], label='Training Error')
     line_val, = plt.plot(results[i][1], label='Validation Error')
 
@@ -182,14 +182,14 @@ for i in range(len(results)):
 
 j = 0
 # Apri un file di testo in modalità scrittura
-with open("01_24_configs_adam_fine_hl3_online.txt", "w") as file:
+with open("prova.txt", "w") as file:
     for nn, batch in (list_combination):
         # Seleziona la i-esima combinazione migliore
         
         # Scrivi i dettagli della configurazione migliore nel file
         file.write(f"\n Configuration n: {j+1} \n")
         file.write(f"Batch Size: {batch}\n")
-        file.write(f"Validation Error: {results[j][1][-1]}\n")
+        file.write(f"Validation Error: {results[j][1][-1]} +- {results[j][4][-1]} \n")
         file.write("NN Details:\n")
         file.write(f"{print_nn_details(nn)}\n")  # Supponendo che print_nn_details ritorni una stringa
         file.write("\n" + "-"*50 + "\n")
