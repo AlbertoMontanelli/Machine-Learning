@@ -156,7 +156,7 @@ class ModelSelection:
         stop_epoch = self.epochs
         for epoch in range(self.epochs):
             if overfitting:
-                overfitting_check = self.loss_control.overfitting_check(epoch, train_error, val_error)
+                overfitting_check = self.loss_control.overfitting_check(epoch, val_error)
                 if overfitting_check:
                     print(f"Overfitting at epoch {epoch}")
                     stop_epoch = epoch - self.loss_control.overfitting_patience  # Registers stopping epoch (included) 
