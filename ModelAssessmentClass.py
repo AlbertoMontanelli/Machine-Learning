@@ -22,23 +22,34 @@ class ModelAssessment:
         Class focused on the actual training and validation of the neural network.
 
         Args:
-            x_retrain (array): data through which the neural network will be re-trained (once 
-                               hyperparameters are fixed, after Model Selection).
+            x_retrain (array): data through which the neural network will be re-trained (once hyperparameters are fixed, 
+                               after Model Selection).
             target_retrain (array): targets of x_retrain.
-            x_test (array): data through which the accuracy of the neural network is estimated.
+            x_test (array): data through which the performace of the neural network is evaluated.
             target_test (array): targets of x_test.
-            epochs (int): number of iterations of the cycle forward propagation + backward propagation). 
-            batch_size (int): batch size for training. If batch_size = 1, the neural network is trained using an online learning approach.
-                              If batch_size != 1, the neural network is trained using a mini-batch learning approach with batches of size
-                              batch_size.
+            epochs (int): number of iterations of the cycle (forward propagation + backward propagation). 
+            batch_size (int): batch size for training. 
+                              If batch_size = 1, the neural network is trained using an online learning approach.
+                              If 1 < batch_size < len(x_retrain), the neural network is trained using a mini-batch learning approach with
+                              batches of size batch_size.
+                              If batch_size = len(x_retrain), the neural network is trained using a batch learning approch.
             loss_func (func): loss function.
             d_loss_func (func): derivative of the loss function.
-            neural_network (NeuralNetwork): instance of the class NeuralNetwork.
-            ????? early_stop (): instance of EarlyStopping Class
-            classification_problem (bool): checking whether the problem consists of regression (default) 
-                                           or classification. If classification_problem = True, accuracy
-                                           is computed.
+            neural_network (NeuralNetwork): instance of NeuralNetwork Class.
+                Returns: 
+                    pred (array): array containing the outputs of the neural network for the given input data.
+            loss_control (LossControl): instance of the class LossControl.
+                Returns:
+                    early_stopping: is True if the training is being early-stopped, 
+                                    is False if it continues.
+                    smoothness: is True if the loss function is smooth, 
+                                is False if the loss function is not smooth.
+                    overfitting: is True if there overfitting,
+                                 is False if there is not.
+            classification_problem (bool): checking whether the problem consists of regression (default) or classification. 
+                                           If classification_problem is True, accuracy is computed.
         '''
+
         self.x_retrain = x_retrain
         self.target_retrain = target_retrain
         self.x_test = x_test
@@ -73,6 +84,7 @@ class ModelAssessment:
             x_batches (list): list of arrays of data that form the mini-batches.
             target_batches (list): list of arrays of labels corresponding to the data in x_batches.
         '''
+
         num_samples = xx.shape[0]
         if self.batch_size > num_samples:
             raise ValueError(f'Invalid batch size {self.batch_size}. Must be smaller than number of examples {num_samples}')
@@ -137,6 +149,7 @@ class ModelAssessment:
             test_error_epoch (float): average test error of one epoch.
             prediction_test (array): array of the outputs of the neural network for the test data.
         '''
+
         prediction_test = self.neural_network.forward(xx)
         test_error_epoch = self.loss_func(target, prediction_test)/xx.shape[0]
 
@@ -154,6 +167,9 @@ class ModelAssessment:
         Args:
             prediction (array): output of the network.
             target (array): targets corresponding to the data for which prediction has been computed.
+
+        Returns: 
+            accuracy (float): accuracy computed for one epoch
         '''
 
         correct_classifications = 0
@@ -173,12 +189,59 @@ class ModelAssessment:
 
         return accuracy
 
+    
+    def loss_control_avg(
+            self, 
+            train_error,
+            val_error,
+            early_stopping,
+            smoothness,
+            overfitting
+    ):
+        '''
+        doc
+        '''
+        stop_epoch = self.epochs
+        for epoch in range(self.epochs):
+            if overfitting:
+                overfitting_check = self.loss_control.overfitting_check(epoch, train_error, val_error)
+                if overfitting_check:
+                    print(f"Overfitting at epoch {epoch}")
+                    stop_epoch = epoch - self.loss_control.overfitting_patience  # Registra l'epoca di stop (inclusiva) 
+                    break
+
+            if early_stopping:
+                early_check = self.loss_control.stopping_check(epoch, val_error)
+                if early_check:
+                    print(f"Early stopping at epoch {epoch}")
+                    stop_epoch = epoch - self.loss_control.stopping_patience  # Registra l'epoca di stop (inclusiva)
+                    break
+
+            if smoothness:
+                smoothness_check_train = self.loss_control.smoothness_check(epoch, train_error)
+                
+                if (smoothness_check_train == False):
+                    #print(f"Loss function not smooth for fold {fold_idx+1}")
+                    smoothness_check = False
+                else:
+                    smoothness_check = True
+
+        return smoothness_check, stop_epoch                 
+
 
     def retrain_test(
-            self         
+            self,
+            early_stopping = False,
+            smoothness = False,
+            overfitting = False    
     ):
         '''
         Function that computes training and test error for each epoch.
+
+        Args:
+            early_stopping (bool): False by default, if True enables overfitting checking.
+            smoothness (bool): False by default, if True enables smoothness checking.
+            overfitting (bool): False by default, if True enables overfitting checking.
         
         Returns:
             retrain_error_tot (array): training error for each epoch.
@@ -212,6 +275,8 @@ class ModelAssessment:
                 if early_check:
                     print(f"epoch: {i}")
                     break
+
+                overfitting_check = self.loss_control.overfitting_check
 
                 smoothness_train = self.loss_control.smoothness_check(i, retrain_error_tot)
                 smoothness_test = self.loss_control.smoothness_check(i, test_error_tot)

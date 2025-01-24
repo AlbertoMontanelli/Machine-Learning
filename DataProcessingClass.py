@@ -14,7 +14,7 @@ class DataProcessing:
             test_perc (float): percentile of test set with respect to the total data.
             K (int): number of splits of the training + validation set. In case of Hold-Out Validation K = 1. 
                      K > 1 is the number of folds used in K-Fold Cross Validation.
-            train_perc (float): percentile of training set with respect to the training & validation set. 
+            train_perc (float): percentile of training set with respect to the training + validation set. 
         '''
 
         self.x_tot = x_tot
@@ -42,11 +42,11 @@ class DataProcessing:
 
     def test_split(self):
         '''
-        Function that splits the input data into two sets: training & validation set, test set.
+        Function that splits the input data into two sets: training + validation set, test set.
         
         Returns:
-            x_train_val (array): training and validation set extracted from input data.
-            target_train_val (array): training and validation set labels.
+            x_train_val (array): training + validation set extracted from input data.
+            target_train_val (array): training + validation set labels.
             x_test (array): test set extracted from input data.
             target_test (array): test set for input data labels.
         '''
@@ -78,9 +78,9 @@ class DataProcessing:
         Function that splits the training & validation set into two sets: training set and validation set.
         
         Returns:
-            x_trains (list): list of training sets extracted from training & validation set (the list has one element per iteration).
+            x_trains (list): list of training sets extracted from training + validation set (the list has one element per iteration).
             target_trains (list): list of targets corrisponding to the training set.
-            x_vals (list): list of validation sets extracted from training & validation set (the list has one element per iteration).
+            x_vals (list): list of validation sets extracted from training + validation set (the list has one element per iteration).
             target_vals (list): list of targets corrisponding to the validation set. 
         '''
         
@@ -90,7 +90,7 @@ class DataProcessing:
         num_samples = self.x_train_val.shape[0]
         indices = np.arange(num_samples)
 
-        if self.K == 1: # hold-out validation
+        if self.K == 1: # Hold-Out Validation
             train_size = int(self.train_perc * num_samples)
             train_indices = indices[:train_size]
             val_indices = indices[train_size:]
@@ -100,10 +100,7 @@ class DataProcessing:
             x_vals = [self.x_train_val[val_indices]]
             target_vals = [self.target_train_val[val_indices]]
 
-        else:
-           # if not (isinstance(self.K, int) and self.K > 0):
-               # raise ValueError(f"Invalid number of folds: {self.K}. Choose an integer bigger than 0")
-
+        else: # K-fold Cross Validation
             fold_size = num_samples // self.K
             x_trains, target_trains, x_vals, target_vals = [], [], [], []
 
