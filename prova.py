@@ -114,7 +114,6 @@ for i in range(len(configurations)):
     neural_networks.append(nn)
 
 
-
 epochs = 500
 loss_control = LossControl(epochs)
 

@@ -5,6 +5,8 @@ from matplotlib.ticker import LogLocator, ScalarFormatter
 from NeuralNetworkClass import NeuralNetwork
 from Functions import activation_functions, d_activation_functions, loss_functions, d_loss_functions
 from ModelAssessmentClass import ModelAssessment
+from LossControlClass import LossControl
+
 from MonkDataProcessing import monk_data
 
 # Training of the neural network using monk2_data
@@ -34,10 +36,8 @@ opt_config = {
     'epsilon': 1e-8,
 }
 
-
 epochs = 500
 batch_size = 20
-
 
 ########################################################################################################################
 
@@ -46,6 +46,7 @@ batch_size = 20
 ########################################################################################################################
 
 nn_assessment = NeuralNetwork(layers_config, reg_config, opt_config)
+loss_control = LossControl(epochs)
 
 train_test = ModelAssessment(
     monk_data['training_set_2'], 
@@ -57,8 +58,9 @@ train_test = ModelAssessment(
     loss_functions['bce'], 
     d_loss_functions['d_bce'], 
     nn_assessment,
-    classification_problem = True)
-
+    loss_control,
+    classification_problem = True
+    )
 
 train_error, test_error, accuracy_train, accuracy_test = train_test.retrain_test()
 
@@ -132,4 +134,3 @@ plt.pause(2)  # Pausa di 2 secondi
 plt.savefig('grafici/monk2.pdf', bbox_inches = 'tight', dpi = 1200)
 
 plt.show()
-

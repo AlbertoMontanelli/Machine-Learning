@@ -29,15 +29,25 @@ class ModelSelection:
             loss_func (func): loss function.
             d_loss_func (func): derivative of the loss function.
             neural_network (NeuralNetwork): instance of the class NeuralNetwork.
-            RISCRIVERE loss_control (EarlyStoppingClass): RISCRIVEREE
+                Returns:
+                    pred (array): array containing the outputs of the neural network for the given input data.
+            loss_control (LossControl): instance of the class LossControl.
+                Returns:
+                    early_stopping: is True if the training is being early-stopped, 
+                                    is False if it continues.
+                    smoothness: is True if the loss function is smooth, 
+                                is False if the loss function is not smooth.
+                    overfitting: is True if there overfitting,
+                                 is False if there is not.
+
         '''
         self.data_splitter = data_splitter
         self.epochs = epochs
         self.batch_size = batch_size
         self.loss_func = loss_func
         self.d_loss_func = d_loss_func
-        self.loss_control = loss_control
         self.neural_network = neural_network
+        self.loss_control = loss_control
 
 
     def batch_generator( 
@@ -123,27 +133,40 @@ class ModelSelection:
             self, 
             train_error,
             val_error,
-            overfitting,
             early_stopping,
-            smoothness
+            smoothness,
+            overfitting
     ):
         '''
-        doc
+        Function that checks the goodness of the average of the loss functions, one-per-fold.
+
+        Args:
+            train_error (array): array of the error-per-epoch of the training set.
+            val_error (array): array of the error-per-epoch of the validation set.
+            early_stopping (bool): inherited from train_fold.
+            smoothness (bool): inherited from train_fold.
+            overfitting (bool): inherited from train_fold.
+
+        Returns:
+            smoothness_check (bool): True if the curve is smooth, False if it is not smooth.
+            stop_epoch (bool): True if the training process has been stopped by either early_stopping
+                               or overfitting, False if it has not been stopped.
+            
         '''
         stop_epoch = self.epochs
         for epoch in range(self.epochs):
             if overfitting:
-                overfitting_check = self.loss_control.overfitting_check(epoch, train_error, val_error)
+                overfitting_check = self.loss_control.overfitting_check(epoch, val_error)
                 if overfitting_check:
                     print(f"Overfitting at epoch {epoch}")
-                    stop_epoch = epoch - self.loss_control.overfitting_patience  # Registra l'epoca di stop (inclusiva) 
+                    stop_epoch = epoch - self.loss_control.overfitting_patience  # Registers stopping epoch (included) 
                     break
 
             if early_stopping:
                 early_check = self.loss_control.stopping_check(epoch, val_error)
                 if early_check:
                     print(f"Early stopping at epoch {epoch}")
-                    stop_epoch = epoch - self.loss_control.stopping_patience  # Registra l'epoca di stop (inclusiva)
+                    stop_epoch = epoch - self.loss_control.stopping_patience  # Registers stopping epoch (included)
                     break
 
             if smoothness:
@@ -166,6 +189,11 @@ class ModelSelection:
     ):
         '''
         Function that computes training and validation error averaged on the number of folds for each epoch.
+
+        Args:
+            early_stopping (bool): False by default, if True enables early stopping checking.
+            smoothness (bool): False by default, if True enables smoothness checking.
+            overfitting (bool): False by default, if True enables overfitting checking.
 
         Returns:
             train_error_tot (array): training error for each epoch averaged on the number of folds.
@@ -206,7 +234,7 @@ class ModelSelection:
             self.neural_network.reinitialize_net_and_optimizers()
 
 
-        # Media sui fold
+        # Averages on the folds
         train_error_avg = np.mean(train_error_tot, axis=0)
         val_error_avg = np.mean(val_error_tot, axis=0)
 

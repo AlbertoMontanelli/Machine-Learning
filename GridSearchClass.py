@@ -117,7 +117,7 @@ print(f'finite le iterazioni tutte: {all_combination}, vere: {used_combination}'
 combination = product(nn_combo, batch_size)
 list_combination = list(combination)
 
-epochs = 500
+epochs = 1000
 loss_control = LossControl(epochs)
 
 
@@ -174,7 +174,7 @@ for i in range(len(results)):
     plt.pause(2)  # Pausa di 2 secondi
 
     # Salvare il grafico in PDF con alta risoluzione
-    plt.savefig(f'grafici/01_24_adam_fine_hl3_online_{i}.pdf', bbox_inches = 'tight', dpi = 1200)
+    plt.savefig(f'grafici/01_24_adam_fine_hl3_batch40_{i}.pdf', bbox_inches = 'tight', dpi = 1200)
 
     plt.close()
 
