@@ -215,7 +215,7 @@ class ModelAssessment:
         stop_epoch = epoch
         
         if overfitting:
-            overfitting_check = self.loss_control.overfitting_check(epoch, train_error, val_error)
+            overfitting_check = self.loss_control.overfitting_check(epoch, val_error)
             if overfitting_check:
                 print(f"Overfitting at epoch {epoch}")
                 stop_epoch = epoch - self.loss_control.overfitting_patience 
@@ -259,25 +259,25 @@ class ModelAssessment:
                 accuracy_test_tot (array): accuracy for the test set for each epoch.
         '''
 
-        retrain_error_tot = np.array([])
-        test_error_tot = np.array([])
+        retrain_error_tot = []
+        test_error_tot = []
 
-        accuracy_retrain_tot = np.array([])
-        accuracy_test_tot = np.array([])
+        accuracy_retrain_tot = []
+        accuracy_test_tot = []
 
         for epoch in range(self.epochs):
             retrain_error_epoch, retrain_pred = self.retrain_epoch(self.x_retrain, self.target_retrain)
-            retrain_error_tot = np.append(retrain_error_tot, retrain_error_epoch)
+            retrain_error_tot.append(retrain_error_epoch)
 
             test_error_epoch, test_pred = self.test_epoch(self.x_test, self.target_test)
-            test_error_tot = np.append(test_error_tot, test_error_epoch)
+            test_error_tot.append(test_error_epoch)
             
             if self.classification_problem:
                 accuracy_retrain = self.accuracy_curve(retrain_pred, self.target_retrain)
                 accuracy_test = self.accuracy_curve(test_pred, self.target_test)
 
-                accuracy_retrain_tot = np.append(accuracy_retrain_tot, accuracy_retrain)
-                accuracy_test_tot = np.append(accuracy_test_tot, accuracy_test)
+                accuracy_retrain_tot.append(accuracy_retrain)
+                accuracy_test_tot.append(accuracy_test)
 
             if smoothness or early_stopping or overfitting:
                 smoothness_outcome, stop_epoch = self.loss_control_epoch(epoch, retrain_error_tot, test_error_tot, early_stopping, smoothness, overfitting)
@@ -293,8 +293,11 @@ class ModelAssessment:
 
 
         if smoothness or early_stopping or overfitting:
-            retrain_error_tot = retrain_error_tot[:stop_epoch]
-            test_error_tot = test_error_tot[:stop_epoch]
+            #retrain_error_tot = retrain_error_tot[:stop_epoch]
+            #test_error_tot = test_error_tot[:stop_epoch]
+            self.loss_control.stop_count = 0
+            self.loss_control.smooth_count = 0
+            self.loss_control.overfitting_count = 0
             print(f'smoothness: {smoothness_outcome}')
 
         print(f'Last retrain error: {retrain_error_tot[-1]}')
