@@ -79,7 +79,7 @@ opt_config = {
 
 # Instance of NeuralNetworkClass
 nn = NeuralNetwork(layers_config, reg_config, opt_config)
-epochs = 100
+epochs = 1000
 batch_size = 1
 
 # Instance of LossControlClass
