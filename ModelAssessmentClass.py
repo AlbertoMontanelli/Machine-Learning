@@ -293,8 +293,8 @@ class ModelAssessment:
                 else:
                     stop_epoch = self.loss_control_epoch(epoch, retrain_error_tot, test_error_tot, early_stopping, smoothness, overfitting)
                 
-            if ((epoch + 1) % 10 == 0):
-                print(f'epoch {epoch+1}, retrain error {retrain_error_epoch}, test error {test_error_epoch}')
+            # if ((epoch + 1) % 50 == 0):
+            #     print(f'epoch {epoch+1}, retrain error {retrain_error_epoch}, test error {test_error_epoch}')
 
 
         if smoothness or early_stopping or overfitting:

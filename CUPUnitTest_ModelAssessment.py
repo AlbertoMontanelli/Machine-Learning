@@ -1,5 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
+import os
+import time
 
 from NeuralNetworkClass import NeuralNetwork
 from Functions import activation_functions, d_activation_functions, loss_functions, d_loss_functions
@@ -11,8 +13,15 @@ from LossControlClass import LossControl
 Model assessment for the best configuration of hyperparameters for CUP. 
 '''
 
-
 np.random.seed(12)
+
+#################################################################################################################################
+
+# adam best configuration
+
+#################################################################################################################################
+
+print('Best adam configuration')
 
 # Layer configuration
 layers_config = [
@@ -40,6 +49,43 @@ opt_config = {
 epochs = 800
 batch_size = 1
 
+
+#################################################################################################################################
+
+# NAG best configuration
+
+#################################################################################################################################
+'''
+print('Best NAG configuration')
+
+# Layer configuration
+layers_config = [
+    (12, 32, activation_functions['leaky_ReLU'], d_activation_functions['d_leaky_ReLU']),
+    (32, 3, activation_functions['linear'], d_activation_functions['d_linear'])
+]
+
+# Regulizer configuration
+reg_config = {
+    'Lambda': 1e-4,
+    'alpha' : 0.25,
+    'reg_type': 'elastic'
+}
+
+# Optimizater configuration
+opt_config = {
+    'opt_type': 'NAG',
+    'learning_rate': 1e-3,
+    'momentum': 0.9,
+    'beta_1': 0.9,
+    'beta_2': 0.999,
+    'epsilon': 1e-8,
+}
+
+epochs = 11000
+batch_size = 32
+'''
+
+
 # Instance of LossControlClass
 loss_control = LossControl(epochs)
 
@@ -48,11 +94,15 @@ nn_total = []
 retrain_error_avg = []
 test_error_avg = []
 
-for i in range(5):
+for i in range(2):
+    
+    # Print time
+    current_time = time.ctime()
+    os.system('echo ' + current_time)
+
     print(f'Model Assessment n {i+1}')
     # Instance of NeuralNetworkClass
     nn = NeuralNetwork(layers_config, reg_config, opt_config)
-
 
     # Model
     assessment = ModelAssessment(CUP_data_splitter.x_train_val,
@@ -71,11 +121,17 @@ for i in range(5):
     retrain_error_avg.append(retrain_error_tot)
     test_error_avg.append(test_error_tot)
 
+# Estrazione degli ultimi valori
+last_values = [sottolista[-1] for sottolista in test_error_avg]
 
-retrain_error = (np.sum(retrain_error_avg, axis=0))/5
-test_error = (np.sum(test_error_avg, axis=0))/5
+print(f'max: {max(last_values)}, min: {min(last_values)}')
+
+retrain_error = np.mean(retrain_error_avg, axis=0)
+test_error = np.mean(test_error_avg, axis=0)
 retrain_variance = np.std(retrain_error_avg, axis = 0, ddof = 1)
 test_variance = np.std(test_error_avg, axis = 0, ddof = 1)
+
+
 
 print('\n')
 print('\n')
@@ -126,7 +182,7 @@ manager.full_screen_toggle()
 plt.pause(2)
 
 # Saving the graph with high resolution
-#plt.savefig(f'grafici/adam_best_config_seed_{i}.pdf', bbox_inches = 'tight', dpi = 1200)
+plt.savefig(f'grafici/adam_final_best_config.pdf', bbox_inches = 'tight', dpi = 1200)
 
 plt.show()
 
