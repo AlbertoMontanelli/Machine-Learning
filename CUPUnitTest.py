@@ -56,8 +56,8 @@ np.random.seed(12)
 
 # Layer configuration
 layers_config = [
-    (12, 256, activation_functions['leaky_ReLU'], d_activation_functions['d_leaky_ReLU']),
-    (256, 3, activation_functions['linear'], d_activation_functions['d_linear'])
+    (12, 4, activation_functions['leaky_ReLU'], d_activation_functions['d_leaky_ReLU']),
+    (4, 3, activation_functions['linear'], d_activation_functions['d_linear'])
 ]
 
 # Regulizer configuration
@@ -79,7 +79,7 @@ opt_config = {
 
 # Instance of NeuralNetworkClass
 nn = NeuralNetwork(layers_config, reg_config, opt_config)
-epochs = 1000
+epochs = 100
 batch_size = 1
 
 # Instance of LossControlClass

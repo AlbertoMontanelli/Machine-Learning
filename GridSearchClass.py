@@ -6,7 +6,7 @@ import time
 from NeuralNetworkClass import NeuralNetwork
 from Functions import activation_functions, d_activation_functions, loss_functions, d_loss_functions, activation_functions_grid, d_activation_functions_grid
 from ModelSelectionClass import ModelSelection
-from GridBuilding_adam_fine_1hl import combinations_grid, x_trains, CUP_data_splitter, batch_size
+from GridBuilding_NAG_25_01_fine import combinations_grid, x_trains, CUP_data_splitter, batch_size
 from LossControlClass import LossControl
 
 #######################################################################################################################
@@ -174,7 +174,7 @@ for i in range(len(results)):
     plt.pause(2)  # Pausa di 2 secondi
 
     # Salvare il grafico in PDF con alta risoluzione
-    plt.savefig(f'grafici/01_25_adam_fine_hl1_batch1_2000epoche_mee_10meno3_{i+1}.pdf', bbox_inches = 'tight', dpi = 1200)
+    plt.savefig(f'grafici/config_NAG_25_01_fine_MEE_etagrande_{i+1}.pdf', bbox_inches = 'tight', dpi = 1200)
 
     plt.close()
 
@@ -182,7 +182,7 @@ for i in range(len(results)):
 
 j = 0
 # Apri un file di testo in modalità scrittura
-with open("best_hyperband_config_adam_fine_hl1_batch1_2000epoche_mee_10meno3.txt", "w") as file:
+with open("config_NAG_25_01_fine_MEE_etagrande.txt", "w") as file:
     for nn, batch in (list_combination):
         # Seleziona la i-esima combinazione migliore
         

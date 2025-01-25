@@ -35,11 +35,12 @@ class ModelAssessment:
                               If batch_size = len(x_retrain), the neural network is trained using a batch learning approch.
             loss_func (func): loss function.
             d_loss_func (func): derivative of the loss function.
-            neural_network (NeuralNetwork): instance of NeuralNetwork Class.
-                Returns: 
+            neural_network (NeuralNetwork): instance of the class NeuralNetwork. The forward() and backward() methods are used.
+                In particular, forward() returns:
                     pred (array): array containing the outputs of the neural network for the given input data.
-            loss_control (LossControl): instance of the class LossControl.
-                Returns:
+            loss_control (LossControl): instance of the class LossControl. The methods stopping_check(), smoothness_check() and 
+                                        overfitting_check() are being used.
+                Return, respectively:
                     early_stopping: is True if the training is being early-stopped, 
                                     is False if it continues.
                     smoothness: is True if the loss function is smooth, 
@@ -61,12 +62,7 @@ class ModelAssessment:
         self.neural_network = neural_network
         self.loss_control = loss_control
         self.classification_problem = classification_problem
-        '''
-        if classification_problem:
-            if self.neural_network.layers[-1].activation_function == activation_functions['tanh']:
-                self.target_retrain[self.target_retrain == 0] = -1
-                self.target_test[self.target_test == 0] = -1
-        '''
+
 
     def batch_generator( 
             self,
@@ -190,8 +186,9 @@ class ModelAssessment:
         return accuracy
 
     
-    def loss_control_avg(
+    def loss_control_epoch(
             self, 
+            epoch,
             train_error,
             val_error,
             early_stopping,
@@ -199,32 +196,43 @@ class ModelAssessment:
             overfitting
     ):
         '''
-        doc
+        Function that checks the goodness of the average of the loss functions.
+
+        Args:
+            epoch (int): current epoch.
+            train_error (array): array of the error-per-epoch of the training set.
+            val_error (array): array of the error-per-epoch of the validation set.
+            early_stopping (bool): inherited from train_fold.
+            smoothness (bool): inherited from train_fold.
+            overfitting (bool): inherited from train_fold.
+
+        Returns:
+            smoothness_check (bool): True if the curve is smooth, False if it is not smooth.
+            stop_epoch (bool): True if the training process has been stopped by either early_stopping
+                               or overfitting, False if it has not been stopped.
         '''
-        stop_epoch = self.epochs
-        for epoch in range(self.epochs):
-            if overfitting:
-                overfitting_check = self.loss_control.overfitting_check(epoch, train_error, val_error)
-                if overfitting_check:
-                    print(f"Overfitting at epoch {epoch}")
-                    stop_epoch = epoch - self.loss_control.overfitting_patience  # Registra l'epoca di stop (inclusiva) 
-                    break
 
-            if early_stopping:
-                early_check = self.loss_control.stopping_check(epoch, val_error)
-                if early_check:
-                    print(f"Early stopping at epoch {epoch}")
-                    stop_epoch = epoch - self.loss_control.stopping_patience  # Registra l'epoca di stop (inclusiva)
-                    break
+        stop_epoch = epoch
+        
+        if overfitting:
+            overfitting_check = self.loss_control.overfitting_check(epoch, train_error, val_error)
+            if overfitting_check:
+                print(f"Overfitting at epoch {epoch}")
+                stop_epoch = epoch - self.loss_control.overfitting_patience 
 
-            if smoothness:
-                smoothness_check_train = self.loss_control.smoothness_check(epoch, train_error)
-                
-                if (smoothness_check_train == False):
-                    #print(f"Loss function not smooth for fold {fold_idx+1}")
-                    smoothness_check = False
-                else:
-                    smoothness_check = True
+        if early_stopping:
+            early_check = self.loss_control.stopping_check(epoch, val_error)
+            if early_check:
+                print(f"Early stopping at epoch {epoch}")
+                stop_epoch = epoch - self.loss_control.stopping_patience
+
+        if smoothness:
+            smoothness_check_train = self.loss_control.smoothness_check(epoch, train_error)
+            
+            if (smoothness_check_train == False):
+                smoothness_check = False
+            else:
+                smoothness_check = True
 
         return smoothness_check, stop_epoch                 
 
@@ -246,18 +254,18 @@ class ModelAssessment:
         Returns:
             retrain_error_tot (array): training error for each epoch.
             test_error_tot (array): test error for each epoch.
-            accuracy_retrain_tot (array): accuracy for the training set for each epoch 
-                                          (if classification_problem = True).
-            accuracy_test_tot (array): accuracy for the test set for each epoch (if classification_problem = True).
-                 
+            If classification_problem == True returns also:
+                accuracy_retrain_tot (array): accuracy for the training set for each epoch.
+                accuracy_test_tot (array): accuracy for the test set for each epoch.
         '''
+
         retrain_error_tot = np.array([])
         test_error_tot = np.array([])
 
         accuracy_retrain_tot = np.array([])
         accuracy_test_tot = np.array([])
 
-        for i in range(self.epochs):
+        for epoch in range(self.epochs):
             retrain_error_epoch, retrain_pred = self.retrain_epoch(self.x_retrain, self.target_retrain)
             retrain_error_tot = np.append(retrain_error_tot, retrain_error_epoch)
 
@@ -271,23 +279,26 @@ class ModelAssessment:
                 accuracy_retrain_tot = np.append(accuracy_retrain_tot, accuracy_retrain)
                 accuracy_test_tot = np.append(accuracy_test_tot, accuracy_test)
 
-                early_check = self.loss_control.stopping_check(i, test_error_tot)
-                if early_check:
-                    print(f"epoch: {i}")
+            if smoothness or early_stopping or overfitting:
+                smoothness_outcome, stop_epoch = self.loss_control_epoch(epoch, retrain_error_tot, test_error_tot, early_stopping, smoothness, overfitting)
+                if(smoothness_outcome) == False:
+                    print("Function is not smooth")
                     break
-
-                overfitting_check = self.loss_control.overfitting_check
-
-                smoothness_train = self.loss_control.smoothness_check(i, retrain_error_tot)
-                smoothness_test = self.loss_control.smoothness_check(i, test_error_tot)
-                if (smoothness_test == False) or (smoothness_train == False):
-                    print("NO SMOOTH")
+                if(stop_epoch < epoch):
                     break
 
 
-            if ((i + 1) % 10 == 0):
-                print(f'epoch {i+1}, retrain error {retrain_error_epoch}, test error {test_error_epoch}')
+            if ((epoch + 1) % 10 == 0):
+                print(f'epoch {epoch+1}, retrain error {retrain_error_epoch}, test error {test_error_epoch}')
 
+
+        if smoothness or early_stopping or overfitting:
+            retrain_error_tot = retrain_error_tot[:stop_epoch]
+            test_error_tot = test_error_tot[:stop_epoch]
+            print(f'smoothness: {smoothness_outcome}')
+
+        print(f'Last retrain error: {retrain_error_tot[-1]}')
+        print(f'Last test error: {test_error_tot[-1]}')
 
         if self.classification_problem:
             return retrain_error_tot, test_error_tot, accuracy_retrain_tot, accuracy_test_tot

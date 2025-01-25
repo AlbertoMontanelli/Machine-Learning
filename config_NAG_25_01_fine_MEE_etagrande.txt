@@ -1,0 +1,410 @@
+
+ Configuration n: 1 
+Batch Size: 32
+Validation Error: 2.862149674588527 +- 0.27195654283805365 
+NN Details:
+=== Neural Network Details ===
+
+Regularizer Configuration:
+  Lambda: 0.0001
+  alpha: 0.25
+  reg_type: elastic
+
+Layers Configuration:
+    Layer 1:
+    dim_prev_layer: 12
+    dim_layer: 32
+    activation_function: leaky_relu
+    d_activation_function: d_leaky_relu
+    Layer 2:
+    dim_prev_layer: 32
+    dim_layer: 3
+    activation_function: linear
+    d_activation_function: d_linear
+
+Optimizers Configuration:
+  Optimizer 1:
+    opt_type: NAG
+    learning_rate: 0.001
+    momentum: 0.9
+    beta_1: None
+    beta_2: None
+    epsilon: None
+  Optimizer 2:
+    opt_type: NAG
+    learning_rate: 0.001
+    momentum: 0.9
+    beta_1: None
+    beta_2: None
+    epsilon: None
+
+--------------------------------------------------
+
+ Configuration n: 2 
+Batch Size: 32
+Validation Error: 9.347560728391954 +- 0.6937590205266371 
+NN Details:
+=== Neural Network Details ===
+
+Regularizer Configuration:
+  Lambda: 0.001
+  alpha: 0.25
+  reg_type: elastic
+
+Layers Configuration:
+    Layer 1:
+    dim_prev_layer: 12
+    dim_layer: 32
+    activation_function: leaky_relu
+    d_activation_function: d_leaky_relu
+    Layer 2:
+    dim_prev_layer: 32
+    dim_layer: 3
+    activation_function: linear
+    d_activation_function: d_linear
+
+Optimizers Configuration:
+  Optimizer 1:
+    opt_type: NAG
+    learning_rate: 0.001
+    momentum: 0.9
+    beta_1: None
+    beta_2: None
+    epsilon: None
+  Optimizer 2:
+    opt_type: NAG
+    learning_rate: 0.001
+    momentum: 0.9
+    beta_1: None
+    beta_2: None
+    epsilon: None
+
+--------------------------------------------------
+
+ Configuration n: 3 
+Batch Size: 32
+Validation Error: 1.6076358512961932 +- 0.09594611992484427 
+NN Details:
+=== Neural Network Details ===
+
+Regularizer Configuration:
+  Lambda: 0.0001
+  alpha: 0.25
+  reg_type: elastic
+
+Layers Configuration:
+    Layer 1:
+    dim_prev_layer: 12
+    dim_layer: 32
+    activation_function: leaky_relu
+    d_activation_function: d_leaky_relu
+    Layer 2:
+    dim_prev_layer: 32
+    dim_layer: 3
+    activation_function: linear
+    d_activation_function: d_linear
+
+Optimizers Configuration:
+  Optimizer 1:
+    opt_type: NAG
+    learning_rate: 0.002
+    momentum: 0.9
+    beta_1: None
+    beta_2: None
+    epsilon: None
+  Optimizer 2:
+    opt_type: NAG
+    learning_rate: 0.002
+    momentum: 0.9
+    beta_1: None
+    beta_2: None
+    epsilon: None
+
+--------------------------------------------------
+
+ Configuration n: 4 
+Batch Size: 32
+Validation Error: 8.225267268339076 +- 1.9938191021097993 
+NN Details:
+=== Neural Network Details ===
+
+Regularizer Configuration:
+  Lambda: 0.001
+  alpha: 0.25
+  reg_type: elastic
+
+Layers Configuration:
+    Layer 1:
+    dim_prev_layer: 12
+    dim_layer: 32
+    activation_function: leaky_relu
+    d_activation_function: d_leaky_relu
+    Layer 2:
+    dim_prev_layer: 32
+    dim_layer: 3
+    activation_function: linear
+    d_activation_function: d_linear
+
+Optimizers Configuration:
+  Optimizer 1:
+    opt_type: NAG
+    learning_rate: 0.002
+    momentum: 0.9
+    beta_1: None
+    beta_2: None
+    epsilon: None
+  Optimizer 2:
+    opt_type: NAG
+    learning_rate: 0.002
+    momentum: 0.9
+    beta_1: None
+    beta_2: None
+    epsilon: None
+
+--------------------------------------------------
+
+ Configuration n: 5 
+Batch Size: 32
+Validation Error: 1.5157166244330937 +- 0.10805070436170569 
+NN Details:
+=== Neural Network Details ===
+
+Regularizer Configuration:
+  Lambda: 0.0001
+  alpha: 0.25
+  reg_type: elastic
+
+Layers Configuration:
+    Layer 1:
+    dim_prev_layer: 12
+    dim_layer: 32
+    activation_function: leaky_relu
+    d_activation_function: d_leaky_relu
+    Layer 2:
+    dim_prev_layer: 32
+    dim_layer: 3
+    activation_function: linear
+    d_activation_function: d_linear
+
+Optimizers Configuration:
+  Optimizer 1:
+    opt_type: NAG
+    learning_rate: 0.003
+    momentum: 0.9
+    beta_1: None
+    beta_2: None
+    epsilon: None
+  Optimizer 2:
+    opt_type: NAG
+    learning_rate: 0.003
+    momentum: 0.9
+    beta_1: None
+    beta_2: None
+    epsilon: None
+
+--------------------------------------------------
+
+ Configuration n: 6 
+Batch Size: 32
+Validation Error: 3.0105781668521083 +- 0.3404332895545884 
+NN Details:
+=== Neural Network Details ===
+
+Regularizer Configuration:
+  Lambda: 0.001
+  alpha: 0.25
+  reg_type: elastic
+
+Layers Configuration:
+    Layer 1:
+    dim_prev_layer: 12
+    dim_layer: 32
+    activation_function: leaky_relu
+    d_activation_function: d_leaky_relu
+    Layer 2:
+    dim_prev_layer: 32
+    dim_layer: 3
+    activation_function: linear
+    d_activation_function: d_linear
+
+Optimizers Configuration:
+  Optimizer 1:
+    opt_type: NAG
+    learning_rate: 0.003
+    momentum: 0.9
+    beta_1: None
+    beta_2: None
+    epsilon: None
+  Optimizer 2:
+    opt_type: NAG
+    learning_rate: 0.003
+    momentum: 0.9
+    beta_1: None
+    beta_2: None
+    epsilon: None
+
+--------------------------------------------------
+
+ Configuration n: 7 
+Batch Size: 32
+Validation Error: 1.4747803009174005 +- 0.106334453118433 
+NN Details:
+=== Neural Network Details ===
+
+Regularizer Configuration:
+  Lambda: 0.0001
+  alpha: 0.25
+  reg_type: elastic
+
+Layers Configuration:
+    Layer 1:
+    dim_prev_layer: 12
+    dim_layer: 32
+    activation_function: leaky_relu
+    d_activation_function: d_leaky_relu
+    Layer 2:
+    dim_prev_layer: 32
+    dim_layer: 3
+    activation_function: linear
+    d_activation_function: d_linear
+
+Optimizers Configuration:
+  Optimizer 1:
+    opt_type: NAG
+    learning_rate: 0.004
+    momentum: 0.9
+    beta_1: None
+    beta_2: None
+    epsilon: None
+  Optimizer 2:
+    opt_type: NAG
+    learning_rate: 0.004
+    momentum: 0.9
+    beta_1: None
+    beta_2: None
+    epsilon: None
+
+--------------------------------------------------
+
+ Configuration n: 8 
+Batch Size: 32
+Validation Error: 2.771412206182633 +- 0.2277029810930605 
+NN Details:
+=== Neural Network Details ===
+
+Regularizer Configuration:
+  Lambda: 0.001
+  alpha: 0.25
+  reg_type: elastic
+
+Layers Configuration:
+    Layer 1:
+    dim_prev_layer: 12
+    dim_layer: 32
+    activation_function: leaky_relu
+    d_activation_function: d_leaky_relu
+    Layer 2:
+    dim_prev_layer: 32
+    dim_layer: 3
+    activation_function: linear
+    d_activation_function: d_linear
+
+Optimizers Configuration:
+  Optimizer 1:
+    opt_type: NAG
+    learning_rate: 0.004
+    momentum: 0.9
+    beta_1: None
+    beta_2: None
+    epsilon: None
+  Optimizer 2:
+    opt_type: NAG
+    learning_rate: 0.004
+    momentum: 0.9
+    beta_1: None
+    beta_2: None
+    epsilon: None
+
+--------------------------------------------------
+
+ Configuration n: 9 
+Batch Size: 32
+Validation Error: 1.4138866011900202 +- 0.12135569709446216 
+NN Details:
+=== Neural Network Details ===
+
+Regularizer Configuration:
+  Lambda: 0.0001
+  alpha: 0.25
+  reg_type: elastic
+
+Layers Configuration:
+    Layer 1:
+    dim_prev_layer: 12
+    dim_layer: 32
+    activation_function: leaky_relu
+    d_activation_function: d_leaky_relu
+    Layer 2:
+    dim_prev_layer: 32
+    dim_layer: 3
+    activation_function: linear
+    d_activation_function: d_linear
+
+Optimizers Configuration:
+  Optimizer 1:
+    opt_type: NAG
+    learning_rate: 0.005
+    momentum: 0.9
+    beta_1: None
+    beta_2: None
+    epsilon: None
+  Optimizer 2:
+    opt_type: NAG
+    learning_rate: 0.005
+    momentum: 0.9
+    beta_1: None
+    beta_2: None
+    epsilon: None
+
+--------------------------------------------------
+
+ Configuration n: 10 
+Batch Size: 32
+Validation Error: 2.66551214518481 +- 0.17886656451813662 
+NN Details:
+=== Neural Network Details ===
+
+Regularizer Configuration:
+  Lambda: 0.001
+  alpha: 0.25
+  reg_type: elastic
+
+Layers Configuration:
+    Layer 1:
+    dim_prev_layer: 12
+    dim_layer: 32
+    activation_function: leaky_relu
+    d_activation_function: d_leaky_relu
+    Layer 2:
+    dim_prev_layer: 32
+    dim_layer: 3
+    activation_function: linear
+    d_activation_function: d_linear
+
+Optimizers Configuration:
+  Optimizer 1:
+    opt_type: NAG
+    learning_rate: 0.005
+    momentum: 0.9
+    beta_1: None
+    beta_2: None
+    epsilon: None
+  Optimizer 2:
+    opt_type: NAG
+    learning_rate: 0.005
+    momentum: 0.9
+    beta_1: None
+    beta_2: None
+    epsilon: None
+
+--------------------------------------------------
