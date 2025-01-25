@@ -1,5 +1,3 @@
-import numpy as np
-
 from LayerClass import Layer
 from RegularizationOptimizationClass import Regularization, Optimization
 
@@ -7,7 +5,7 @@ class NeuralNetwork:
 
     def __init__(self, layers_config, reg_config, opt_config, grid_search = False):
         '''
-        Class for the neural network  
+        Class for the neural network.
 
         Args:
             layers_config (list): layers configuration as a list of N layers, each defined by the following parameters:
@@ -15,6 +13,7 @@ class NeuralNetwork:
             reg_config (dict): a dictionary for regularization configuration defined by the following keys: Lambda, alpha, reg_type.
             opt_config (dict): a dictionary for optimization configuration defined by the following keys:
                                opt_type, learning_rate, momentum, beta_1, beta_2, epsilon.
+            grid_search (bool): False by default, set to True during the grid search.
         '''
         self.grid_search = grid_search
         self.regularizer = Regularization(**reg_config)
@@ -23,11 +22,21 @@ class NeuralNetwork:
         else:
             self.layers, self.optimizers = self.initialize_layers_default(layers_config, opt_config)
 
-        
     
-    # per CUPUnitTest
     def initialize_layers_default(self, layers_config, opt_config):
-      
+        '''
+        Function that initializes all layer in the neural network in case of using CUPUnitTest.py.
+
+        Args:
+            layers_config (list): layers configuration as a list of N layers, each defined by the following parameters:
+                                  dim_prev_layer, dim_layer, activation_function, d_activation_function.
+            opt_config (dict): a dictionary for optimization configuration defined by the following keys:
+                               opt_type, learning_rate, momentum, beta_1, beta_2, epsilon.
+        
+        Returns:
+            layers (list): list of the layers of the neural network.
+            optimizers (list): list of optimization class instances, one for each layer of the neural network.
+        '''
         layers = []
         optimizers = []
         for config in layers_config:
@@ -38,11 +47,10 @@ class NeuralNetwork:
         return layers, optimizers
     
     
-    # per GridSearchClass
-    
     def initialize_layers_grid_search(self, layers_config, opt_config):
         '''
-        Function that iniliatizes all the layers in the neural network.
+        Function that iniliatizes all the layers in the neural network in case of using GridSearchClass.py or SuccessiveHalvingsClass.py
+
         Args:
             layers_config (list): layers configuration as a list of N layers, each defined by the following parameters:
                                   dim_prev_layer, dim_layer, activation_function, d_activation_function.
@@ -53,7 +61,6 @@ class NeuralNetwork:
             layers (list): list of the layers of the neural network.
             optimizers (list): list of optimization class instances, one for each layer of the neural network.
         '''
-       
         layers = []
         optimizers = []
         for config in layers_config:
@@ -72,7 +79,7 @@ class NeuralNetwork:
 
     def forward(self, input):
         '''
-        Function that iterates the layer.forward_layer method through each layer in the list self.layers
+        Function that iterates the layer.forward_layer method through each layer in the list self.layers.
 
         Args:
             input (array): in case of the input layer, it is the data batch. 

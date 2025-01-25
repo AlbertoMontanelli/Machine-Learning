@@ -12,7 +12,7 @@ class Regularization:
         Class for regularization
 
         Args:
-            Lambda (float): constant used in elastic regularization.
+            Lambda (float): constant used in regularization.
             alpha (float): parameter used in elastic regularization to tune between Tikhonov and Lass regularization.             
             reg_type (str): the type of Regularization being applied.
         '''
@@ -20,7 +20,7 @@ class Regularization:
         self.alpha = alpha
         self.reg_type = reg_type
 
-        if not(0<= self.alpha <=1):
+        if not(0 <= self.alpha <= 1):
             raise ValueError(f"Invalid value for alpha: {self.alpha}. It must be between 0 and 1")
         
 
@@ -54,7 +54,6 @@ class Regularization:
         reg_term = self.Lambda * (2  * (1-self.alpha) * weights + self.alpha * np.sign(weights)) # Learning rule of Elastic Regularization.
                                                                                                  # If self.alpha == 0: Tikhonov Regularization.
                                                                                                  # If self.alpha == 1: Lasso Regularizaion.
-
         return reg_term
 
 
@@ -79,7 +78,10 @@ class Optimization:
         Args:
             weights (array): weights matrix.
             biases (array): biases array.
-            regulizer (Regularization): instance of the Regularization class.
+            regulizer (Regularization): instance of the Regularization class. The methods regularization() is being used.
+                Returns:
+                    reg_term (array): Result of the computation of the regularization algorithm. To be subtracted to the gradient
+                                      in the Loss Function.
             opt_type (str): the type of Optimization being applied.
             learning_rate (float): growth factor for the weights and biases parameters of the network.
             momentum (float): factor for optimization through Nesterov Accelerated Gradient (NAG).
@@ -88,7 +90,6 @@ class Optimization:
             epsilon (float): stabilization term used in the update of the weights and the biases at every step of the Adam Optimization.
             t (int): counter of iterations used in Adam Optimization that goes up to number_epochs * number_batches.
         '''
-        
         self.regulizer = regulizer
         self.opt_type = opt_type
         self.learning_rate = learning_rate
@@ -163,8 +164,8 @@ class Optimization:
                                                                 # the predicted biases
             delta_pred = loss_gradient * d_activation_function(net_pred)  # Loss gradient with respect to predicted net, 
             grad_weights = self.learning_rate * np.dot(input.T, delta_pred) / len(input)  # Loss gradient multiplied by the learning rate.
-                                                                             # The gradient has been computed with respect
-                                                                             # to the predicted weights and biases
+                                                                                          # The gradient has been computed with respect
+                                                                                          # to the predicted weights and biases
             reg_term = self.regulizer.regularization(weights_pred)
 
             # Difference between the current weights and the previous weights. 
