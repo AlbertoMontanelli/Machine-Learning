@@ -183,7 +183,7 @@ used_combination = used_combination * len(batch_size)
 print(f"Number of combination: {used_combination}")
 
 '''
-Definition of successive halviings parameters and application of the algorithm.
+Definition of successive halvings parameters and application of the algorithm.
 '''
 
 # Successive Halvings parameters
