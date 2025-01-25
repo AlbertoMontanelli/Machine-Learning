@@ -6,7 +6,7 @@ import time
 from NeuralNetworkClass import NeuralNetwork
 from Functions import activation_functions, d_activation_functions, loss_functions, d_loss_functions, activation_functions_grid, d_activation_functions_grid
 from ModelSelectionClass import ModelSelection
-from GridBuilding_adam_fine_1hl import combinations_grid, x_trains, CUP_data_splitter, batch_size
+from GridBuilding_adam_fine_3hl import combinations_grid, x_trains, CUP_data_splitter, batch_size
 from LossControlClass import LossControl
 
 #######################################################################################################################
@@ -117,7 +117,7 @@ print(f'finite le iterazioni tutte: {all_combination}, vere: {used_combination}'
 combination = product(nn_combo, batch_size)
 list_combination = list(combination)
 
-epochs = 5000
+epochs = 3000
 loss_control = LossControl(epochs)
 
 
@@ -174,7 +174,7 @@ for i in range(len(results)):
     plt.pause(2)  # Pausa di 2 secondi
 
     # Salvare il grafico in PDF con alta risoluzione
-    plt.savefig(f'grafici/01_24_adam_fine_hl3_batch40_3000epoche_10meno5_{i}.pdf', bbox_inches = 'tight', dpi = 1200)
+    plt.savefig(f'grafici/01_24_adam_fine_hl3_batch40_80_3000epoche_mee_{i}.pdf', bbox_inches = 'tight', dpi = 1200)
 
     plt.close()
 
@@ -182,7 +182,7 @@ for i in range(len(results)):
 
 j = 0
 # Apri un file di testo in modalità scrittura
-with open("prova.txt", "w") as file:
+with open("best_hyperband_config_adam_fine_hl3_batch40_80_3000epoche_mee.txt", "w") as file:
     for nn, batch in (list_combination):
         # Seleziona la i-esima combinazione migliore
         

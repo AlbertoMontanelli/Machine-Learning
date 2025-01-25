@@ -16,7 +16,8 @@ class ModelSelection:
         Class focused on the actual training and validation of the neural network.
 
         Args:
-            data_splitter (DataProcessing): instance of the class DataProcessing.
+            data_splitter (DataProcessing): instance of the class DataProcessing. The method
+                                            train_fold() is being used.
                 Returns:
                     x_train (array): data through which the neural network will be trained.
                     target_train (array): targets of x_train.
@@ -28,11 +29,13 @@ class ModelSelection:
                               batch_size.
             loss_func (func): loss function.
             d_loss_func (func): derivative of the loss function.
-            neural_network (NeuralNetwork): instance of the class NeuralNetwork.
-                Returns:
+            neural_network (NeuralNetwork): instance of the class NeuralNetwork. The forward() and backward()
+                                            methods are used.
+                In particular, forward() returns:
                     pred (array): array containing the outputs of the neural network for the given input data.
-            loss_control (LossControl): instance of the class LossControl.
-                Returns:
+            loss_control (LossControl): instance of the class LossControl. The methods stopping_check(),
+                                        smoothness_check() and overfitting_check() are being used.
+                Return, respectively:
                     early_stopping: is True if the training is being early-stopped, 
                                     is False if it continues.
                     smoothness: is True if the loss function is smooth, 
@@ -198,6 +201,11 @@ class ModelSelection:
         Returns:
             train_error_tot (array): training error for each epoch averaged on the number of folds.
             val_error_tot (array): validation error for each epoch averaged on the number of folds.
+            train_error_variance (array): variance for each epoch on the folds for the training error.
+            val_error_variance (array): variance for each epoch on the folds for the validation error.
+        If smoothness == True returns also:
+            smoothness_outcome (bool): True if the training loss function is smooth,
+                                       False if it is not smooth.
         
         '''
         train_error_tot = []
@@ -234,14 +242,14 @@ class ModelSelection:
             self.neural_network.reinitialize_net_and_optimizers()
 
 
-        # Averages on the folds
+        # Averages on the folds and variance calculated on the folds
         train_error_avg = np.mean(train_error_tot, axis = 0)
         train_variance = np.std(train_error_tot, axis = 0, ddof = 1)
         val_error_avg = np.mean(val_error_tot, axis = 0)
         val_variance = np.std(val_error_tot, axis = 0, ddof = 1)
 
         if smoothness or early_stopping or overfitting:
-            print('entra?')
+            print('enters?')
             smoothness_outcome, stop_epoch = self.loss_control_avg(train_error_avg, val_error_avg, overfitting, early_stopping, smoothness)
             train_error_avg = train_error_avg[:stop_epoch]
             val_error_avg = val_error_avg[:stop_epoch]
@@ -261,114 +269,6 @@ class ModelSelection:
         else:
             return train_error_avg, val_error_avg, train_variance, val_variance
 
-    '''
-    def train_fold(
-            self,
-            early_stopping = False,
-            smoothness = False,
-            overfitting = False
-    ):
-
-        train_error_tot = []
-        val_error_tot = []
-
-        # Indici per monitorare eventuale early stopping
-        stop_epochs = np.zeros(self.data_splitter.K, dtype=int)
-        smoothness_fold = np.zeros(self.data_splitter.K, dtype=bool)
-
-        for fold_idx, (x_train, target_train, x_val, target_val) in enumerate(
-            zip(
-                self.data_splitter.x_trains,
-                self.data_splitter.target_trains,
-                self.data_splitter.x_vals,
-                self.data_splitter.target_vals,
-            )
-        ):
-            if self.neural_network.grid_search == False:
-                print(f'fold n: {fold_idx + 1}')
-            train_error = []
-            val_error = []
-
-            for i in range(self.epochs):
-                train_error_epoch = self.train_epoch(x_train, target_train)
-                val_error_epoch = self.train_val(x_val, target_val)
-
-                train_error.append(train_error_epoch)
-                val_error.append(val_error_epoch)
-
-
-                if overfitting:
-                    overfitting_check = self.loss_control.overfitting_check(i, train_error, val_error)
-                    if overfitting_check:
-                        print(f"Overfitting at epoch {i} for fold {fold_idx + 1}")
-                        stop_epochs[fold_idx] = i + 1  # Registra l'epoca di stop (inclusiva)
-                        break
-                    else:
-                        stop_epochs[fold_idx] = self.epochs 
-
-                if early_stopping:
-                    early_check = self.loss_control.stopping_check(i, val_error)
-                    if early_check:
-                        print(f"Early stopping at epoch {i} for fold {fold_idx + 1}")
-                        stop_epochs[fold_idx] = i + 1  # Registra l'epoca di stop (inclusiva)
-                        break
-                    else:
-                        stop_epochs[fold_idx] = self.epochs  # Se non si interrompe, registra il massimo delle epoche
-
-                if smoothness:
-                    smoothness_check_train = self.loss_control.smoothness_check(i, train_error)
-                    # smoothness_check_val = self.loss_control.smoothness_check(i, val_error)
-                    
-                    if (smoothness_check_train == False):
-                        #print(f"Loss function not smooth for fold {fold_idx+1}")
-                        smoothness_fold[fold_idx] = False
-
-                    else:
-                        smoothness_fold[fold_idx] = True                   
-
-                
-                if self.neural_network.grid_search == False:
-                    if ((i + 1) % 30 == 0):
-                        print(f'epoch {i+1}, train error {train_error_epoch}, val error {val_error_epoch}')
-                
-
-
-            train_error_tot.append(train_error)
-            val_error_tot.append(val_error)
-
-            if early_stopping:
-                self.loss_control.stop_count = 0
-
-            if overfitting:
-                self.loss_control.overfitting_count = 0
-
-            self.neural_network.reinitialize_net_and_optimizers()
-
-        # Epoca massima su tutti i fold
-        max_epoch = np.max(stop_epochs)
-
-        # Normalizza le lunghezze degli array di errori dei fold
-        for fold_idx in range(self.data_splitter.K):
-            train_error_tot[fold_idx] += [train_error_tot[fold_idx][-1]] * (max_epoch - len(train_error_tot[fold_idx]))
-            val_error_tot[fold_idx] += [val_error_tot[fold_idx][-1]] * (max_epoch - len(val_error_tot[fold_idx]))
-
-        
-
-        # Media sui fold
-        train_error_avg = np.mean(train_error_tot, axis=0)
-        val_error_avg = np.mean(val_error_tot, axis=0)
-
-        if self.neural_network.grid_search == False:
-            print(f'last val error: \n {val_error_avg[-1]}')
-            print(f'last train error: \n {train_error_avg[-1]}')
-
-        smoothness_outcome = all(smoothness_fold) # if there is one False in the smoothness of the folds, smoothness_outcome is False 
-        
-        if smoothness:
-            return train_error_avg, val_error_avg, smoothness_outcome
-        else:
-            return train_error_avg, val_error_avg
-    '''
 
 '''
 Unit test for batches

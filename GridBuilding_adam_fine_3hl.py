@@ -38,7 +38,7 @@ param_grid = {
     'alpha': [0.5]
     }
 
-batch_size = [40]
+batch_size = [40, 80]
 
 # Genera tutte le combinazioni
 all_combinations = list(product(*param_grid.values()))
