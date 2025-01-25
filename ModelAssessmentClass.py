@@ -234,7 +234,10 @@ class ModelAssessment:
             else:
                 smoothness_check = True
 
-        return smoothness_check, stop_epoch                 
+        if smoothness:
+            return smoothness_check, stop_epoch
+        else:
+            return stop_epoch                    
 
 
     def retrain_test(
@@ -280,14 +283,16 @@ class ModelAssessment:
                 accuracy_test_tot.append(accuracy_test)
 
             if smoothness or early_stopping or overfitting:
-                smoothness_outcome, stop_epoch = self.loss_control_epoch(epoch, retrain_error_tot, test_error_tot, early_stopping, smoothness, overfitting)
-                if(smoothness_outcome) == False:
-                    print("Function is not smooth")
-                    break
-                if(stop_epoch < epoch):
-                    break
-
-
+                if smoothness:
+                    smoothness_outcome, stop_epoch = self.loss_control_epoch(epoch, retrain_error_tot, test_error_tot, early_stopping, smoothness, overfitting)
+                    if(smoothness_outcome) == False:
+                        print("Function is not smooth")
+                        break
+                    if(stop_epoch < epoch):
+                        break
+                else:
+                    stop_epoch = self.loss_control_epoch(epoch, retrain_error_tot, test_error_tot, early_stopping, smoothness, overfitting)
+                
             if ((epoch + 1) % 10 == 0):
                 print(f'epoch {epoch+1}, retrain error {retrain_error_epoch}, test error {test_error_epoch}')
 
@@ -298,7 +303,8 @@ class ModelAssessment:
             self.loss_control.stop_count = 0
             self.loss_control.smooth_count = 0
             self.loss_control.overfitting_count = 0
-            print(f'smoothness: {smoothness_outcome}')
+            if smoothness:
+                print(f'smoothness: {smoothness_outcome}')
 
         print(f'Last retrain error: {retrain_error_tot[-1]}')
         print(f'Last test error: {test_error_tot[-1]}')
