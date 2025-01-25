@@ -9,7 +9,7 @@ from LossControlClass import LossControl
 
 from MonkDataProcessing import monk_data
 
-# Training of the neural network using monk1_data
+'''Training of the neural network using monk1_data'''
 
 # Layers configuration
 np.random.seed(12)
@@ -64,10 +64,10 @@ train_test = ModelAssessment(
 
 train_error, test_error, accuracy_train, accuracy_test = train_test.retrain_test()
 
-# Creazione della figura con due subplot
+# Figure
 fig, ax = plt.subplots(1, 2, figsize = (15, 10))
 
-# Primo grafico (Training e Test Error)
+# Loss functions graph
 line_train, = ax[0].plot(train_error, label = 'Training Error', linewidth = 2)
 line_test, = ax[0].plot(test_error, label = 'Test Error', linewidth = 2)
 ax[0].set_xlabel('Epochs', fontsize = 16, fontweight = 'bold')
@@ -77,14 +77,13 @@ ax[0].yaxis.set_major_locator(LogLocator(base=10.0, subs=np.arange(1.0, 10.0) * 
 ax[0].yaxis.set_major_formatter(ScalarFormatter())  # Mostra i valori in formato decimale
 ax[0].grid()
 
-# Secondo grafico (Accuracy)
+# Accuracy graph
 line_train_acc, = ax[1].plot(accuracy_train, label = 'Training accuracy', linewidth = 2)
 line_test_acc, = ax[1].plot(accuracy_test, label = 'Test accuracy', linewidth = 2)
 ax[1].set_xlabel('Epochs', fontsize = 16, fontweight = 'bold')
 ax[1].set_ylabel('Accuracy', fontsize = 16, fontweight = 'bold')
 ax[1].grid()
 
-# Dati della rete da includere nella legenda
 network_details = [
     ('Number of Hidden Layers', f'{layers_config[1][1]}'),
     ('Units per Layer', f'{layers_config[1][0]}'),
@@ -95,42 +94,34 @@ network_details = [
     ('Optimizer',f"{opt_config['opt_type']}")
 ]
 
-# Aggiungere informazioni della rete come stringa multilinea
 legend_info = "\n".join([f"{param}: {value}" for param, value in network_details])
 
-# Aggiungere le legende per le curve (Training, Test Error, Accuracy)
 ax[0].legend(handles = [line_train, line_test], labels = ['Training Error', 'Test Error'], fontsize = 18)
 ax[1].legend(handles = [line_train_acc, line_test_acc], labels = ['Training Accuracy', 'Test Accuracy'], 
              fontsize = 18, loc = 'best')
 
 
-# Titolo del blocco
 ax[1].text(0.77, 0.255, "Network characteristics", transform = ax[1].transAxes, fontsize = 16, 
         fontweight = 'bold', horizontalalignment = 'center', verticalalignment = 'top')
 
-# Aggiungere un rettangolo bianco dietro il testo per simulare la "legenda"
 props = dict(boxstyle = 'round', facecolor = 'white', edgecolor = 'black')
 ax[1].text(0.77, 0.22, legend_info, transform = ax[1].transAxes, fontsize = 16, 
         verticalalignment = 'top', horizontalalignment = 'center', bbox = props)
 
-# Titoli
 ax[0].set_title('Error vs Epochs', fontsize = 18, fontweight = 'bold')
 ax[1].set_title('Accuracy vs Epochs', fontsize = 18, fontweight = 'bold')
 
-# Aggiungere padding tra i subplot
 plt.tight_layout()
 
 for a in ax:
     a.tick_params(axis = 'x', labelsize = 16)  # Dimensione xticks
     a.tick_params(axis = 'y', labelsize = 16)  # Dimensione yticks
 
-# Mettere il grafico a schermo intero
 manager = plt.get_current_fig_manager()
 manager.full_screen_toggle() 
 
-plt.pause(2)  # Pausa di 2 secondi
+plt.pause(2)
 
-# Salvare il grafico in PDF con alta risoluzione
 plt.savefig('grafici/monk1.pdf', bbox_inches = 'tight', dpi = 1200)
 
 plt.show()

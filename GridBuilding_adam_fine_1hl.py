@@ -33,12 +33,12 @@ param_grid = {
     'opt_type' : ['adam'], 
     'activation_function' : list(activation_functions_grid.keys()),
     'd_activation_function' : list(d_activation_functions_grid.keys()),
-    'learning_rate' : np.linspace(1e-5, 1e-4, num = 10), 
+    'learning_rate' : [1e-5], 
     'lambda': [1e-5],
     'alpha': [0.5]
     }
 
-batch_size = [1, 16, 40]
+batch_size = [1]
 
 # Genera tutte le combinazioni
 all_combinations = list(product(*param_grid.values()))

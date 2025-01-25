@@ -56,8 +56,8 @@ np.random.seed(12)
 
 # Layer configuration
 layers_config = [
-    (12, 256, activation_functions['leaky_ReLU'], d_activation_functions['d_leaky_ReLU']),
-    (256, 3, activation_functions['linear'], d_activation_functions['d_linear'])
+    (12, 4, activation_functions['leaky_ReLU'], d_activation_functions['d_leaky_ReLU']),
+    (4, 3, activation_functions['linear'], d_activation_functions['d_linear'])
 ]
 
 # Regulizer configuration
