@@ -17,7 +17,7 @@ class ModelSelection:
 
         Args:
             data_splitter (DataProcessing): instance of the class DataProcessing. The method
-                                            train_fold() is being used.
+                                            train_val_split() is being used.
                 Returns:
                     x_train (array): data through which the neural network will be trained.
                     target_train (array): targets of x_train.
@@ -249,7 +249,6 @@ class ModelSelection:
         val_variance = np.std(val_error_tot, axis = 0, ddof = 1)
 
         if smoothness or early_stopping or overfitting:
-            print('enters?')
             smoothness_outcome, stop_epoch = self.loss_control_avg(train_error_avg, val_error_avg, overfitting, early_stopping, smoothness)
             train_error_avg = train_error_avg[:stop_epoch]
             val_error_avg = val_error_avg[:stop_epoch]
@@ -268,7 +267,6 @@ class ModelSelection:
             return train_error_avg, val_error_avg, train_variance, val_variance, smoothness_outcome
         else:
             return train_error_avg, val_error_avg, train_variance, val_variance
-
 
 '''
 Unit test for batches

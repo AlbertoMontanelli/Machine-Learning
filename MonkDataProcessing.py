@@ -1,5 +1,18 @@
 import pandas as pd
 
+'''
+    Code that:
+        extracts data from .csv files;
+        splits the Monk data into training set and test set;
+        converts pandas dataframes in numpy arrays.
+    At the end of this code, we have:
+        train_set;
+        target_train_set;
+        test_set;
+        target_test_set
+    for every Monk dataset.
+'''
+
 # Setting the column names for each monk datasets.
 columns = ["target", "feat1", "feat2", "feat3", "feat4", "feat5", "feat6", "Id"]
 # Creation of an empty dictionary to store the processed data related to the 3 monk datasets.
@@ -30,5 +43,7 @@ for i in range(1, 4):
     monk_data[f"test_set_{i}"] = test_set.to_numpy()
     monk_data[f"target_test_set_{i}"] = target_test_set.to_numpy().reshape(-1, 1)
 
-# Access example:
-# monk_data["training_set_1"], monk_data["target_training_set_1"]
+'''
+Access example:
+monk_data["training_set_1"], monk_data["target_training_set_1"]
+'''
