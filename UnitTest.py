@@ -6,7 +6,10 @@ from Functions import activation_functions, d_activation_functions, loss_functio
 from ModelSelectionClass import ModelSelection
 from DataProcessingClass import DataProcessing
 
-'''Unit test for NN'''
+'''
+Unit test for NN with random data
+'''
+
 np.random.seed(12)
 
 # Configurazione dei layer: [(input_dim, output_dim, activation_function, d_activation_function), ...]

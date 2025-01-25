@@ -1,4 +1,3 @@
-import numpy as np
 from itertools import product
 import os
 import time
@@ -9,11 +8,13 @@ from ModelSelectionClass import ModelSelection
 from GridBuilding_NAG_25_01_fine import combinations_grid, x_trains, CUP_data_splitter, batch_size
 from LossControlClass import LossControl
 
-#######################################################################################################################
-
-# PRINT details nn
-
 def print_nn_details(nn):
+    '''
+    Function that prints the Neural Network details.
+
+    Args:
+        nn (NeuralNetwork): instance of NeuralNetwork 
+    '''
     details = []
     details.append("=== Neural Network Details ===")
     
@@ -48,7 +49,18 @@ def print_nn_details(nn):
     
     return "\n".join(details)
 
-#######################################################################################################################
+
+#####################################################################################################################################
+
+# Configurations building and grid search.
+
+#####################################################################################################################################
+
+'''
+In this section of the code we take the combinations of GridBuilding in order to form the layer configuration, the regulizer configuration
+and the optimizer configuration to give as parameters to the NeuralNetwork instance. Then it builds the actual neural networks. 
+In order to perform the training algorithm, it calculates the combination of neural networks with the possible batch sizes.
+'''
 
 current_time = time.ctime()
 os.system('echo ' + current_time)
@@ -56,14 +68,10 @@ os.system('echo ' + current_time)
 # List of neural network combinations being investigated
 nn_combo = []
 
-# Layer configurations
-all_combination = 0
 used_combination = 0
-for config in combinations_grid:
-    all_combination += 1
-    #print(f'entra? {all_combination}')
 
-    # controllo prima cosi se non sono uguali skippo direttamente
+for config in combinations_grid:
+    # check if activation function and activation function derivative are the same
     if config['d_activation_function'].startswith('d_') and config['d_activation_function'][2:] == config['activation_function']:
         used_combination += 1
         
@@ -81,10 +89,9 @@ for config in combinations_grid:
                 'd_activation_function': d_activation_functions_grid[config['d_activation_function']]
             })
                 
-        # Aggiunta del layer di output
-
+        # Output layer
         layer_config.append({
-                'dim_prev_layer': int(N_units[-1]), # dim dell'ultimo layer nascosto
+                'dim_prev_layer': int(N_units[-1]),
                 'dim_layer': 3,
                 'activation function': activation_functions['linear'],
                 'd_activation_function': d_activation_functions['d_linear']
@@ -109,23 +116,28 @@ for config in combinations_grid:
         })
 
         nn = NeuralNetwork(layer_config, reg_config, opt_config, True)
-        
         nn_combo.append(nn)
         
-print(f'finite le iterazioni tutte: {all_combination}, vere: {used_combination}')
 
 combination = product(nn_combo, batch_size)
 list_combination = list(combination)
 
+used_combination = used_combination * len(batch_size)
+print(f"Number of combination: {used_combination}")
+
+
+'''
+Application of Grid search in order to find one or more good configurations.
+'''
+
 epochs = 2000
 loss_control = LossControl(epochs)
-
 
 i = 0
 results = []
 
 for nn, batch in (list_combination):
-    print(f'combinazione {i+1}')
+    print(f'combination {i+1}')
 
     train_val = ModelSelection(CUP_data_splitter, epochs, batch, loss_functions['mee'], d_loss_functions['d_mee'], nn, loss_control)
     train_error_tot, val_error_tot, train_variance, val_variance, smoothness = train_val.train_fold(True, True, True)
@@ -139,13 +151,14 @@ for nn, batch in (list_combination):
     print('\n')
 
 
-print('\n')
-print('\n')
-print('Plot e salvataggio dei grafici')
-print('\n')
+#############################################################################################################################
+
+# PLOT
+
+##############################################################################################################################
+
 
 import matplotlib.pyplot as plt
-
 
 for i in range(len(results)):
 
@@ -167,21 +180,22 @@ for i in range(len(results)):
     plt.tick_params(axis = 'x', labelsize = 16)  # Dimensione xticks
     plt.tick_params(axis = 'y', labelsize = 16)  # Dimensione yticks
 
-    # Mettere il grafico a schermo intero
     manager = plt.get_current_fig_manager()
     manager.full_screen_toggle() 
 
-    plt.pause(2)  # Pausa di 2 secondi
+    plt.pause(2) 
 
-    # Salvare il grafico in PDF con alta risoluzione
+    # Save figure
     plt.savefig(f'grafici/config_NAG_25_01_fine_MEE_etagrande_{i+1}.pdf', bbox_inches = 'tight', dpi = 1200)
 
     plt.close()
+    plt.show()
 
-    #plt.show()
+'''
+Writing a txt file with the combination selected
+'''
 
 j = 0
-# Apri un file di testo in modalità scrittura
 with open("config_NAG_25_01_fine_MEE_etagrande.txt", "w") as file:
     for nn, batch in (list_combination):
         # Seleziona la i-esima combinazione migliore
