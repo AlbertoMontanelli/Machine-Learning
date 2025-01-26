@@ -94,7 +94,7 @@ nn_total = []
 retrain_error_avg = []
 test_error_avg = []
 
-for i in range(2):
+for i in range(400):
     
     # Print time
     current_time = time.ctime()
@@ -130,8 +130,6 @@ retrain_error = np.mean(retrain_error_avg, axis=0)
 test_error = np.mean(test_error_avg, axis=0)
 retrain_variance = np.std(retrain_error_avg, axis = 0, ddof = 1)
 test_variance = np.std(test_error_avg, axis = 0, ddof = 1)
-
-
 
 print('\n')
 print('\n')
