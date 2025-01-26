@@ -31,15 +31,15 @@ layers_config = [
 
 # Regularization configuration
 reg_config = {
-    'Lambda': 0,
+    'Lambda': 1e-5,
     'alpha' : 0.5,
     'reg_type': 'elastic'
 }
 
 # Optimization configuration
 opt_config = {
-    'opt_type': 'NAG',
-    'learning_rate': 5e-2,
+    'opt_type': 'none',
+    'learning_rate': 5e-3,
     'momentum': 0.9,
     'beta_1': 0.9,
     'beta_2': 0.999,
