@@ -310,6 +310,8 @@ class ModelAssessment:
         print(f'Last test error: {test_error_tot[-1]}')
 
         if self.classification_problem:
+            print(f'Last retrain accuracy: {accuracy_retrain_tot[-1]}')
+            print(f'Last test accuracy: {accuracy_test_tot[-1]}')
             return retrain_error_tot, test_error_tot, accuracy_retrain_tot, accuracy_test_tot
 
         else:
