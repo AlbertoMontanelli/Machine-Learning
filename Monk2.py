@@ -32,14 +32,14 @@ layers_config = [
 # Regularization configuration
 reg_config = {
     'Lambda': 0,
-    'alpha' : 0.5,
+    'alpha' : 0,
     'reg_type': 'none'
 }
 
 # Optimization configuration
 opt_config = {
     'opt_type': 'none',
-    'learning_rate': 0.5,
+    'learning_rate': 0.3,
     'momentum': 0.9,
     'beta_1': 0.9,
     'beta_2': 0.999,
@@ -113,8 +113,8 @@ network_details = [
     ('Loss function', 'mse'),
     ('Learning Rate', f"{opt_config['learning_rate']}"),
     ('Regularization', f"{reg_config['reg_type']}"),
-    ('lambda', f"{reg_config['Lambda']}"),
-    ('alpha', f"{reg_config['alpha']}"),
+    #('lambda', f"{reg_config['Lambda']}"),
+    #('alpha', f"{reg_config['alpha']}"),
     ('Optimizer',f"{opt_config['opt_type']}")
 ]
 
@@ -145,6 +145,6 @@ manager.full_screen_toggle()
 
 plt.pause(2)
 
-plt.savefig(f'grafici/monk2_batch{batch_size}.pdf', bbox_inches = 'tight', dpi = 1200)
+plt.savefig(f"grafici/monk2_batch{batch_size}_learningrate{opt_config['learning_rate']}.pdf", bbox_inches = 'tight', dpi = 1200)
 
 plt.show()
