@@ -92,7 +92,7 @@ plt.figure()
 plt.plot(train_error, label = 'Training Error', linewidth = 2)
 plt.plot(test_error, label = 'Test Error', linewidth = 2)
 plt.xlabel('Epochs', fontsize = 18, fontweight = 'bold')
-plt.ylabel('Error', fontsize = 18, fontweight = 'bold')
+plt.ylabel('MSE Error', fontsize = 18, fontweight = 'bold')
 plt.yscale('log')
 
 ax = plt.gca()  # Ottieni gli assi correnti
@@ -108,13 +108,13 @@ network_details = [
     ('Number of Hidden Layers', f'{layers_config[1][1]}'),
     ('Units per Layer', f'{layers_config[1][0]}'),
     ('Activation function', 'sigmoid'),
-    ('Loss function', 'mse'),
+    ('Loss function', 'MSE'),
     ('Learning Rate', f"{opt_config['learning_rate']}"),
     ('Regularization', f"{reg_config['reg_type']}"),
     #('lambda', f"{reg_config['Lambda']}"),
     #('alpha', f"{reg_config['alpha']}"),
     ('Optimizer',f"{opt_config['opt_type']}"),
-    ('Batch size', 'online')
+    ('Batch size', f"{batch_size}")
 ]
 
 legend_info = "\n".join([f"{param}: {value}" for param, value in network_details])
@@ -129,7 +129,7 @@ props = dict(boxstyle = 'round', facecolor = 'white', edgecolor = 'black')
 plt.text(0.86, 0.930, legend_info, transform = ax.transAxes, fontsize = 16, 
         verticalalignment = 'top', horizontalalignment = 'center', bbox = props)
 
-plt.title('Error vs Epochs', fontsize = 20, fontweight = 'bold')
+plt.title('Training error vs Test error', fontsize = 20, fontweight = 'bold')
 
 
 plt.tight_layout()
@@ -162,7 +162,7 @@ plt.grid()
 
 plt.legend(labels = ['Training Accuracy', 'Test Accuracy'], fontsize = 25, loc = 'best')
 
-plt.title('Accuracy vs Epochs', fontsize = 20, fontweight = 'bold')
+plt.title('Training accuracy vs Test accuracy', fontsize = 20, fontweight = 'bold')
 
 plt.tight_layout()
 
