@@ -5,7 +5,7 @@ from matplotlib.ticker import LogLocator, ScalarFormatter
 from NeuralNetworkClass import NeuralNetwork
 from Functions import activation_functions, d_activation_functions, loss_functions, d_loss_functions
 from ModelAssessmentClass import ModelAssessment
-from CUPDataProcessing import CUP_data_splitter
+from CUPDataProcessing import CUP_data_splitter, data_blind
 from LossControlClass import LossControl
 
 '''
@@ -112,6 +112,48 @@ print('\n')
 print(f'retrain error: {retrain_error_tot[-1]}')
 print(f'test error: {test_error_tot[-1]}')
 
+###############################################################################################################################
+
+# BLIND DATA PROCESSING
+
+################################################################################################################################
+
+import csv
+
+pred_blind = nn.forward(data_blind)
+
+
+team_name = "BG_peppers"
+dataset_name = "ML-CUP24 V1"
+date = "29/01/2025"
+
+# Nome file
+file_name = f"{team_name}_ML-CUP24-TS.csv"
+
+# Scrittura del file
+with open(file_name, mode='w', newline='') as file:
+    writer = csv.writer(file, delimiter=',', quoting=csv.QUOTE_MINIMAL)
+
+    # Commenti
+    writer.writerow(["#Leonardo Bandiera Marlia", "Irene Bini", "Alberto Montanelli"]) 
+    writer.writerow([f"# {team_name}"])
+    writer.writerow([f"# {dataset_name}"])
+    writer.writerow([f"# {date}"])
+
+    # Intestazione tabella
+    writer.writerow(["id", "output_x", "output_y", "output_z"])
+
+    # Scrittura dati
+    for idx, row in enumerate(pred_blind, start=1):
+        writer.writerow([idx, *row])
+
+#################################################################################################################################
+
+# PLOT
+
+#################################################################################################################################
+
+
 network_details = [
     ('Number of Hidden Layers', f'{len(layers_config)-1}'),
     ('Units per Layer', f'{layers_config[0][1]}'),
@@ -167,7 +209,7 @@ manager.full_screen_toggle()
 plt.pause(2)
 
 # Saving the graph with high resolution
-plt.savefig(f'grafici_per_slides/adam_final_best_config.pdf', bbox_inches = 'tight', dpi = 1200)
+#plt.savefig(f'grafici_per_slides/adam_final_best_config.pdf', bbox_inches = 'tight', dpi = 1200)
 
 plt.show()
 
