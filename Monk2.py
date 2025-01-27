@@ -143,7 +143,7 @@ manager.full_screen_toggle()
 
 plt.pause(2)
 
-plt.savefig("grafici_per_slides/Monk2_accuracy.pdf", bbox_inches = 'tight', dpi = 1200)
+plt.savefig("grafici_per_slides/Monk2_error.pdf", bbox_inches = 'tight', dpi = 1200)
 
 
 plt.close()
