@@ -5,14 +5,21 @@ from Functions import activation_functions_grid, d_activation_functions_grid
 from CUPDataProcessing import CUP_data_splitter
 
 '''
-MOMENTUM:
-0.9 è il valore più frequentemente utilizzato e funziona bene in molti casi pratici.
-0.99 può essere usato per problemi con gradienti molto rumorosi, poiché enfatizza maggiormente l'accumulo della direzione passata.
-0.8-0.85 è scelto in situazioni in cui un valore più basso aiuta a stabilizzare l'ottimizzazione, specialmente nelle fasi iniziali.
-
-SONO FISSATI:
-BETA_1 = 0.9
-BETA_2 = 0.999
+This code aims at building the grid in the hyperparameters space in order to allow the implementation of 
+successive halvings algorithm.
+The hyperparameters taken into consideration are:
+- number of hidden layers, ranging from 1 to 2;
+- number of units per layer, ranging from 32 to 256 in steps of powers of 2;
+- type of activation function, from the dictionary activation_functions_grid;
+(specifically, number of hidden layers + number of units per layer + type of activation function form the architecture
+of the neural network)
+- learning_rate, ranging from 1e-5 to 1e-3 in coarse grids, ranging within the decade in finer grids;
+- lambda, between 1e-2 and 0;
+- alpha from [0, 0.33, 0.66, 1];
+- batch_size, generally from the array [1, 40, 160]
+Separate grids have been built for different optimizers.
+For NAG, momentum has been fixed to 0.9.
+For adam, beta_1 has been fixed to 0.9, beta_2 has been fixed to 0.999 and epsilon to 1e-8.
 '''
 
 # Splitting CUP data

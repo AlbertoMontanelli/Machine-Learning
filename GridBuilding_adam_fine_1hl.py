@@ -5,14 +5,16 @@ from Functions import activation_functions_grid, d_activation_functions_grid
 from CUPDataProcessing import CUP_data_splitter
 
 '''
-MOMENTUM:
-0.9 è il valore più frequentemente utilizzato e funziona bene in molti casi pratici.
-0.99 può essere usato per problemi con gradienti molto rumorosi, poiché enfatizza maggiormente l'accumulo della direzione passata.
-0.8-0.85 è scelto in situazioni in cui un valore più basso aiuta a stabilizzare l'ottimizzazione, specialmente nelle fasi iniziali.
-
-SONO FISSATI:
-BETA_1 = 0.9
-BETA_2 = 0.999
+This code aims at building the grid in the hyperparameters space in order to allow the implementation of 
+grid building algorithm using adam optimizator.
+The hyperparameters taken into consideration are:
+- number of hidden layers has been fixed to 1;
+- number of units per layer has been fixed to 256;
+- type of activation function, from the dictionary activation_functions_grid (leaky_ReLU or tanh);
+- learning_rate, ranging from 1e-5 to 1e-4.;
+- lambda has been fixed to 1e-5;
+- alpha has been fixed to 0.5;
+- batch_size has been fixed to 1
 '''
 
 # Splitting CUP data
@@ -33,7 +35,7 @@ param_grid = {
     'opt_type' : ['adam'], 
     'activation_function' : list(activation_functions_grid.keys()),
     'd_activation_function' : list(d_activation_functions_grid.keys()),
-    'learning_rate' : [1e-5], 
+    'learning_rate' : [1e5, 2e-5, 3e-5, 4e-5, 5e-5, 6e-5, 7e-5, 8e-5, 9e-5, 1e-4], 
     'lambda': [1e-5],
     'alpha': [0.5]
     }
