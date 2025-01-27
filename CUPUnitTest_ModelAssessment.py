@@ -140,9 +140,6 @@ with open(file_name, mode='w', newline='') as file:
     writer.writerow([f"# {dataset_name}"])
     writer.writerow([f"# {date}"])
 
-    # Intestazione tabella
-    writer.writerow(["id", "output_x", "output_y", "output_z"])
-
     # Scrittura dati
     for idx, row in enumerate(pred_blind, start=1):
         writer.writerow([idx, *row])
