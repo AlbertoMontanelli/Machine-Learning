@@ -30,16 +30,33 @@ layers_config = [
 ]
 
 # Regularization configuration
-reg_config = {
-    'Lambda': 1e-5,
+reg_config_adam = {
+    'Lambda': 9e-4,
+    'alpha' : 0.5,
+    'reg_type': 'elastic'
+}
+
+# Optimization configuration
+opt_config_adam = {
+    'opt_type': 'adam',
+    'learning_rate': 5e-3,
+    'momentum': 0.9,
+    'beta_1': 0.9,
+    'beta_2': 0.999,
+    'epsilon': 1e-8,
+}
+
+# Regularization configuration
+reg_config_none = {
+    'Lambda': 5e-4,
     'alpha' : 0.5,
     'reg_type': 'none'
 }
 
 # Optimization configuration
-opt_config = {
+opt_config_none = {
     'opt_type': 'none',
-    'learning_rate': 0.01,
+    'learning_rate': 5e-3,
     'momentum': 0.9,
     'beta_1': 0.9,
     'beta_2': 0.999,
@@ -56,10 +73,12 @@ batch_size = 1
 
 ########################################################################################################################
 
-nn_assessment = NeuralNetwork(layers_config, reg_config, opt_config)
+nn_adam = NeuralNetwork(layers_config, reg_config_adam, opt_config_adam)
+np.random.seed(12)
+nn_none = NeuralNetwork(layers_config, reg_config_none, opt_config_none)
 loss_control = LossControl(epochs)
 
-train_test = ModelAssessment(
+train_test_adam = ModelAssessment(
     monk_data['training_set_3'], 
     monk_data['target_training_set_3'], 
     monk_data['test_set_3'], 
@@ -68,12 +87,27 @@ train_test = ModelAssessment(
     batch_size, 
     loss_functions['mse'], 
     d_loss_functions['d_mse'], 
-    nn_assessment,
+    nn_adam,
     loss_control,
     classification_problem = True
     )
 
-train_error, test_error, accuracy_train, accuracy_test = train_test.retrain_test()
+train_test_none = ModelAssessment(
+    monk_data['training_set_3'], 
+    monk_data['target_training_set_3'], 
+    monk_data['test_set_3'], 
+    monk_data['target_test_set_3'], 
+    epochs, 
+    batch_size, 
+    loss_functions['mse'], 
+    d_loss_functions['d_mse'], 
+    nn_none,
+    loss_control,
+    classification_problem = True
+    )
+
+train_error_adam, test_error_adam, accuracy_train_adam, accuracy_test_adam = train_test_adam.retrain_test()
+train_error_none, test_error_none, accuracy_train_none, accuracy_test_none = train_test_none.retrain_test()
 
 
 ########################################################################################################################
@@ -89,8 +123,10 @@ from matplotlib.ticker import LogLocator, ScalarFormatter
 plt.figure()
 
 # Loss functions graph
-plt.plot(train_error, label = 'Training Error', linewidth = 2)
-plt.plot(test_error, label = 'Test Error', linewidth = 2)
+plt.plot(train_error_adam, label = 'Training Error Adam', linewidth = 2, color = 'cornflowerblue', linestyle = '-')
+plt.plot(test_error_adam, label = 'Test Error Adam', linewidth = 2, color = 'sandybrown', linestyle = '-')
+plt.plot(train_error_none, label = 'Training Error no opt', linewidth = 2, color = 'cornflowerblue', linestyle = '--')
+plt.plot(test_error_none, label = 'Test Error no opt', linewidth = 2, color = 'sandybrown', linestyle = '--')
 plt.xlabel('Epochs', fontsize = 18, fontweight = 'bold')
 plt.ylabel('MSE Error', fontsize = 18, fontweight = 'bold')
 plt.yscale('log')
@@ -109,17 +145,24 @@ network_details = [
     ('Units per Layer', f'{layers_config[1][0]}'),
     ('Activation function', 'sigmoid'),
     ('Loss function', 'MSE'),
-    ('Learning Rate', f"{opt_config['learning_rate']}"),
-    ('Regularization', f"{reg_config['reg_type']}"),
-    #(r'$\lambda$', f"{reg_config['Lambda']}"),
-    #(r'$\alpha$', f"{reg_config['alpha']}"),
-    ('Optimizer',f"{opt_config['opt_type']}"),
-    ('Batch size', f"{batch_size}")
+    ('Batch size', f"{batch_size}"),
+    ('Learning Rate', f"{opt_config_none['learning_rate']}"),
+    ('For optimizer',f"{opt_config_adam['opt_type']}"),
+    (r'$\beta_1$', f"{opt_config_adam['beta_1']}"),
+    (r'$\beta_2$', f"{opt_config_adam['beta_2']}"),
+    (r'$\epsilon$', f"{opt_config_adam['epsilon']}"),
+    ('Regularization', f"{reg_config_adam['reg_type']}"),
+    (r'$\lambda$', f"{reg_config_adam['Lambda']}"),
+    (r'$\alpha$', f"{reg_config_adam['alpha']}"),
+    ('For optimizer',f"{opt_config_none['opt_type']}"),
+    ('Regularization', f"{reg_config_none['reg_type']}"),
+    #('lambda', f"{reg_config_none['Lambda']}"),
+    #('alpha', f"{reg_config_none['alpha']}"),
 ]
 
 legend_info = "\n".join([f"{param}: {value}" for param, value in network_details])
+plt.legend(labels = ['Training Error adam', 'Test Error adam', 'Training Error no opt', 'Test Error no opt'], fontsize = 18, loc = 'best')
 
-plt.legend(labels = ['Training Error', 'Test Error'], fontsize = 25, loc = 'lower left')
 
 
 plt.text(0.86, 0.965, "Network characteristics", transform = ax.transAxes, fontsize = 16, 
@@ -129,7 +172,7 @@ props = dict(boxstyle = 'round', facecolor = 'white', edgecolor = 'black')
 plt.text(0.86, 0.930, legend_info, transform = ax.transAxes, fontsize = 16, 
         verticalalignment = 'top', horizontalalignment = 'center', bbox = props)
 
-plt.title('Training error vs Test error', fontsize = 20, fontweight = 'bold')
+plt.title('Training error and Test error for adam, no opt.', fontsize = 20, fontweight = 'bold')
 
 
 plt.tight_layout()
@@ -143,7 +186,7 @@ manager.full_screen_toggle()
 
 plt.pause(2)
 
-plt.savefig("grafici_per_slides/Monk3_error_no_reg.pdf", bbox_inches = 'tight', dpi = 1200)
+plt.savefig("grafici_per_slides/Monk3_error_adam_none.pdf", bbox_inches = 'tight', dpi = 1200)
 
 
 plt.close()
@@ -153,16 +196,18 @@ plt.show()
 # Accuracy graph
 
 plt.figure()
-plt.plot(accuracy_train, label = 'Training accuracy', linewidth = 2)
-plt.plot(accuracy_test, label = 'Test accuracy', linewidth = 2)
+plt.plot(accuracy_train_adam, label = 'Training accuracy adam', linewidth = 2, color = 'cornflowerblue', linestyle = '-')
+plt.plot(accuracy_test_adam, label = 'Test accuracy adam', linewidth = 2, color = 'sandybrown', linestyle = '-')
+plt.plot(accuracy_train_none, label = 'Training accuracy no opt', linewidth = 2, color = 'cornflowerblue', linestyle = '--')
+plt.plot(accuracy_test_none, label = 'Test accuracy no opt', linewidth = 2, color = 'sandybrown', linestyle = '--')
 plt.xlabel('Epochs', fontsize = 18, fontweight = 'bold')
 plt.ylabel('Accuracy', fontsize = 18, fontweight = 'bold')
 plt.grid()
 
 
-plt.legend(labels = ['Training Accuracy', 'Test Accuracy'], fontsize = 25, loc = 'best')
+plt.legend(labels = ['Training Accuracy adam', 'Test Accuracy adam', 'Training Accuracy no opt', 'Test Accuracy no opt'], fontsize = 25, loc = 'best')
 
-plt.title('Training accuracy vs Test accuracy', fontsize = 20, fontweight = 'bold')
+plt.title('Training accuracy and Test accuracy for adam, no opt.', fontsize = 20, fontweight = 'bold')
 
 plt.tight_layout()
 
@@ -174,7 +219,7 @@ manager.full_screen_toggle()
 
 plt.pause(2)
 
-plt.savefig("grafici_per_slides/Monk3_accuracy_no_reg.pdf", bbox_inches = 'tight', dpi = 1200)
+plt.savefig("grafici_per_slides/Monk3_accuracy_adam_none.pdf", bbox_inches = 'tight', dpi = 1200)
 
 
 plt.close()
