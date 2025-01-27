@@ -6,6 +6,8 @@ from NeuralNetworkClass import NeuralNetwork
 from Functions import activation_functions, d_activation_functions, loss_functions, d_loss_functions, activation_functions_grid, d_activation_functions_grid
 from ModelSelectionClass import ModelSelection
 from GridBuilding_adam import combinations_grid, x_trains, CUP_data_splitter, batch_size
+# from GridBuilding_NAG_1 import combinations_grid, x_trains, CUP_data_splitter, batch_size
+# from GridBuilding_NAG_2 import combinations_grid, x_trains, CUP_data_splitter, batch_size
 from LossControlClass import LossControl
 
 def print_nn_details(nn):

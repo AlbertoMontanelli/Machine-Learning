@@ -5,20 +5,20 @@ from CUPDataProcessing import CUP_data_splitter
 
 '''
 This code aims at building the grid in the hyperparameters space in order to allow the implementation of 
-a grid search algorithm.
+successive halvings algorithm.
 The hyperparameters taken into consideration are:
-- number of hidden layers, generally ranging from 1 to 5;
-- number of units per layer, ranging from 16 to 256 in steps of powers of 2;
+- number of hidden layers, ranging from 1 to 3;
+- number of units per layer, ranging from 32 to 256 in steps of powers of 2;
 - type of activation function, from the dictionary activation_functions_grid;
 (specifically, number of hidden layers + number of units per layer + type of activation function form the architecture
 of the neural network)
-- learning_rate, ranging from 1e-6 to 1e-1 in coarse grids, ranging within the decade in finer grids;
-- lambda, between 1e-5 and 1e-3;
-- alpha, generally from the array [0, 0.25, 0.5, 0.75, 1];
-- batch_size, generally from the array [1, 16, 32, 40, 64, 80, 160]
+- learning_rate, ranging from 1e-6 to 1e-3 in coarse grids, ranging within the decade in finer grids;
+- lambda, between 1e-3 and 0;
+- alpha has been fixed to 0.5;
+- batch_size, generally from the array [1, 16, 40, 64, 80]
 Separate grids have been built for different optimizers.
 For NAG, momentum has been fixed to 0.9.
-For adam, beta_1 has been fixed to 0.9 and beta_2 has been fixed to 0.999.
+For adam, beta_1 has been fixed to 0.9, beta_2 has been fixed to 0.999 and epsilon to 1e-8.
 '''
 
 # Splitting CUP data
@@ -41,7 +41,9 @@ param_grid = {
     'opt_type' : ['adam'], 
     'activation_function' : list(activation_functions_grid.keys()),
     'd_activation_function' : list(d_activation_functions_grid.keys()),
-    'learning_rate' : [5e-3, 1e-3, 5e-4], 
+    #'learning_rate' : [5e-3, 1e-3, 5e-4], 
+    #'learning_rate' : [1e-4, 5e-5, 1e-5], 
+    'learning_rate' : [5e-6, 1e-6], 
     'lambda': [0, 1e-3, 1e-5],
     'alpha': [0.5]
     }
