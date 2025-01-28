@@ -40,7 +40,9 @@ param_grid = {
     'opt_type' : ['NAG'], 
     'activation_function' : list(activation_functions_grid.keys()),
     'd_activation_function' : list(d_activation_functions_grid.keys()),
-    'learning_rate' : np.logspace(-5, -3, num = 3),  
+    'learning_rate' : [1e-3, 5e-3], 
+    #'learning_rate' : [1e-4, 5e-4],
+    #'learning_rate' : [1e-5, 5e-5],
     'lambda': [0, 1e-2, 1e-4, 1e-6],
     'alpha' : [0, 0.33, 0.66, 1]
     }
