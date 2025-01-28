@@ -152,8 +152,8 @@ plt.text(0.4, 0.930, legend_info, transform = ax.transAxes, fontsize = 20,
 # Subplot padding
 plt.tight_layout()
 
-plt.tick_params(axis = 'x', labelsize = 16)  # Dimensione xticks
-plt.tick_params(axis = 'y', labelsize = 16)  # Dimensione yticks
+plt.tick_params(axis = 'x', labelsize = 16)  # xticks dimension
+plt.tick_params(axis = 'y', labelsize = 16)  # yticks dimension
 
 plt.title('Training error vs Validation error', fontsize = 20, fontweight = 'bold')
 
