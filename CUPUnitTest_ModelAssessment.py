@@ -63,27 +63,27 @@ batch_size = 1
 #     (32, 3, activation_functions['linear'], d_activation_functions['d_linear'])
 # ]
 
-# # Regulizer configuration
+# # Regularization configuration
 # reg_config = {
-#     'Lambda': 1e-4,
-#     'alpha' : 0.25,
+#     'Lambda': 1e-6,
+#     'alpha' : 0.5,
 #     'reg_type': 'elastic'
 # }
 
-# # Optimizater configuration
+# # Optimization configuration
 # opt_config = {
 #     'opt_type': 'NAG',
-#     'learning_rate': 1e-3,
+#     'learning_rate': 1e-5,
 #     'momentum': 0.9,
 #     'beta_1': 0.9,
 #     'beta_2': 0.999,
 #     'epsilon': 1e-8,
 # }
 
-# epochs = 11000
-# batch_size = 32
+# epochs = 1000
+# batch_size = 1
 
-
+#################################################################################################################################
 
 # Instance of LossControlClass
 loss_control = LossControl(epochs)
@@ -107,11 +107,6 @@ assessment = ModelAssessment(CUP_data_splitter.x_train_val,
 
 retrain_error_tot, test_error_tot = assessment.retrain_test(False, False, False)
 
-print('\n')
-print('\n')
-print(f'retrain error: {retrain_error_tot[-1]}')
-print(f'test error: {test_error_tot[-1]}')
-
 ###############################################################################################################################
 
 # BLIND DATA PROCESSING
@@ -126,21 +121,18 @@ pred_blind = nn.forward(data_blind)
 team_name = "BG_peppers"
 dataset_name = "ML-CUP24 V1"
 date = "29/01/2025"
-
-# Nome file
 file_name = f"{team_name}_ML-CUP24-TS.csv"
 
-# Scrittura del file
+# File writing
 with open(file_name, mode='w', newline='') as file:
     writer = csv.writer(file, delimiter=',', quoting=csv.QUOTE_MINIMAL)
 
-    # Commenti
     writer.writerow(["#Leonardo Bandiera Marlia", "Irene Bini", "Alberto Montanelli"]) 
     writer.writerow([f"# {team_name}"])
     writer.writerow([f"# {dataset_name}"])
     writer.writerow([f"# {date}"])
 
-    # Scrittura dati
+    # Data writing
     for idx, row in enumerate(pred_blind, start=1):
         writer.writerow([idx, *row])
 
@@ -162,10 +154,10 @@ network_details = [
     (r'$\alpha$', f"{reg_config['alpha']}"),
     (r'$\lambda$', f"{reg_config['Lambda']}"),
     ('Optimizer',f"{opt_config['opt_type']}"),
-    # (r'$\beta_1$',f"{opt_config['beta_1']}"),
-    # (r'$\beta_2$',f"{opt_config['beta_2']}"),
-    # (r'$\epsilon$',f"{opt_config['epsilon']}"),
-    ('Momentum', f'{opt_config['momentum']}')
+    (r'$\beta_1$',f"{opt_config['beta_1']}"),
+    (r'$\beta_2$',f"{opt_config['beta_2']}"),
+    (r'$\epsilon$',f"{opt_config['epsilon']}")
+    #('Momentum', f'{opt_config['momentum']}')
 ]
 
 # Neural network characteristics as a multi-line string
@@ -206,7 +198,7 @@ manager.full_screen_toggle()
 plt.pause(2)
 
 # Saving the graph with high resolution
-#plt.savefig(f'grafici_per_slides/adam_final_best_config.pdf', bbox_inches = 'tight', dpi = 1200)
+plt.savefig(f'grafici_per_slides/adam_final_best_config.pdf', bbox_inches = 'tight', dpi = 1200)
 
 plt.show()
 
