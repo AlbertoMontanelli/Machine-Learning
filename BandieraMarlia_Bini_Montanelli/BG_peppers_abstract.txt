@@ -1,0 +1,6 @@
+The final model is a fully connected neural network with one hidden layer of 256 neurons and leaky ReLU activation. It employs Elastic Regularization (alpha = 0.5, lambda = 10⁻⁵) and the Adam optimizer (beta_1 = 0.9, beta_2 = 0.999, epsilon = 1e-8) for training. The loss function used is the Mean Euclidean Error (MEE).
+The model was obtained by a final finer grid search through a 5-fold cross-validation for hyperparameter tuning, followed by retraining with the combined training and validation sets.
+The Test Error on the training set is: 0.68 +- 0.02 (MEE).
+The Validation Error on the validation set is​: 0.77 +- 0.06 (MEE).
+The Training Error on ​the combined training and valdiation set is: 0.66 (MEE).
+The Test Error on the internal test set is: 0.73​ (MEE).
